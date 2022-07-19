@@ -59,10 +59,10 @@
 #pragma config WDTPRE = PR128    //Watchdog Timer Prescaler bit->1:128
 #pragma config PLLKEN = ON    //PLL Lock Enable bit->Clock switch to PLL source will wait until the PLL lock signal is valid.
 #pragma config WINDIS = OFF    //Watchdog Timer Window Enable bit->Watchdog Timer in Non-Window mode
-#pragma config FWDTEN = ON    //Watchdog Timer Enable bit->Watchdog timer always enabled
+#pragma config FWDTEN = OFF    //Watchdog Timer Enable bit->Watchdog timer enabled/disabled by user software
 
 // FOSC
-#pragma config POSCMD = XT    //Primary Oscillator Mode Select bits->XT Crystal Oscillator Mode
+#pragma config POSCMD = HS    //Primary Oscillator Mode Select bits->HS Crystal Oscillator Mode
 #pragma config OSCIOFNC = ON    //OSC2 Pin Function bit->OSC2 is general purpose digital I/O pin
 #pragma config IOL1WAY = ON    //Peripheral pin select configuration->Allow only one reconfiguration
 #pragma config FCKSM = CSECMD    //Clock Switching Mode bits->Clock switching is enabled,Fail-safe Clock Monitor is disabled
@@ -82,10 +82,10 @@
 #include "system_types.h"
 #include "interrupt_manager.h"
 #include "traps.h"
-#include "uart1.h"
-#include "adc1.h"
-#include "tmr1.h"
 #include "memory/flash.h"
+#include "uart1.h"
+#include "tmr1.h"
+#include "adc1.h"
 
 void SYSTEM_Initialize(void)
 {
