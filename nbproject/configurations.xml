@@ -7,6 +7,7 @@
       <logicalFolder name="01-MAIN" displayName="01-MAIN" projectFiles="true">
         <itemPath>01-SRC/01-MAIN/bootloader.h</itemPath>
         <itemPath>01-SRC/01-MAIN/main.h</itemPath>
+        <itemPath>01-SRC/01-MAIN/BackTask.h</itemPath>
       </logicalFolder>
       <logicalFolder name="02-FLAH_ROUTINES"
                      displayName="02-FLAH_ROUTINES"
@@ -53,6 +54,7 @@
       <logicalFolder name="01-MAIN" displayName="01-MAIN" projectFiles="true">
         <itemPath>01-SRC/01-MAIN/bootloader.c</itemPath>
         <itemPath>01-SRC/01-MAIN/main.c</itemPath>
+        <itemPath>01-SRC/01-MAIN/BackTask.c</itemPath>
       </logicalFolder>
       <logicalFolder name="02-FLAH_ROUTINES"
                      displayName="02-FLAH_ROUTINES"
