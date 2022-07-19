@@ -16,7 +16,7 @@ UARTmsg_t RxMsg, TxMsg;
 
 void InitBackTask(void)
 {
-    uint8_t i;
+    uint16_t i;
     UART_States = eBackTask_Idle;
     BufferIndex = 0;
     for (i = 0; i < MAX_FRM_LEN; i++)
@@ -50,7 +50,7 @@ void ManageBackTask(void)
         case eBackTask_Data:
             DataBuffer[BufferIndex] = RxData; /* Load incoming data into frame buffer */
             BufferIndex ++;
-            UART_States = CheckHeader();
+            UART_States = CheckPayloadLength();
             break;
 
         default:
@@ -112,7 +112,7 @@ uint8_t CheckPayloadLength (void)
 {
     uint16_t CRC16;
     uint8_t Res = eBackTask_Data;
-    if (BufferIndex >= RxMsg.Length - 3)
+    if (BufferIndex >= RxMsg.Length + 3)
     {
         CRC16 = DataBuffer[BufferIndex - 1];
         CRC16 |= (DataBuffer[BufferIndex - 2] << 8) & 0xFF00;
@@ -125,6 +125,8 @@ uint8_t CheckPayloadLength (void)
             /* Frame CRC error */
             Res = eBackTask_Idle;
         }
+        Res = eBackTask_Idle;
+        RxMsg.Status = 1;
     }
     return Res;
 }

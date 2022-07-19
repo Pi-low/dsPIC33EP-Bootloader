@@ -23,6 +23,7 @@ typedef struct
     uint16_t Length;
     uint8_t *Data;
     uint16_t CRC;
+    uint8_t Status;
 }UARTmsg_t;
 
 
