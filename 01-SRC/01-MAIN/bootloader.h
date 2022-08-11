@@ -5,7 +5,7 @@
 #define BOOT_PAGE_SIZE_BYTE         (2048U)
 #define BOOT_ROW_SIZE_WORD          (64U)
 #define BOOT_PAGE_SIZE_WORD         (512U)
-#define BOOT_ROW_OFFSET_ADDR        (0x80)
+#define BOOT_ROW_OFFSET_ADDR        (0x80U)
 #define BOOT_PAGE_OFFSET_ADDR       (0x200U)
 
 #define ADDR_FLASH_LOGISTIC         (0x4000L)
@@ -21,5 +21,17 @@ typedef struct
     uint8_t *blockDataArray;
     uint16_t blockCRC;
 }datablock_t;
+
+enum
+{
+    eService_gotoBoot =         0x01,
+    eService_echo =             0x02,
+    eService_getInfo =          0x03,
+    eService_eraseFlash =       0x04,
+    eService_dataTransfer =     0x05,
+    eService_checkFlash =       0x06,
+    eService_writePin =         0x71,
+    eService_readPin =          0x72
+};
 
 #endif

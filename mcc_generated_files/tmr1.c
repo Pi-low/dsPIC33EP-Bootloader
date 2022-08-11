@@ -76,7 +76,7 @@ typedef struct _TMR_OBJ_STRUCT
     /* Timer Elapsed */
     volatile bool           timerElapsed;
     /*Software Counter value*/
-    volatile uint8_t        count;
+    volatile uint16_t        count;
 
 } TMR_OBJ;
 
@@ -171,7 +171,7 @@ bool TMR1_GetElapsedThenClear(void)
     return status;
 }
 
-int TMR1_SoftwareCounterGet(void)
+uint16_t TMR1_SoftwareCounterGet(void)
 {
     return tmr1_obj.count;
 }
