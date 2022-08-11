@@ -1,5 +1,7 @@
 .generated_files/
 build/
-dist/
 nbproject/private/
 *.mc3
+nbproject/Makefile-genesis.properties
+
+nbproject/Makefile-default.mk

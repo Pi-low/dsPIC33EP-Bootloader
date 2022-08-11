@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project>
+  <executable name="dist/default/production/Bootloader_UART.X.production.elf">
+    <memory name="data">
+      <units>bytes</units>
+      <length>49152</length>
+      <used>340</used>
+      <free>48812</free>
+    </memory>
+    <memory name="program">
+      <units>bytes</units>
+      <length>47616</length>
+      <used>6210</used>
+      <free>41406</free>
+    </memory>
+  </executable>
+</project>
