@@ -1,9 +1,16 @@
 #ifndef TARGET_H
 #define TARGET_H
 
+/* Max frame length:
+ * - Counter : 1 byte
+ * - Block NVM address : 3 bytes
+ * - data : up to 255 bytes
+ * - CRC : 2 bytes
+ * - Frame checksum : 1 byte
+ */
 #define MAX_FRM_LEN (261U)
 #define RX_BUFFER_SIZE (264U)
-#define INTER_FRAME_TIMEOUT ((uint16_t)100)
+#define INTER_FRAME_TIMEOUT ((uint16_t)20)
 
 enum
 {

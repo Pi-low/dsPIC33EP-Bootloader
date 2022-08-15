@@ -119,7 +119,7 @@ uint8_t CheckHeader (void)
         }
         else
         {
-            /* Frame too long */
+            /* Frame too short or too long */
             res = eBackTask_Idle;
             TimeMng.SOF_Flag = 0;
         }
