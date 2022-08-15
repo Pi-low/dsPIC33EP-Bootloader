@@ -8,6 +8,7 @@
 #include "bootloader.h"
 
 static UARTmsg_t uartTxMsg;
+static uint8_t BlankFlashFlag;
 
 uint8_t serviceEcho(UARTmsg_t * uartMsg)
 {
@@ -78,6 +79,38 @@ uint8_t serviceGetInfo(UARTmsg_t * uartMsg)
 
 uint8_t serviceEraseFlash(UARTmsg_t * uartMsg)
 {
+    uint32_t i = 0;
+    uint8_t Err = 1, SID = eService_eraseFlash;
+    uint8_t Buff[2];
+    if (uartMsg->Length == 0)
+    {
+        FLASH_Unlock(FLASH_UNLOCK_KEY);
+        
+        while ((i < FLASH_APPLI_PAGES) && (Err != 1)) /* break loop in case of error */
+        {
+            /* Page start address % 0x400 */
+            Err &= FLASH_ErasePage(ADDR_FLASH_LOGISTIC + (i * FLASH_ERASE_PAGE_SIZE_IN_PC_UNITS));
+            i++;
+        }
+        if ((Err == 1) && (i == FLASH_APPLI_PAGES))
+        {
+            BlankFlashFlag = 1;
+        }
+        else
+        {
+            /* Do nothing */
+        }
+        Buff[0] = Err;
+        
+        FLASH_Lock();
+    }
+    else
+    {
+        SID |= eMaskError_IncorrectFrameLength;
+        Buff[0] = 0xFF;
+    }
+    constructFrame(SID, Buff, 1, &uartTxMsg);
+    sendFrame(&uartTxMsg);
     return 0;
 }
 

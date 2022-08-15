@@ -9,16 +9,20 @@
 #include "../04-CRC/crc.h"
 
 volatile uint32_t BootRequest __attribute__((address(0x1080), persistent));
+
 const char __attribute__((address(0x4080), space(prog))) text[64] = "Ceci est un test";
+const uint32_t AppliFlag __attribute__((address(0x4000), space(prog))) = 0xAABBCCDD;
+const uint16_t SWVersion __attribute__((address(0x40C0), space(prog))) = 0x0201;
 
 void WriteLogisticPage(void);
 
 void main(void)
 {
     uint8_t BootState = eBootStandbyState;
+    uint8_t RxMsgBuffer[MAX_FRM_LEN];
     uint32_t AppliPresent = readAppFlag();
     UARTmsg_t Rx_Msg;
-    
+    Rx_Msg.Data = RxMsgBuffer;
     if (BootRequest != BOOTFLAG && AppliPresent == APPLIVALID) /* Application is present, no bootmode requested */
     {
         StartApplication();
@@ -47,6 +51,7 @@ void main(void)
                 break;
                 
             case eService_eraseFlash:
+                serviceEraseFlash(&Rx_Msg);
                 break;
                 
             case eService_dataTransfer:
