@@ -14,6 +14,8 @@
 #define ADDR_FLASH_APPLI            (0x4400L)
 #define ADDR_FLASH_END              (0x55400L)
 
+#define FLASH_APPLI_PAGES           (144U)
+
 #define BOOTFLAG (0xC0DEFEED)
 #define APPLIVALID (0xA1B2C3D4)
 #define RESET() asm ("RESET");
