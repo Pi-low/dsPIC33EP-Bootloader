@@ -1,6 +1,8 @@
 #ifndef BOOTLOADER_H
 #define BOOTLOADER_H
 
+#include "../03-TARGET/target.h"
+
 #define BOOT_ROW_SIZE_BYTE          (256U)
 #define BOOT_PAGE_SIZE_BYTE         (2048U)
 #define BOOT_ROW_SIZE_WORD          (64U)
@@ -12,7 +14,10 @@
 #define ADDR_FLASH_APPLI            (0x4200L)
 #define ADDR_FLASH_END              (0x55600L)
 
+#define BOOTFLAG (0xC0DEFEED)
+#define APPLIVALID (0xA1B2C3D4)
 #define RESET() asm ("RESET");
+#define StartApplication() __asm__ volatile("goto %0"::"i"(ADDR_FLASH_APPLI))
 
 typedef struct
 {
@@ -33,5 +38,19 @@ enum
     eService_writePin =         0x71,
     eService_readPin =          0x72
 };
+
+enum
+{
+    eBootStandbyState =         0x01,
+    eBootLoadingState =         0x02
+};
+
+uint8_t serviceEcho(UARTmsg_t * uartMsg);
+uint8_t serviceGetInfo(UARTmsg_t * uartMsg);
+uint8_t serviceEraseFlash(UARTmsg_t * uartMsg);
+uint8_t serviceDataTransfer(UARTmsg_t * uartMsg);
+uint8_t serviceCheckFlash(UARTmsg_t * uartMsg);
+uint8_t serviceWritePin(UARTmsg_t * uartMsg);
+uint8_t serviceReadPin(UARTmsg_t * uartMsg);
 
 #endif
