@@ -26,9 +26,52 @@ uint8_t serviceEcho(UARTmsg_t * uartMsg)
 
 uint8_t serviceGetInfo(UARTmsg_t * uartMsg)
 {
-    uint8_t LogisticChar[64];
-    readLogisticChar(LogisticChar);
-    constructFrame(eService_getInfo, LogisticChar, 64, &uartTxMsg);
+    uint8_t Logistics[64];
+    uint8_t DataLen, SID;
+    uint16_t SwVersion;
+    uint32_t ApplicationPresentFlag;
+    
+    SID = eService_getInfo;
+    
+    if (uartMsg->Length == 1)
+    {
+        switch (uartMsg->Data[0])
+        {
+        case 0: /* Get application present flag */
+            ApplicationPresentFlag = readAppFlag();
+            Logistics[0] = ApplicationPresentFlag >> 24;
+            Logistics[1] = ApplicationPresentFlag >> 16;
+            Logistics[2] = ApplicationPresentFlag >> 8;
+            Logistics[3] = ApplicationPresentFlag;
+            DataLen = 4;
+            break;
+
+        case 1: /* Get application version */
+            SwVersion = readSWVersion();
+            Logistics[0] = SwVersion >> 8;
+            Logistics[1] = SwVersion;
+            DataLen = 2;
+            break;
+
+        case 2: /* Get application logistic ascii string */
+            readLogisticChar(Logistics);
+            DataLen = 64;
+            break;
+
+        default:
+            SID |= eMaskError_UnknownParameter;
+            Logistics[0] = 0xFF;
+            DataLen = 1;
+            break;
+        }
+    }
+    else
+    {
+        SID |= eMaskError_IncorrectFrameLength;
+        Logistics[0] = 0xFF;
+        DataLen = 1;
+    }
+    constructFrame(SID, Logistics, DataLen, &uartTxMsg);
     sendFrame(&uartTxMsg);
     return 0;
 }

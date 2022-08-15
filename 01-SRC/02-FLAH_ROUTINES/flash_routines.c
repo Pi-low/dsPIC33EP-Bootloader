@@ -31,4 +31,15 @@ void readLogisticChar(uint8_t buffer[])
         j++;
     }
 }
-        
+
+uint16_t readSWVersion(void)
+{
+    uint16_t u16;
+    u16 = FLASH_ReadWord16(0x40C0);
+    return u16;
+}
+
+uint8_t extractDataBlock(UARTmsg_t *RxMsg, datablock_t *Datablock)
+{
+    
+}
