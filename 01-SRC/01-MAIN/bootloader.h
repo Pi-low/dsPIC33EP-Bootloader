@@ -37,8 +37,8 @@ enum
     eService_eraseFlash =       0x04,
     eService_dataTransfer =     0x05,
     eService_checkFlash =       0x06,
-    eService_writePin =         0x71,
-    eService_readPin =          0x72
+    eService_writePin =         0x0A,
+    eService_readPin =          0x0B
 };
 
 enum
