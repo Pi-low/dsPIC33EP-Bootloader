@@ -47,6 +47,13 @@ enum
     eBootLoadingState =         0x02
 };
 
+enum
+{
+    eMaskError_UnknownParameter =           0x10,
+    eMaskError_IncorrectFrameLength =       0x20,
+    eMaskError_FlashRoutineProblem =        0x30
+};
+
 uint8_t serviceEcho(UARTmsg_t * uartMsg);
 uint8_t serviceGetInfo(UARTmsg_t * uartMsg);
 uint8_t serviceEraseFlash(UARTmsg_t * uartMsg);
