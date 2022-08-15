@@ -11,8 +11,8 @@
 #define BOOT_PAGE_OFFSET_ADDR       (0x200U)
 
 #define ADDR_FLASH_LOGISTIC         (0x4000L)
-#define ADDR_FLASH_APPLI            (0x4200L)
-#define ADDR_FLASH_END              (0x55600L)
+#define ADDR_FLASH_APPLI            (0x4400L)
+#define ADDR_FLASH_END              (0x55400L)
 
 #define BOOTFLAG (0xC0DEFEED)
 #define APPLIVALID (0xA1B2C3D4)
