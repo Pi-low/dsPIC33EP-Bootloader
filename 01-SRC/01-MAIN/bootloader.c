@@ -9,6 +9,7 @@
 
 static UARTmsg_t uartTxMsg;
 static uint8_t BlankFlashFlag;
+uint32_t u32Buffer[64];
 
 uint8_t serviceEcho(UARTmsg_t * uartMsg)
 {
@@ -116,6 +117,10 @@ uint8_t serviceEraseFlash(UARTmsg_t * uartMsg)
 
 uint8_t serviceDataTransfer(UARTmsg_t * uartMsg)
 {
+    if (uartMsg->Length != 0)
+    {
+        
+    }
     return 0;
 }
 
@@ -131,5 +136,43 @@ uint8_t serviceWritePin(UARTmsg_t * uartMsg)
 
 uint8_t serviceReadPin(UARTmsg_t * uartMsg)
 {
+    uint8_t SID = eService_readPin;
+    if (uartMsg->Length == 0)
+    {
+        
+    }
     return 0;
+}
+
+uint8_t createDataBlock(UARTmsg_t * MSG, DataBlock_t * Row)
+{
+    uint16_t u16Tmp, u16i;
+    uint8_t u8Temp, u8RetVal = 1;
+    
+    if (MSG->Length > 7)
+    {
+        Row->blockAddress = MSG->Data[3] & 0xFF; /* ADDR24 low */
+        Row->blockAddress |= (MSG->Data[2] << 8) & 0xFF00; /* ADDR24 mid */
+        Row->blockAddress |= (MSG->Data[1] << 16) & 0xFF0000; /* ADDR24 high */
+        Row->blockAddress >>= 1;
+  
+        Row->u32WordArray = u32Buffer;
+        
+        Row->blockSize = u16Tmp - 6;
+        Row->blockCRC = MSG->Data[u16Tmp - 1] & 0xFF; /* CRC16 low */
+        Row->blockCRC |= (MSG->Data[u16Tmp - 2] << 8) & 0xFF00; /* CRC16 high */
+        
+        if((Row->blockAddress % 2) == 0)
+        {
+            /* Correct block address */
+        }
+        else
+        {
+            /* Start address is not aligned */
+            u8RetVal = 0;
+        }
+        u16Tmp = MSG->Length;
+        
+    }
+    return u8Temp;
 }

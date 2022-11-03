@@ -3,6 +3,7 @@
 #include "../01-MAIN/main.h"
 #include "../01-MAIN/bootloader.h"
 #include "flash_routines.h"
+#include "adc1.h"
 
 uint32_t readAppFlag(void)
 {
@@ -37,9 +38,4 @@ uint16_t readSWVersion(void)
     uint16_t u16;
     u16 = FLASH_ReadWord16(0x40C0);
     return u16;
-}
-
-uint8_t extractDataBlock(UARTmsg_t *RxMsg, datablock_t *Datablock)
-{
-    
 }

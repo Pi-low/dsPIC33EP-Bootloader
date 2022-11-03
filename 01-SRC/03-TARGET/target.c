@@ -199,8 +199,8 @@ void sendFrame(UARTmsg_t *TxFrame)
     
     TxBuffer[0] = 0x5A;
     TxBuffer[1] = TxFrame->ID;
-    TxBuffer[2] = (FrmLength >> 8) & 0x00FF;
-    TxBuffer[3] = FrmLength & 0x00FF;
+    TxBuffer[2] = FrmLength >> 8;
+    TxBuffer[3] = FrmLength;
     
     Checksum = TxBuffer[1] + TxBuffer[2] + TxBuffer[3];
     

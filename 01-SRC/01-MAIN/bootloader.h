@@ -25,9 +25,9 @@ typedef struct
 {
     uint32_t blockAddress;
     uint16_t blockSize;
-    uint8_t *blockDataArray;
+    uint32_t *u32WordArray;
     uint16_t blockCRC;
-}datablock_t;
+}DataBlock_t;
 
 enum
 {

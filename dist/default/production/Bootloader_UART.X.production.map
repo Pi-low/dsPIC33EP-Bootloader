@@ -25,7 +25,6 @@ Command:
   build/default/production/01-SRC/03-TARGET/target.o \
   build/default/production/01-SRC/04-CRC/crc.o \
   build/default/production/mcc_generated_files/memory/flash.o \
-  build/default/production/mcc_generated_files/memory/flash_demo.o \
   build/default/production/mcc_generated_files/mcc.o \
   build/default/production/mcc_generated_files/system.o \
   build/default/production/mcc_generated_files/traps.o \
@@ -99,31 +98,34 @@ Default Scalar Model: Small
 section                    address   length (PC units)   length (bytes) (dec)
 -------                    -------   -----------------   --------------------
 .text                        0x400               0x204           0x306  (774)
-.text                        0x604               0x1d8           0x2c4  (708)
-.text                        0x7dc                0x18            0x24  (36)
-.text                        0x7f4                 0x6             0x9  (9)
-_058e7c0062f52f5f            0x800               0x400           0x600  (1536)
-.text                        0xc00               0x2ae           0x405  (1029)
-.NVM_flash                   0xeae               0x150           0x1f8  (504)
-.text                        0xffe               0x3f0           0x5e8  (1512)
-.dinit                      0x13ee                0x32            0x4b  (75)
-.text                       0x1420                0x12            0x1b  (27)
+.text                        0x604               0x528           0x7bc  (1980)
+.NVM_flash                   0xb2c               0x150           0x1f8  (504)
+.text                        0xc7c               0x416           0x621  (1569)
+.text                       0x1092                0x50            0x78  (120)
+.dinit                      0x10e2                0x44            0x66  (102)
+.text                       0x1126                0x7e            0xbd  (189)
+_0592FBA0_at_address_00004000    0x4000                 0x4             0x6  (6)
+.text                       0x4004                0x52            0x7b  (123)
+.text                       0x4056                0x1e            0x2d  (45)
+_0592FA20_at_address_00004080    0x4080                0x40            0x60  (96)
+_0592FC60_at_address_000040C0    0x40c0                 0x2             0x3  (3)
 
-                 Total "program" memory used (bytes):         0x1842  (6210) 13%
+                 Total "program" memory used (bytes):         0x1587  (5511) 11%
 
 
 "data" Memory  [Origin = 0x1000, Length = 0xc000]
 
 section                    address      alignment gaps    total length  (dec)
 -------                    -------      --------------    -------------------
-_0593B660_at_address_00001000    0x1000                   0             0x4  (4)
-.nbss                       0x1004                   0             0x8  (8)
-.ndata                      0x100c                   0             0x2  (2)
-.nbss                       0x100e                   0             0x2  (2)
-.bss                        0x1010                   0           0x140  (320)
-.data                       0x1150                   0             0x4  (4)
+.nbss                       0x1000                   0            0x18  (24)
+.ndata                      0x1018                   0             0x2  (2)
+.nbss                       0x101a                   0             0x2  (2)
+.bss                        0x101c                   0            0x20  (32)
+.data                       0x103c                   0             0x4  (4)
+_0592F8A0_at_address_00001080    0x1080                   0             0x4  (4)
+.bss                        0x1084                   0           0x314  (788)
 
-                 Total "data" memory used (bytes):          0x154  (340) <1%
+                 Total "data" memory used (bytes):          0x358  (856) 1%
 
 
 Dynamic Memory Usage
@@ -131,26 +133,26 @@ Dynamic Memory Usage
 region                     address                      maximum length  (dec)
 ------                     -------                      ---------------------
 heap                             0                                   0  (0)
-stack                       0x1154                              0xbeac  (48812)
+stack                       0x1398                              0xbc68  (48232)
 
-                 Maximum dynamic memory (bytes):         0xbeac  (48812)
+                 Maximum dynamic memory (bytes):         0xbc68  (48232)
 
 Note: Project is using a large data memory model when small data memory model is sufficient.
 
 
 External Symbols in Data Memory (by address):
 
-                    0x1000                  _ulBootFlag
-                    0x111c                  _RxMsg
-                    0x1126                  _TxMsg
-                    0x1150                  _FlashKey
+                    0x103c                  _FlashKey
+                    0x1080                  _BootRequest
+                    0x1192                  _RxMsgBuffer
+                    0x1298                  _u32Buffer
 
 External Symbols in Data Memory (by name):
 
-                    0x1150                  _FlashKey
-                    0x111c                  _RxMsg
-                    0x1126                  _TxMsg
-                    0x1000                  _ulBootFlag
+                    0x1080                  _BootRequest
+                    0x103c                  _FlashKey
+                    0x1192                  _RxMsgBuffer
+                    0x1298                  _u32Buffer
 
 External Symbols in Program Memory (by address):
 
@@ -166,108 +168,117 @@ External Symbols in Program Memory (by address):
                   0x0005ac                  __HardTrapError
                   0x0005ce                  __SoftTrapError
                   0x0005fe                  __DefaultInterrupt
-                  0x0007d2                  _FlashDemo
-                  0x0007f4                  _INTERRUPT_Initialize
-                  0x000c00                  _InitBackTask
-                  0x000c30                  _ManageBackTask
-                  0x000de2                  _FrameAvailable
-                  0x000dfa                  _AcknowledgeFrame
-                  0x000e06                  _constructFrame
-                  0x000e2a                  _sendFrame
-                  0x000e8e                  _constructErrFrame
-                  0x000eb0                  _FLASH_Unlock
-                  0x000eba                  _FLASH_Lock
-                  0x000ec8                  _FLASH_SendNvmKey
-                  0x000ef4                  _FLASH_ReadWord24
-                  0x000f02                  _FLASH_ReadWord16
-                  0x000f0e                  _FLASH_ErasePage
-                  0x000f2a                  _FLASH_WriteDoubleWord24
-                  0x000f5e                  _FLASH_WriteDoubleWord16
-                  0x000f94                  _FLASH_WriteRow24
-                  0x000fb6                  _FLASH_WriteRow16
-                  0x000fee                  _FLASH_GetErasePageOffset
-                  0x000ff4                  _FLASH_GetErasePageAddress
-                  0x000ffe                  _RESET_GetCause
-                  0x00110a                  _RESET_CauseClearAll
-                  0x001112                  _UART1_Initialize
-                  0x001126                  _UART1_Read
-                  0x001144                  _UART1_Write
-                  0x00115c                  _UART1_IsRxReady
-                  0x001174                  _UART1_IsTxReady
-                  0x001196                  _UART1_IsTxDone
-                  0x0011ae                  _UART1_StatusGet
-                  0x0011b6                  _UART1_Enable
-                  0x0011c0                  _UART1_Disable
-                  0x0011ca                  _TMR1_Initialize
-                  0x0011dc                  _TMR1_Tasks_16BitOperation
-                  0x0011f6                  _TMR1_Period16BitSet
-                  0x001204                  _TMR1_Period16BitGet
-                  0x00120c                  _TMR1_Counter16BitSet
-                  0x00121a                  _TMR1_Counter16BitGet
-                  0x001222                  _TMR1_Start
-                  0x00122c                  _TMR1_Stop
-                  0x001234                  _TMR1_GetElapsedThenClear
-                  0x00124a                  _TMR1_SoftwareCounterGet
-                  0x001252                  _TMR1_SoftwareCounterClear
-                  0x00125a                  _PIN_MANAGER_Initialize
-                  0x0012d8                  _CLOCK_Initialize
-                  0x00132a                  _ADC1_Initialize
-                  0x001352                  _ADC1_SetInterruptHandler
-                  0x001398                  _SYSTEM_Initialize
-                  0x0013bc                  _main
-                  0x001420                  _BootloaderInit
-                  0x001426                  _BootResponse
+                  0x000604                  _serviceEcho
+                  0x000642                  _serviceGetInfo
+                  0x000700                  _serviceEraseFlash
+                  0x00079e                  _serviceDataTransfer
+                  0x0007a8                  _serviceCheckFlash
+                  0x0007b2                  _serviceWritePin
+                  0x0007bc                  _serviceReadPin
+                  0x0007ca                  _createDataBlock
+                  0x0008ac                  _InitBackTask
+                  0x0008d8                  _ManageBackTask
+                  0x000a18                  _FrameAvailable
+                  0x000a78                  _constructFrame
+                  0x000a96                  _sendFrame
+                  0x000b2e                  _FLASH_Unlock
+                  0x000b38                  _FLASH_Lock
+                  0x000b46                  _FLASH_SendNvmKey
+                  0x000b72                  _FLASH_ReadWord24
+                  0x000b80                  _FLASH_ReadWord16
+                  0x000b8c                  _FLASH_ErasePage
+                  0x000ba8                  _FLASH_WriteDoubleWord24
+                  0x000bdc                  _FLASH_WriteDoubleWord16
+                  0x000c12                  _FLASH_WriteRow24
+                  0x000c34                  _FLASH_WriteRow16
+                  0x000c6c                  _FLASH_GetErasePageOffset
+                  0x000c72                  _FLASH_GetErasePageAddress
+                  0x000c7c                  _RESET_GetCause
+                  0x000d88                  _RESET_CauseClearAll
+                  0x000d90                  _UART1_Initialize
+                  0x000da4                  _UART1_Read
+                  0x000dc2                  _UART1_Write
+                  0x000dda                  _UART1_IsRxReady
+                  0x000df2                  _UART1_IsTxReady
+                  0x000e14                  _UART1_IsTxDone
+                  0x000e2c                  _UART1_StatusGet
+                  0x000e34                  _UART1_Enable
+                  0x000e3e                  _UART1_Disable
+                  0x000e48                  _readAppFlag
+                  0x000e82                  _readLogisticChar
+                  0x000ed6                  _readSWVersion
+                  0x000ee8                  _main
+                  0x000f84                  _TMR1_Initialize
+                  0x000f96                  _TMR1_Tasks_16BitOperation
+                  0x000fb0                  _TMR1_Period16BitSet
+                  0x000fbe                  _TMR1_Period16BitGet
+                  0x000fc6                  _TMR1_Counter16BitSet
+                  0x000fd4                  _TMR1_Counter16BitGet
+                  0x000fdc                  _TMR1_Start
+                  0x000fe6                  _TMR1_Stop
+                  0x000fee                  _TMR1_GetElapsedThenClear
+                  0x001004                  _TMR1_SoftwareCounterGet
+                  0x00100c                  _TMR1_SoftwareCounterClear
+                  0x001014                  _PIN_MANAGER_Initialize
+                  0x001092                  _ADC1_Initialize
+                  0x0010ba                  _ADC1_SetInterruptHandler
+                  0x001144                  _SYSTEM_Initialize
+                  0x001168                  _initCRCengine
+                  0x00117e                  _runCRCOnBuffer
+                  0x004000                  _AppliFlag
+                  0x004004                  _CLOCK_Initialize
+                  0x00406e                  _INTERRUPT_Initialize
+                  0x004080                  _text
+                  0x0040c0                  _SWVersion
                   0x0557fa                  __FGS.sec
 
 External Symbols in Program Memory (by name):
 
-                  0x00132a                  _ADC1_Initialize
-                  0x001352                  _ADC1_SetInterruptHandler
-                  0x000dfa                  _AcknowledgeFrame
-                  0x001426                  _BootResponse
-                  0x001420                  _BootloaderInit
-                  0x0012d8                  _CLOCK_Initialize
-                  0x000f0e                  _FLASH_ErasePage
-                  0x000ff4                  _FLASH_GetErasePageAddress
-                  0x000fee                  _FLASH_GetErasePageOffset
-                  0x000eba                  _FLASH_Lock
-                  0x000f02                  _FLASH_ReadWord16
-                  0x000ef4                  _FLASH_ReadWord24
-                  0x000ec8                  _FLASH_SendNvmKey
-                  0x000eb0                  _FLASH_Unlock
-                  0x000f5e                  _FLASH_WriteDoubleWord16
-                  0x000f2a                  _FLASH_WriteDoubleWord24
-                  0x000fb6                  _FLASH_WriteRow16
-                  0x000f94                  _FLASH_WriteRow24
-                  0x0007d2                  _FlashDemo
-                  0x000de2                  _FrameAvailable
-                  0x0007f4                  _INTERRUPT_Initialize
-                  0x000c00                  _InitBackTask
-                  0x000c30                  _ManageBackTask
-                  0x00125a                  _PIN_MANAGER_Initialize
-                  0x00110a                  _RESET_CauseClearAll
-                  0x000ffe                  _RESET_GetCause
-                  0x001398                  _SYSTEM_Initialize
-                  0x00121a                  _TMR1_Counter16BitGet
-                  0x00120c                  _TMR1_Counter16BitSet
-                  0x001234                  _TMR1_GetElapsedThenClear
-                  0x0011ca                  _TMR1_Initialize
-                  0x001204                  _TMR1_Period16BitGet
-                  0x0011f6                  _TMR1_Period16BitSet
-                  0x001252                  _TMR1_SoftwareCounterClear
-                  0x00124a                  _TMR1_SoftwareCounterGet
-                  0x001222                  _TMR1_Start
-                  0x00122c                  _TMR1_Stop
-                  0x0011dc                  _TMR1_Tasks_16BitOperation
-                  0x0011c0                  _UART1_Disable
-                  0x0011b6                  _UART1_Enable
-                  0x001112                  _UART1_Initialize
-                  0x00115c                  _UART1_IsRxReady
-                  0x001196                  _UART1_IsTxDone
-                  0x001174                  _UART1_IsTxReady
-                  0x001126                  _UART1_Read
-                  0x0011ae                  _UART1_StatusGet
-                  0x001144                  _UART1_Write
+                  0x001092                  _ADC1_Initialize
+                  0x0010ba                  _ADC1_SetInterruptHandler
+                  0x004000                  _AppliFlag
+                  0x004004                  _CLOCK_Initialize
+                  0x000b8c                  _FLASH_ErasePage
+                  0x000c72                  _FLASH_GetErasePageAddress
+                  0x000c6c                  _FLASH_GetErasePageOffset
+                  0x000b38                  _FLASH_Lock
+                  0x000b80                  _FLASH_ReadWord16
+                  0x000b72                  _FLASH_ReadWord24
+                  0x000b46                  _FLASH_SendNvmKey
+                  0x000b2e                  _FLASH_Unlock
+                  0x000bdc                  _FLASH_WriteDoubleWord16
+                  0x000ba8                  _FLASH_WriteDoubleWord24
+                  0x000c34                  _FLASH_WriteRow16
+                  0x000c12                  _FLASH_WriteRow24
+                  0x000a18                  _FrameAvailable
+                  0x00406e                  _INTERRUPT_Initialize
+                  0x0008ac                  _InitBackTask
+                  0x0008d8                  _ManageBackTask
+                  0x001014                  _PIN_MANAGER_Initialize
+                  0x000d88                  _RESET_CauseClearAll
+                  0x000c7c                  _RESET_GetCause
+                  0x0040c0                  _SWVersion
+                  0x001144                  _SYSTEM_Initialize
+                  0x000fd4                  _TMR1_Counter16BitGet
+                  0x000fc6                  _TMR1_Counter16BitSet
+                  0x000fee                  _TMR1_GetElapsedThenClear
+                  0x000f84                  _TMR1_Initialize
+                  0x000fbe                  _TMR1_Period16BitGet
+                  0x000fb0                  _TMR1_Period16BitSet
+                  0x00100c                  _TMR1_SoftwareCounterClear
+                  0x001004                  _TMR1_SoftwareCounterGet
+                  0x000fdc                  _TMR1_Start
+                  0x000fe6                  _TMR1_Stop
+                  0x000f96                  _TMR1_Tasks_16BitOperation
+                  0x000e3e                  _UART1_Disable
+                  0x000e34                  _UART1_Enable
+                  0x000d90                  _UART1_Initialize
+                  0x000dda                  _UART1_IsRxReady
+                  0x000e14                  _UART1_IsTxDone
+                  0x000df2                  _UART1_IsTxReady
+                  0x000da4                  _UART1_Read
+                  0x000e2c                  _UART1_StatusGet
+                  0x000dc2                  _UART1_Write
                   0x000546                  __AddressError
                   0x00058a                  __DMACError
                   0x0005fe                  __DefaultInterrupt
@@ -281,10 +292,23 @@ External Symbols in Program Memory (by name):
                   0x000448                  __data_init_extended
                   0x00043c                  __psv_init
                   0x000400                  __resetPRI
-                  0x000e8e                  _constructErrFrame
-                  0x000e06                  _constructFrame
-                  0x0013bc                  _main
-                  0x000e2a                  _sendFrame
+                  0x000a78                  _constructFrame
+                  0x0007ca                  _createDataBlock
+                  0x001168                  _initCRCengine
+                  0x000ee8                  _main
+                  0x000e48                  _readAppFlag
+                  0x000e82                  _readLogisticChar
+                  0x000ed6                  _readSWVersion
+                  0x00117e                  _runCRCOnBuffer
+                  0x000a96                  _sendFrame
+                  0x0007a8                  _serviceCheckFlash
+                  0x00079e                  _serviceDataTransfer
+                  0x000604                  _serviceEcho
+                  0x000700                  _serviceEraseFlash
+                  0x000642                  _serviceGetInfo
+                  0x0007bc                  _serviceReadPin
+                  0x0007b2                  _serviceWritePin
+                  0x004080                  _text
 
 Memory Configuration
 
@@ -313,7 +337,6 @@ LOAD build/default/production/01-SRC/02-FLAH_ROUTINES/flash_routines.o
 LOAD build/default/production/01-SRC/03-TARGET/target.o
 LOAD build/default/production/01-SRC/04-CRC/crc.o
 LOAD build/default/production/mcc_generated_files/memory/flash.o
-LOAD build/default/production/mcc_generated_files/memory/flash_demo.o
 LOAD build/default/production/mcc_generated_files/mcc.o
 LOAD build/default/production/mcc_generated_files/system.o
 LOAD build/default/production/mcc_generated_files/traps.o
@@ -403,7 +426,7 @@ __FOSCSEL
 
 __FGS             0x0557fa          0x2
  *(__FGS.sec*)
- __FGS.sec        0x0557fa          0x2 /CW/_FGSØãê
+ __FGS.sec        0x0557fa          0x2 /CW/_FGS ©á
                   0x0557fa                  __FGS.sec
 
 __FUID0
@@ -421,95 +444,94 @@ __FUID3
 .comment
  *(.comment)
 
-.debug_info       0x000000       0x5f06
+.debug_info       0x000000       0x7063
  *(.debug_info)
- .debug_info      0x000000        0x2b8 build/default/production/01-SRC/01-MAIN/bootloader.o
- .debug_info      0x0002b8        0x375 build/default/production/01-SRC/01-MAIN/main.o
- .debug_info      0x00062d        0x18a build/default/production/01-SRC/02-FLAH_ROUTINES/flash_routines.o
- .debug_info      0x0007b7        0x8af build/default/production/01-SRC/03-TARGET/target.o
- .debug_info      0x001066        0x175 build/default/production/01-SRC/04-CRC/crc.o
- .debug_info      0x0011db         0xbf build/default/production/mcc_generated_files/memory/flash.o
- .debug_info      0x00129a        0x2da build/default/production/mcc_generated_files/memory/flash_demo.o
- .debug_info      0x001574       0x128a build/default/production/mcc_generated_files/system.o
- .debug_info      0x0027fe        0x5f1 build/default/production/mcc_generated_files/traps.o
- .debug_info      0x002def        0x447 build/default/production/mcc_generated_files/clock.o
- .debug_info      0x003236        0x6a9 build/default/production/mcc_generated_files/tmr1.o
- .debug_info      0x0038df        0x178 build/default/production/mcc_generated_files/interrupt_manager.o
- .debug_info      0x003a57        0x4ac build/default/production/mcc_generated_files/reset.o
- .debug_info      0x003f03       0x10a5 build/default/production/mcc_generated_files/adc1.o
- .debug_info      0x004fa8        0x6fa build/default/production/mcc_generated_files/uart1.o
- .debug_info      0x0056a2        0x864 build/default/production/mcc_generated_files/pin_manager.o
+ .debug_info      0x000000        0x6d8 build/default/production/01-SRC/01-MAIN/bootloader.o
+ .debug_info      0x0006d8        0x49e build/default/production/01-SRC/01-MAIN/main.o
+ .debug_info      0x000b76       0x1004 build/default/production/01-SRC/02-FLAH_ROUTINES/flash_routines.o
+ .debug_info      0x001b7a        0x7d4 build/default/production/01-SRC/03-TARGET/target.o
+ .debug_info      0x00234e        0x2c4 build/default/production/01-SRC/04-CRC/crc.o
+ .debug_info      0x002612         0xbf build/default/production/mcc_generated_files/memory/flash.o
+ .debug_info      0x0026d1       0x128a build/default/production/mcc_generated_files/system.o
+ .debug_info      0x00395b        0x5f1 build/default/production/mcc_generated_files/traps.o
+ .debug_info      0x003f4c        0x447 build/default/production/mcc_generated_files/clock.o
+ .debug_info      0x004393        0x6a9 build/default/production/mcc_generated_files/tmr1.o
+ .debug_info      0x004a3c        0x178 build/default/production/mcc_generated_files/interrupt_manager.o
+ .debug_info      0x004bb4        0x4ac build/default/production/mcc_generated_files/reset.o
+ .debug_info      0x005060       0x10a5 build/default/production/mcc_generated_files/adc1.o
+ .debug_info      0x006105        0x6fa build/default/production/mcc_generated_files/uart1.o
+ .debug_info      0x0067ff        0x864 build/default/production/mcc_generated_files/pin_manager.o
  *(.gnu.linkonce.wi.*)
 
-.debug_abbrev     0x000000        0xca1
+.debug_abbrev     0x000000        0xdc5
  *(.debug_abbrev)
- .debug_abbrev    0x000000         0x9e build/default/production/01-SRC/01-MAIN/bootloader.o
- .debug_abbrev    0x00009e         0xf2 build/default/production/01-SRC/01-MAIN/main.o
- .debug_abbrev    0x000190         0x44 build/default/production/01-SRC/02-FLAH_ROUTINES/flash_routines.o
- .debug_abbrev    0x0001d4        0x1a8 build/default/production/01-SRC/03-TARGET/target.o
- .debug_abbrev    0x00037c         0x44 build/default/production/01-SRC/04-CRC/crc.o
- .debug_abbrev    0x0003c0         0x14 build/default/production/mcc_generated_files/memory/flash.o
- .debug_abbrev    0x0003d4         0x9c build/default/production/mcc_generated_files/memory/flash_demo.o
- .debug_abbrev    0x000470          0x1 build/default/production/mcc_generated_files/mcc.o
- .debug_abbrev    0x000471        0x114 build/default/production/mcc_generated_files/system.o
- .debug_abbrev    0x000585        0x10d build/default/production/mcc_generated_files/traps.o
- .debug_abbrev    0x000692         0xc5 build/default/production/mcc_generated_files/clock.o
- .debug_abbrev    0x000757        0x148 build/default/production/mcc_generated_files/tmr1.o
- .debug_abbrev    0x00089f         0x34 build/default/production/mcc_generated_files/interrupt_manager.o
- .debug_abbrev    0x0008d3         0xf6 build/default/production/mcc_generated_files/reset.o
- .debug_abbrev    0x0009c9        0x111 build/default/production/mcc_generated_files/adc1.o
- .debug_abbrev    0x000ada        0x102 build/default/production/mcc_generated_files/uart1.o
- .debug_abbrev    0x000bdc         0xc5 build/default/production/mcc_generated_files/pin_manager.o
+ .debug_abbrev    0x000000         0xf9 build/default/production/01-SRC/01-MAIN/bootloader.o
+ .debug_abbrev    0x0000f9        0x13c build/default/production/01-SRC/01-MAIN/main.o
+ .debug_abbrev    0x000235        0x107 build/default/production/01-SRC/02-FLAH_ROUTINES/flash_routines.o
+ .debug_abbrev    0x00033c        0x198 build/default/production/01-SRC/03-TARGET/target.o
+ .debug_abbrev    0x0004d4         0xac build/default/production/01-SRC/04-CRC/crc.o
+ .debug_abbrev    0x000580         0x14 build/default/production/mcc_generated_files/memory/flash.o
+ .debug_abbrev    0x000594          0x1 build/default/production/mcc_generated_files/mcc.o
+ .debug_abbrev    0x000595        0x114 build/default/production/mcc_generated_files/system.o
+ .debug_abbrev    0x0006a9        0x10d build/default/production/mcc_generated_files/traps.o
+ .debug_abbrev    0x0007b6         0xc5 build/default/production/mcc_generated_files/clock.o
+ .debug_abbrev    0x00087b        0x148 build/default/production/mcc_generated_files/tmr1.o
+ .debug_abbrev    0x0009c3         0x34 build/default/production/mcc_generated_files/interrupt_manager.o
+ .debug_abbrev    0x0009f7         0xf6 build/default/production/mcc_generated_files/reset.o
+ .debug_abbrev    0x000aed        0x111 build/default/production/mcc_generated_files/adc1.o
+ .debug_abbrev    0x000bfe        0x102 build/default/production/mcc_generated_files/uart1.o
+ .debug_abbrev    0x000d00         0xc5 build/default/production/mcc_generated_files/pin_manager.o
 
-.debug_line       0x000000       0x1396
+.debug_line       0x000000       0x13ba
  *(.debug_line)
- .debug_line      0x000000        0x13b build/default/production/01-SRC/01-MAIN/bootloader.o
- .debug_line      0x00013b        0x15b build/default/production/01-SRC/01-MAIN/main.o
- .debug_line      0x000296         0xfc build/default/production/01-SRC/02-FLAH_ROUTINES/flash_routines.o
- .debug_line      0x000392        0x1df build/default/production/01-SRC/03-TARGET/target.o
- .debug_line      0x000571         0xfc build/default/production/01-SRC/04-CRC/crc.o
- .debug_line      0x00066d        0x106 build/default/production/mcc_generated_files/memory/flash.o
- .debug_line      0x000773         0xe9 build/default/production/mcc_generated_files/memory/flash_demo.o
- .debug_line      0x00085c         0x1a build/default/production/mcc_generated_files/mcc.o
- .debug_line      0x000876        0x178 build/default/production/mcc_generated_files/system.o
- .debug_line      0x0009ee        0x16e build/default/production/mcc_generated_files/traps.o
- .debug_line      0x000b5c        0x139 build/default/production/mcc_generated_files/clock.o
- .debug_line      0x000c95        0x157 build/default/production/mcc_generated_files/tmr1.o
- .debug_line      0x000dec         0x55 build/default/production/mcc_generated_files/interrupt_manager.o
- .debug_line      0x000e41        0x178 build/default/production/mcc_generated_files/reset.o
- .debug_line      0x000fb9        0x13e build/default/production/mcc_generated_files/adc1.o
- .debug_line      0x0010f7        0x154 build/default/production/mcc_generated_files/uart1.o
- .debug_line      0x00124b        0x14b build/default/production/mcc_generated_files/pin_manager.o
+ .debug_line      0x000000        0x1bf build/default/production/01-SRC/01-MAIN/bootloader.o
+ .debug_line      0x0001bf        0x17c build/default/production/01-SRC/01-MAIN/main.o
+ .debug_line      0x00033b        0x14c build/default/production/01-SRC/02-FLAH_ROUTINES/flash_routines.o
+ .debug_line      0x000487        0x1c8 build/default/production/01-SRC/03-TARGET/target.o
+ .debug_line      0x00064f        0x12b build/default/production/01-SRC/04-CRC/crc.o
+ .debug_line      0x00077a        0x106 build/default/production/mcc_generated_files/memory/flash.o
+ .debug_line      0x000880         0x1a build/default/production/mcc_generated_files/mcc.o
+ .debug_line      0x00089a        0x178 build/default/production/mcc_generated_files/system.o
+ .debug_line      0x000a12        0x16e build/default/production/mcc_generated_files/traps.o
+ .debug_line      0x000b80        0x139 build/default/production/mcc_generated_files/clock.o
+ .debug_line      0x000cb9        0x157 build/default/production/mcc_generated_files/tmr1.o
+ .debug_line      0x000e10         0x55 build/default/production/mcc_generated_files/interrupt_manager.o
+ .debug_line      0x000e65        0x178 build/default/production/mcc_generated_files/reset.o
+ .debug_line      0x000fdd        0x13e build/default/production/mcc_generated_files/adc1.o
+ .debug_line      0x00111b        0x154 build/default/production/mcc_generated_files/uart1.o
+ .debug_line      0x00126f        0x14b build/default/production/mcc_generated_files/pin_manager.o
 
-.debug_frame      0x000000        0x95a
+.debug_frame      0x000000        0x9d8
  *(.debug_frame)
- .debug_frame     0x000000         0x4c build/default/production/01-SRC/01-MAIN/bootloader.o
- .debug_frame     0x00004c         0x30 build/default/production/01-SRC/01-MAIN/main.o
- .debug_frame     0x00007c        0x12c build/default/production/01-SRC/03-TARGET/target.o
- .debug_frame     0x0001a8         0xa6 build/default/production/mcc_generated_files/memory/flash_demo.o
- .debug_frame     0x00024e         0x68 build/default/production/mcc_generated_files/system.o
- .debug_frame     0x0002b6        0x20c build/default/production/mcc_generated_files/traps.o
- .debug_frame     0x0004c2         0x30 build/default/production/mcc_generated_files/clock.o
- .debug_frame     0x0004f2        0x148 build/default/production/mcc_generated_files/tmr1.o
- .debug_frame     0x00063a         0x30 build/default/production/mcc_generated_files/interrupt_manager.o
- .debug_frame     0x00066a        0x12c build/default/production/mcc_generated_files/reset.o
- .debug_frame     0x000796         0x84 build/default/production/mcc_generated_files/adc1.o
- .debug_frame     0x00081a        0x110 build/default/production/mcc_generated_files/uart1.o
- .debug_frame     0x00092a         0x30 build/default/production/mcc_generated_files/pin_manager.o
+ .debug_frame     0x000000         0xf4 build/default/production/01-SRC/01-MAIN/bootloader.o
+ .debug_frame     0x0000f4         0x30 build/default/production/01-SRC/01-MAIN/main.o
+ .debug_frame     0x000124         0x68 build/default/production/01-SRC/02-FLAH_ROUTINES/flash_routines.o
+ .debug_frame     0x00018c         0xf4 build/default/production/01-SRC/03-TARGET/target.o
+ .debug_frame     0x000280         0x4c build/default/production/01-SRC/04-CRC/crc.o
+ .debug_frame     0x0002cc         0x68 build/default/production/mcc_generated_files/system.o
+ .debug_frame     0x000334        0x20c build/default/production/mcc_generated_files/traps.o
+ .debug_frame     0x000540         0x30 build/default/production/mcc_generated_files/clock.o
+ .debug_frame     0x000570        0x148 build/default/production/mcc_generated_files/tmr1.o
+ .debug_frame     0x0006b8         0x30 build/default/production/mcc_generated_files/interrupt_manager.o
+ .debug_frame     0x0006e8        0x12c build/default/production/mcc_generated_files/reset.o
+ .debug_frame     0x000814         0x84 build/default/production/mcc_generated_files/adc1.o
+ .debug_frame     0x000898        0x110 build/default/production/mcc_generated_files/uart1.o
+ .debug_frame     0x0009a8         0x30 build/default/production/mcc_generated_files/pin_manager.o
 
-.debug_str        0x000000        0x1db
+.debug_str        0x000000        0x275
  *(.debug_str)
- .debug_str       0x000000          0x9 build/default/production/01-SRC/01-MAIN/main.o
- .debug_str       0x000009         0x14 build/default/production/01-SRC/03-TARGET/target.o
- .debug_str       0x00001d         0x16 build/default/production/mcc_generated_files/memory/flash_demo.o
- .debug_str       0x000033         0x93 build/default/production/mcc_generated_files/system.o
- .debug_str       0x0000c6         0x24 build/default/production/mcc_generated_files/traps.o
- .debug_str       0x0000ea          0xb build/default/production/mcc_generated_files/clock.o
- .debug_str       0x0000f5         0x13 build/default/production/mcc_generated_files/tmr1.o
- .debug_str       0x000108         0x17 build/default/production/mcc_generated_files/reset.o
- .debug_str       0x00011f         0x87 build/default/production/mcc_generated_files/adc1.o
- .debug_str       0x0001a6         0x15 build/default/production/mcc_generated_files/uart1.o
- .debug_str       0x0001bb         0x20 build/default/production/mcc_generated_files/pin_manager.o
+ .debug_str       0x000000         0x12 build/default/production/01-SRC/01-MAIN/bootloader.o
+ .debug_str       0x000012         0x21 build/default/production/01-SRC/01-MAIN/main.o
+ .debug_str       0x000033         0x87 build/default/production/01-SRC/02-FLAH_ROUTINES/flash_routines.o
+ .debug_str       0x0000ba         0x13 build/default/production/01-SRC/03-TARGET/target.o
+ .debug_str       0x0000cd         0x93 build/default/production/mcc_generated_files/system.o
+ .debug_str       0x000160         0x24 build/default/production/mcc_generated_files/traps.o
+ .debug_str       0x000184          0xb build/default/production/mcc_generated_files/clock.o
+ .debug_str       0x00018f         0x13 build/default/production/mcc_generated_files/tmr1.o
+ .debug_str       0x0001a2         0x17 build/default/production/mcc_generated_files/reset.o
+ .debug_str       0x0001b9         0x87 build/default/production/mcc_generated_files/adc1.o
+ .debug_str       0x000240         0x15 build/default/production/mcc_generated_files/uart1.o
+ .debug_str       0x000255         0x20 build/default/production/mcc_generated_files/pin_manager.o
 
 .debug_loc
  *(.debug_loc)
@@ -518,68 +540,72 @@ __FUID3
  *(.debug_macinfo)
 
 .debug_pubnames
-                  0x000000        0x4fe
+                  0x000000        0x5e1
  *(.debug_pubnames)
  .debug_pubnames
-                  0x000000         0x36 build/default/production/01-SRC/01-MAIN/bootloader.o
+                  0x000000         0xc2 build/default/production/01-SRC/01-MAIN/bootloader.o
  .debug_pubnames
-                  0x000036         0x2a build/default/production/01-SRC/01-MAIN/main.o
+                  0x0000c2         0x60 build/default/production/01-SRC/01-MAIN/main.o
  .debug_pubnames
-                  0x000060         0xa9 build/default/production/01-SRC/03-TARGET/target.o
+                  0x000122         0x49 build/default/production/01-SRC/02-FLAH_ROUTINES/flash_routines.o
  .debug_pubnames
-                  0x000109         0x20 build/default/production/mcc_generated_files/memory/flash_demo.o
+                  0x00016b         0x6a build/default/production/01-SRC/03-TARGET/target.o
  .debug_pubnames
-                  0x000129         0x28 build/default/production/mcc_generated_files/system.o
+                  0x0001d5         0x37 build/default/production/01-SRC/04-CRC/crc.o
  .debug_pubnames
-                  0x000151         0xa4 build/default/production/mcc_generated_files/traps.o
+                  0x00020c         0x28 build/default/production/mcc_generated_files/system.o
  .debug_pubnames
-                  0x0001f5         0x27 build/default/production/mcc_generated_files/clock.o
+                  0x000234         0xa4 build/default/production/mcc_generated_files/traps.o
  .debug_pubnames
-                  0x00021c        0x11a build/default/production/mcc_generated_files/tmr1.o
+                  0x0002d8         0x27 build/default/production/mcc_generated_files/clock.o
  .debug_pubnames
-                  0x000336         0x2b build/default/production/mcc_generated_files/interrupt_manager.o
+                  0x0002ff        0x11a build/default/production/mcc_generated_files/tmr1.o
  .debug_pubnames
-                  0x000361         0x54 build/default/production/mcc_generated_files/reset.o
+                  0x000419         0x2b build/default/production/mcc_generated_files/interrupt_manager.o
  .debug_pubnames
-                  0x0003b5         0x64 build/default/production/mcc_generated_files/adc1.o
+                  0x000444         0x54 build/default/production/mcc_generated_files/reset.o
  .debug_pubnames
-                  0x000419         0xb8 build/default/production/mcc_generated_files/uart1.o
+                  0x000498         0x64 build/default/production/mcc_generated_files/adc1.o
  .debug_pubnames
-                  0x0004d1         0x2d build/default/production/mcc_generated_files/pin_manager.o
+                  0x0004fc         0xb8 build/default/production/mcc_generated_files/uart1.o
+ .debug_pubnames
+                  0x0005b4         0x2d build/default/production/mcc_generated_files/pin_manager.o
 
 .debug_ranges
  *(.debug_ranges)
 
-.debug_aranges    0x000000        0x188
+.debug_aranges    0x000000        0x1a0
  *(.debug_aranges)
  .debug_aranges
                   0x000000         0x18 build/default/production/01-SRC/01-MAIN/bootloader.o
  .debug_aranges
                   0x000018         0x18 build/default/production/01-SRC/01-MAIN/main.o
  .debug_aranges
-                  0x000030         0x18 build/default/production/01-SRC/03-TARGET/target.o
+                  0x000030         0x18 build/default/production/01-SRC/02-FLAH_ROUTINES/flash_routines.o
  .debug_aranges
-                  0x000048         0x18 build/default/production/mcc_generated_files/memory/flash.o
+                  0x000048         0x18 build/default/production/01-SRC/03-TARGET/target.o
  .debug_aranges
-                  0x000060         0x18 build/default/production/mcc_generated_files/memory/flash_demo.o
+                  0x000060         0x18 build/default/production/01-SRC/04-CRC/crc.o
  .debug_aranges
-                  0x000078         0x18 build/default/production/mcc_generated_files/system.o
+                  0x000078         0x18 build/default/production/mcc_generated_files/memory/flash.o
  .debug_aranges
-                  0x000090         0x50 build/default/production/mcc_generated_files/traps.o
+                  0x000090         0x18 build/default/production/mcc_generated_files/system.o
  .debug_aranges
-                  0x0000e0         0x18 build/default/production/mcc_generated_files/clock.o
+                  0x0000a8         0x50 build/default/production/mcc_generated_files/traps.o
  .debug_aranges
-                  0x0000f8         0x18 build/default/production/mcc_generated_files/tmr1.o
+                  0x0000f8         0x18 build/default/production/mcc_generated_files/clock.o
  .debug_aranges
-                  0x000110         0x18 build/default/production/mcc_generated_files/interrupt_manager.o
+                  0x000110         0x18 build/default/production/mcc_generated_files/tmr1.o
  .debug_aranges
-                  0x000128         0x18 build/default/production/mcc_generated_files/reset.o
+                  0x000128         0x18 build/default/production/mcc_generated_files/interrupt_manager.o
  .debug_aranges
-                  0x000140         0x18 build/default/production/mcc_generated_files/adc1.o
+                  0x000140         0x18 build/default/production/mcc_generated_files/reset.o
  .debug_aranges
-                  0x000158         0x18 build/default/production/mcc_generated_files/uart1.o
+                  0x000158         0x18 build/default/production/mcc_generated_files/adc1.o
  .debug_aranges
-                  0x000170         0x18 build/default/production/mcc_generated_files/pin_manager.o
+                  0x000170         0x18 build/default/production/mcc_generated_files/uart1.o
+ .debug_aranges
+                  0x000188         0x18 build/default/production/mcc_generated_files/pin_manager.o
                     0x0000                  WREG0 = 0x0
                     0x0000                  _WREG0 = 0x0
                     0x0002                  WREG1 = 0x2
@@ -2697,108 +2723,127 @@ LOAD c:/program files (x86)/microchip/xc16/v1.41/bin/bin/../../lib\libm-elf.a
 LOAD c:/program files (x86)/microchip/xc16/v1.41/bin/bin/../../lib\liblega-c-elf.a
 END GROUP
 OUTPUT(dist/default/production/Bootloader_UART.X.production.elf elf32-pic30)
-LOAD /CW/_FGSØãê
+LOAD /CW/_FGS ©á
 LOAD jump_table
 LOAD default_isr
 LOAD data_init
 
 .debug_pubtypes
-                  0x000188        0x6a1
+                  0x0001a0        0x7d0
  .debug_pubtypes
-                  0x000188         0x2b build/default/production/01-SRC/01-MAIN/bootloader.o
+                  0x0001a0         0x56 build/default/production/01-SRC/01-MAIN/bootloader.o
  .debug_pubtypes
-                  0x0001b3         0x63 build/default/production/01-SRC/01-MAIN/main.o
+                  0x0001f6         0x63 build/default/production/01-SRC/01-MAIN/main.o
  .debug_pubtypes
-                  0x000216         0x1f build/default/production/01-SRC/02-FLAH_ROUTINES/flash_routines.o
+                  0x000259        0x142 build/default/production/01-SRC/02-FLAH_ROUTINES/flash_routines.o
  .debug_pubtypes
-                  0x000235         0x6b build/default/production/01-SRC/03-TARGET/target.o
+                  0x00039b         0x6b build/default/production/01-SRC/03-TARGET/target.o
  .debug_pubtypes
-                  0x0002a0         0x1f build/default/production/01-SRC/04-CRC/crc.o
+                  0x000406         0x2b build/default/production/01-SRC/04-CRC/crc.o
  .debug_pubtypes
-                  0x0002bf         0x2b build/default/production/mcc_generated_files/memory/flash_demo.o
+                  0x000431        0x17c build/default/production/mcc_generated_files/system.o
  .debug_pubtypes
-                  0x0002ea        0x17c build/default/production/mcc_generated_files/system.o
+                  0x0005ad         0x94 build/default/production/mcc_generated_files/traps.o
  .debug_pubtypes
-                  0x000466         0x94 build/default/production/mcc_generated_files/traps.o
+                  0x000641         0x4c build/default/production/mcc_generated_files/clock.o
  .debug_pubtypes
-                  0x0004fa         0x4c build/default/production/mcc_generated_files/clock.o
+                  0x00068d         0x7b build/default/production/mcc_generated_files/tmr1.o
  .debug_pubtypes
-                  0x000546         0x7b build/default/production/mcc_generated_files/tmr1.o
+                  0x000708         0x12 build/default/production/mcc_generated_files/interrupt_manager.o
  .debug_pubtypes
-                  0x0005c1         0x12 build/default/production/mcc_generated_files/interrupt_manager.o
+                  0x00071a         0x42 build/default/production/mcc_generated_files/reset.o
  .debug_pubtypes
-                  0x0005d3         0x42 build/default/production/mcc_generated_files/reset.o
+                  0x00075c        0x129 build/default/production/mcc_generated_files/adc1.o
  .debug_pubtypes
-                  0x000615        0x129 build/default/production/mcc_generated_files/adc1.o
+                  0x000885         0x6b build/default/production/mcc_generated_files/uart1.o
  .debug_pubtypes
-                  0x00073e         0x6b build/default/production/mcc_generated_files/uart1.o
- .debug_pubtypes
-                  0x0007a9         0x80 build/default/production/mcc_generated_files/pin_manager.o
+                  0x0008f0         0x80 build/default/production/mcc_generated_files/pin_manager.o
 
 __c30_signature
-                  0x000829         0x6c
+                  0x000970         0x66
  __c30_signature
-                  0x000829          0x6 build/default/production/01-SRC/01-MAIN/bootloader.o
+                  0x000970          0x6 build/default/production/01-SRC/01-MAIN/bootloader.o
  __c30_signature
-                  0x00082f          0x6 build/default/production/01-SRC/01-MAIN/main.o
+                  0x000976          0x6 build/default/production/01-SRC/01-MAIN/main.o
  __c30_signature
-                  0x000835          0x6 build/default/production/01-SRC/02-FLAH_ROUTINES/flash_routines.o
+                  0x00097c          0x6 build/default/production/01-SRC/02-FLAH_ROUTINES/flash_routines.o
  __c30_signature
-                  0x00083b          0x6 build/default/production/01-SRC/03-TARGET/target.o
+                  0x000982          0x6 build/default/production/01-SRC/03-TARGET/target.o
  __c30_signature
-                  0x000841          0x6 build/default/production/01-SRC/04-CRC/crc.o
+                  0x000988          0x6 build/default/production/01-SRC/04-CRC/crc.o
  __c30_signature
-                  0x000847          0x6 build/default/production/mcc_generated_files/memory/flash_demo.o
+                  0x00098e          0x6 build/default/production/mcc_generated_files/mcc.o
  __c30_signature
-                  0x00084d          0x6 build/default/production/mcc_generated_files/mcc.o
+                  0x000994          0x6 build/default/production/mcc_generated_files/system.o
  __c30_signature
-                  0x000853          0x6 build/default/production/mcc_generated_files/system.o
+                  0x00099a          0x6 build/default/production/mcc_generated_files/traps.o
  __c30_signature
-                  0x000859          0x6 build/default/production/mcc_generated_files/traps.o
+                  0x0009a0          0x6 build/default/production/mcc_generated_files/clock.o
  __c30_signature
-                  0x00085f          0x6 build/default/production/mcc_generated_files/clock.o
+                  0x0009a6          0x6 build/default/production/mcc_generated_files/tmr1.o
  __c30_signature
-                  0x000865          0x6 build/default/production/mcc_generated_files/tmr1.o
+                  0x0009ac          0x6 build/default/production/mcc_generated_files/interrupt_manager.o
  __c30_signature
-                  0x00086b          0x6 build/default/production/mcc_generated_files/interrupt_manager.o
+                  0x0009b2          0x6 build/default/production/mcc_generated_files/reset.o
  __c30_signature
-                  0x000871          0x6 build/default/production/mcc_generated_files/reset.o
+                  0x0009b8          0x6 build/default/production/mcc_generated_files/adc1.o
  __c30_signature
-                  0x000877          0x6 build/default/production/mcc_generated_files/adc1.o
+                  0x0009be          0x6 build/default/production/mcc_generated_files/uart1.o
  __c30_signature
-                  0x00087d          0x6 build/default/production/mcc_generated_files/uart1.o
+                  0x0009c4          0x6 build/default/production/mcc_generated_files/pin_manager.o
  __c30_signature
-                  0x000883          0x6 build/default/production/mcc_generated_files/pin_manager.o
+                  0x0009ca          0x6 c:/program files (x86)/microchip/xc16/v1.41/bin/bin/../../lib\liblega-pic30-elf.a(crt0_extendedep.o)
  __c30_signature
-                  0x000889          0x6 c:/program files (x86)/microchip/xc16/v1.41/bin/bin/../../lib\liblega-pic30-elf.a(crt0_extendedep.o)
- __c30_signature
-                  0x00088f          0x6 c:/program files (x86)/microchip/xc16/v1.41/bin/bin/../../lib\liblega-pic30-elf.a(data_init_extended.o)
+                  0x0009d0          0x6 c:/program files (x86)/microchip/xc16/v1.41/bin/bin/../../lib\liblega-pic30-elf.a(data_init_extended.o)
 
-_0593B660_at_address_00001000
-                    0x1000          0x4
- _0593B660_at_address_00001000
-                    0x1000          0x4 build/default/production/01-SRC/01-MAIN/main.o
-                    0x1000                  _ulBootFlag
+_0592F8A0_at_address_00001080
+                    0x1080          0x4
+ _0592F8A0_at_address_00001080
+                    0x1080          0x4 build/default/production/01-SRC/01-MAIN/main.o
+                    0x1080                  _BootRequest
 
-.nbss               0x1004          0x8
- .nbss              0x1004          0x4 build/default/production/01-SRC/03-TARGET/target.o
- .nbss              0x1008          0x4 build/default/production/mcc_generated_files/tmr1.o
+.nbss               0x1000         0x18
+ .nbss              0x1000          0xa build/default/production/01-SRC/01-MAIN/bootloader.o
+ .nbss              0x100a          0xa build/default/production/01-SRC/03-TARGET/target.o
+ .nbss              0x1014          0x4 build/default/production/mcc_generated_files/tmr1.o
 
-.ndata              0x100c          0x2
- .ndata             0x100c          0x2 build/default/production/mcc_generated_files/traps.o
+.ndata              0x1018          0x2
+ .ndata             0x1018          0x2 build/default/production/mcc_generated_files/traps.o
 
-.nbss               0x100e          0x2
- .nbss              0x100e          0x2 build/default/production/mcc_generated_files/adc1.o
+.nbss               0x101a          0x2
+ .nbss              0x101a          0x2 build/default/production/mcc_generated_files/adc1.o
 
-.bss                0x1010        0x140
- .bss               0x1010        0x120 build/default/production/01-SRC/03-TARGET/target.o
-                    0x111c                  _RxMsg
-                    0x1126                  _TxMsg
- .bss               0x1130         0x20 build/default/production/mcc_generated_files/traps.o
+.bss                0x1084        0x314
+ .bss               0x1084        0x10e build/default/production/01-SRC/03-TARGET/target.o
+ .bss               0x1192        0x106 build/default/production/01-SRC/01-MAIN/main.o
+                    0x1192                  _RxMsgBuffer
+ .bss               0x1298        0x100 build/default/production/01-SRC/01-MAIN/bootloader.o
+                    0x1298                  _u32Buffer
 
-.data               0x1150          0x4
- .data              0x1150          0x4 build/default/production/mcc_generated_files/memory/flash.o
-                    0x1150                  _FlashKey
+.bss                0x101c         0x20
+ .bss               0x101c         0x20 build/default/production/mcc_generated_files/traps.o
+
+.data               0x103c          0x4
+ .data              0x103c          0x4 build/default/production/mcc_generated_files/memory/flash.o
+                    0x103c                  _FlashKey
+
+_0592FA20_at_address_00004080
+                  0x004080         0x40
+ _0592FA20_at_address_00004080
+                  0x004080         0x40 build/default/production/01-SRC/01-MAIN/main.o
+                  0x004080                  _text
+
+_0592FBA0_at_address_00004000
+                  0x004000          0x4
+ _0592FBA0_at_address_00004000
+                  0x004000          0x4 build/default/production/01-SRC/01-MAIN/main.o
+                  0x004000                  _AppliFlag
+
+_0592FC60_at_address_000040C0
+                  0x0040c0          0x2
+ _0592FC60_at_address_000040C0
+                  0x0040c0          0x2 build/default/production/01-SRC/01-MAIN/main.o
+                  0x0040c0                  _SWVersion
 
 .config_IESO      0x0557f8          0x2
  .config_IESO     0x0557f8          0x2 build/default/production/mcc_generated_files/system.o
@@ -2818,93 +2863,97 @@ _0593B660_at_address_00001000
  .config_JTAGEN
                   0x0557f0          0x2 build/default/production/mcc_generated_files/system.o
 
-_058e7c0062f52f5f
-                  0x000800        0x400
- _058e7c0062f52f5f
-                  0x000800        0x400 build/default/production/mcc_generated_files/memory/flash_demo.o
+.text             0x000604        0x528
+ .text            0x000604        0x2a8 build/default/production/01-SRC/01-MAIN/bootloader.o
+                  0x000604                  _serviceEcho
+                  0x000642                  _serviceGetInfo
+                  0x000700                  _serviceEraseFlash
+                  0x00079e                  _serviceDataTransfer
+                  0x0007a8                  _serviceCheckFlash
+                  0x0007b2                  _serviceWritePin
+                  0x0007bc                  _serviceReadPin
+                  0x0007ca                  _createDataBlock
+ .text            0x0008ac        0x280 build/default/production/01-SRC/03-TARGET/target.o
+                  0x0008ac                  _InitBackTask
+                  0x0008d8                  _ManageBackTask
+                  0x000a18                  _FrameAvailable
+                  0x000a78                  _constructFrame
+                  0x000a96                  _sendFrame
 
-.text             0x000c00        0x2ae
- .text            0x000c00        0x2ae build/default/production/01-SRC/03-TARGET/target.o
-                  0x000c00                  _InitBackTask
-                  0x000c30                  _ManageBackTask
-                  0x000de2                  _FrameAvailable
-                  0x000dfa                  _AcknowledgeFrame
-                  0x000e06                  _constructFrame
-                  0x000e2a                  _sendFrame
-                  0x000e8e                  _constructErrFrame
+.NVM_flash        0x000b2c        0x150
+ .NVM_flash       0x000b2c        0x150 build/default/production/mcc_generated_files/memory/flash.o
+                  0x000b2e                  _FLASH_Unlock
+                  0x000b38                  _FLASH_Lock
+                  0x000b46                  _FLASH_SendNvmKey
+                  0x000b72                  _FLASH_ReadWord24
+                  0x000b80                  _FLASH_ReadWord16
+                  0x000b8c                  _FLASH_ErasePage
+                  0x000ba8                  _FLASH_WriteDoubleWord24
+                  0x000bdc                  _FLASH_WriteDoubleWord16
+                  0x000c12                  _FLASH_WriteRow24
+                  0x000c34                  _FLASH_WriteRow16
+                  0x000c6c                  _FLASH_GetErasePageOffset
+                  0x000c72                  _FLASH_GetErasePageAddress
 
-.text             0x000604        0x1d8
- .text            0x000604        0x1d8 build/default/production/mcc_generated_files/memory/flash_demo.o
-                  0x0007d2                  _FlashDemo
+.text             0x000c7c        0x416
+ .text            0x000c7c        0x114 build/default/production/mcc_generated_files/reset.o
+                  0x000c7c                  _RESET_GetCause
+                  0x000c84                  _RESET_CauseHandler
+                  0x000d88                  _RESET_CauseClearAll
+ .text            0x000d90         0xb8 build/default/production/mcc_generated_files/uart1.o
+                  0x000d90                  _UART1_Initialize
+                  0x000da4                  _UART1_Read
+                  0x000dc2                  _UART1_Write
+                  0x000dda                  _UART1_IsRxReady
+                  0x000df2                  _UART1_IsTxReady
+                  0x000e14                  _UART1_IsTxDone
+                  0x000e2c                  _UART1_StatusGet
+                  0x000e34                  _UART1_Enable
+                  0x000e3e                  _UART1_Disable
+ .text            0x000e48         0xa0 build/default/production/01-SRC/02-FLAH_ROUTINES/flash_routines.o
+                  0x000e48                  _readAppFlag
+                  0x000e82                  _readLogisticChar
+                  0x000ed6                  _readSWVersion
+ .text            0x000ee8         0x9c build/default/production/01-SRC/01-MAIN/main.o
+                  0x000ee8                  _main
+ .text            0x000f84         0x90 build/default/production/mcc_generated_files/tmr1.o
+                  0x000f84                  _TMR1_Initialize
+                  0x000f96                  _TMR1_Tasks_16BitOperation
+                  0x000fb0                  _TMR1_Period16BitSet
+                  0x000fbe                  _TMR1_Period16BitGet
+                  0x000fc6                  _TMR1_Counter16BitSet
+                  0x000fd4                  _TMR1_Counter16BitGet
+                  0x000fdc                  _TMR1_Start
+                  0x000fe6                  _TMR1_Stop
+                  0x000fee                  _TMR1_GetElapsedThenClear
+                  0x001004                  _TMR1_SoftwareCounterGet
+                  0x00100c                  _TMR1_SoftwareCounterClear
+ .text            0x001014         0x7e build/default/production/mcc_generated_files/pin_manager.o
+                  0x001014                  _PIN_MANAGER_Initialize
 
-.NVM_flash        0x000eae        0x150
- .NVM_flash       0x000eae        0x150 build/default/production/mcc_generated_files/memory/flash.o
-                  0x000eb0                  _FLASH_Unlock
-                  0x000eba                  _FLASH_Lock
-                  0x000ec8                  _FLASH_SendNvmKey
-                  0x000ef4                  _FLASH_ReadWord24
-                  0x000f02                  _FLASH_ReadWord16
-                  0x000f0e                  _FLASH_ErasePage
-                  0x000f2a                  _FLASH_WriteDoubleWord24
-                  0x000f5e                  _FLASH_WriteDoubleWord16
-                  0x000f94                  _FLASH_WriteRow24
-                  0x000fb6                  _FLASH_WriteRow16
-                  0x000fee                  _FLASH_GetErasePageOffset
-                  0x000ff4                  _FLASH_GetErasePageAddress
+.text             0x004004         0x52
+ .text            0x004004         0x52 build/default/production/mcc_generated_files/clock.o
+                  0x004004                  _CLOCK_Initialize
 
-.text             0x000ffe        0x3f0
- .text            0x000ffe        0x114 build/default/production/mcc_generated_files/reset.o
-                  0x000ffe                  _RESET_GetCause
-                  0x001006                  _RESET_CauseHandler
-                  0x00110a                  _RESET_CauseClearAll
- .text            0x001112         0xb8 build/default/production/mcc_generated_files/uart1.o
-                  0x001112                  _UART1_Initialize
-                  0x001126                  _UART1_Read
-                  0x001144                  _UART1_Write
-                  0x00115c                  _UART1_IsRxReady
-                  0x001174                  _UART1_IsTxReady
-                  0x001196                  _UART1_IsTxDone
-                  0x0011ae                  _UART1_StatusGet
-                  0x0011b6                  _UART1_Enable
-                  0x0011c0                  _UART1_Disable
- .text            0x0011ca         0x90 build/default/production/mcc_generated_files/tmr1.o
-                  0x0011ca                  _TMR1_Initialize
-                  0x0011dc                  _TMR1_Tasks_16BitOperation
-                  0x0011f6                  _TMR1_Period16BitSet
-                  0x001204                  _TMR1_Period16BitGet
-                  0x00120c                  _TMR1_Counter16BitSet
-                  0x00121a                  _TMR1_Counter16BitGet
-                  0x001222                  _TMR1_Start
-                  0x00122c                  _TMR1_Stop
-                  0x001234                  _TMR1_GetElapsedThenClear
-                  0x00124a                  _TMR1_SoftwareCounterGet
-                  0x001252                  _TMR1_SoftwareCounterClear
- .text            0x00125a         0x7e build/default/production/mcc_generated_files/pin_manager.o
-                  0x00125a                  _PIN_MANAGER_Initialize
- .text            0x0012d8         0x52 build/default/production/mcc_generated_files/clock.o
-                  0x0012d8                  _CLOCK_Initialize
- .text            0x00132a         0x50 build/default/production/mcc_generated_files/adc1.o
-                  0x00132a                  _ADC1_Initialize
-                  0x00134c                  _ADC1_CallBack
-                  0x001352                  _ADC1_SetInterruptHandler
-                  0x00135e                  _ADC1_Tasks
- .text            0x00137a         0x42 build/default/production/mcc_generated_files/system.o
-                  0x001398                  _SYSTEM_Initialize
- .text            0x0013bc         0x32 build/default/production/01-SRC/01-MAIN/main.o
-                  0x0013bc                  _main
+.text             0x001092         0x50
+ .text            0x001092         0x50 build/default/production/mcc_generated_files/adc1.o
+                  0x001092                  _ADC1_Initialize
+                  0x0010b4                  _ADC1_CallBack
+                  0x0010ba                  _ADC1_SetInterruptHandler
+                  0x0010c6                  _ADC1_Tasks
 
-.dinit            0x0013ee         0x32
- .dinit           0x0013ee         0x32 data_init
+.dinit            0x0010e2         0x44
+ .dinit           0x0010e2         0x44 data_init
 
-.text             0x0007dc         0x18
- .text            0x0007dc         0x18 build/default/production/mcc_generated_files/traps.o
-                  0x0007dc                  _TRAPS_halt_on_error
+.text             0x001126         0x7e
+ .text            0x001126         0x42 build/default/production/mcc_generated_files/system.o
+                  0x001144                  _SYSTEM_Initialize
+ .text            0x001168         0x3c build/default/production/01-SRC/04-CRC/crc.o
+                  0x001168                  _initCRCengine
+                  0x00117e                  _runCRCOnBuffer
 
-.text             0x001420         0x12
- .text            0x001420         0x12 build/default/production/01-SRC/01-MAIN/bootloader.o
-                  0x001420                  _BootloaderInit
-                  0x001426                  _BootResponse
-
-.text             0x0007f4          0x6
- .text            0x0007f4          0x6 build/default/production/mcc_generated_files/interrupt_manager.o
-                  0x0007f4                  _INTERRUPT_Initialize
+.text             0x004056         0x1e
+ .text            0x004056         0x18 build/default/production/mcc_generated_files/traps.o
+                  0x004056                  _TRAPS_halt_on_error
+ .text            0x00406e          0x6 build/default/production/mcc_generated_files/interrupt_manager.o
+                  0x00406e                  _INTERRUPT_Initialize

@@ -10,19 +10,21 @@
 
 volatile uint32_t BootRequest __attribute__((address(0x1080), persistent));
 
+#ifndef _IS_RELEASE
 const char __attribute__((address(0x4080), space(prog))) text[64] = "Ceci est un test";
 const uint32_t AppliFlag __attribute__((address(0x4000), space(prog))) = 0xAABBCCDD;
 const uint16_t SWVersion __attribute__((address(0x40C0), space(prog))) = 0x0201;
+#endif
 
-void WriteLogisticPage(void);
+uint8_t RxMsgBuffer[MAX_FRM_LEN];
 
 void main(void)
 {
-    uint8_t BootState = eBootStandbyState;
-    uint8_t RxMsgBuffer[MAX_FRM_LEN];
     uint32_t AppliPresent = readAppFlag();
     UARTmsg_t Rx_Msg;
+    
     Rx_Msg.Data = RxMsgBuffer;
+    
     if (BootRequest != BOOTFLAG && AppliPresent == APPLIVALID) /* Application is present, no bootmode requested */
     {
         StartApplication();
@@ -71,21 +73,4 @@ void main(void)
             }
         }
     }
-}
-
-void WriteLogisticPage(void)
-{
-    uint32_t WriteBuffze32[BOOT_ROW_SIZE_WORD];
-    uint16_t i;
-    uint8_t result;
-    
-    FLASH_Unlock(FLASH_UNLOCK_KEY);
-    
-    for (i= 0; i < BOOT_ROW_SIZE_WORD; i++)
-    {
-        WriteBuffze32[i] = 0x00AACCBB;
-    }
-    
-    result = FLASH_WriteRow24(ADDR_FLASH_LOGISTIC, WriteBuffze32);
-    FLASH_Lock();
 }
