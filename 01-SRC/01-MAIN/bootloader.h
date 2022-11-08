@@ -31,18 +31,6 @@ typedef struct
 
 enum
 {
-    eService_gotoBoot =         0x01,
-    eService_echo =             0x02,
-    eService_getInfo =          0x03,
-    eService_eraseFlash =       0x04,
-    eService_dataTransfer =     0x05,
-    eService_checkFlash =       0x06,
-    eService_writePin =         0x0A,
-    eService_readPin =          0x0B
-};
-
-enum
-{
     eBootStandbyState =         0x01,
     eBootLoadingState =         0x02
 };
@@ -54,12 +42,12 @@ enum
     eMaskError_FlashRoutineProblem =        0x30
 };
 
-uint8_t serviceEcho(UARTmsg_t * uartMsg);
-uint8_t serviceGetInfo(UARTmsg_t * uartMsg);
-uint8_t serviceEraseFlash(UARTmsg_t * uartMsg);
-uint8_t serviceDataTransfer(UARTmsg_t * uartMsg);
-uint8_t serviceCheckFlash(UARTmsg_t * uartMsg);
-uint8_t serviceWritePin(UARTmsg_t * uartMsg);
-uint8_t serviceReadPin(UARTmsg_t * uartMsg);
+uint8_t serviceEcho(tsUARTmsg * uartMsg);
+uint8_t serviceGetInfo(tsUARTmsg * uartMsg);
+uint8_t serviceEraseFlash(tsUARTmsg * uartMsg);
+uint8_t serviceDataTransfer(tsUARTmsg * uartMsg);
+uint8_t serviceCheckFlash(tsUARTmsg * uartMsg);
+uint8_t serviceWritePin(tsUARTmsg * uartMsg);
+uint8_t serviceReadPin(tsUARTmsg * uartMsg);
 
 #endif

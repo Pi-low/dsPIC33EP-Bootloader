@@ -1,11 +1,11 @@
 #include "../../mcc_generated_files/system.h"
 #include "../../mcc_generated_files/uart1.h"
 #include "../../mcc_generated_files/tmr1.h"
-#include "../01-MAIN/main.h"
+#include "../01-MAIN/BootloaderTypes.h"
 #include "../01-MAIN/bootloader.h"
 #include "target.h"
 
-static uint8_t UART_States, FrameStatus, Checksum;
+static uint8_t u8_UART_State, FrameStatus, Checksum;
 static uint8_t DataBuffer[RX_BUFFER_SIZE];
 static uint16_t BufferIndex, FrameLength, RxFrameTimestamp;
 
@@ -18,7 +18,7 @@ static TimeProtocol_t TimeMng;
 void InitBackTask(void)
 {
     uint16_t i;
-    UART_States = eBackTask_Idle;
+    u8_UART_State = eBackTask_Idle;
     BufferIndex = 0;
     for (i = 0; i < RX_BUFFER_SIZE; i++)
     {
@@ -33,7 +33,7 @@ void ManageBackTask(void)
     uint8_t RxData;
     if (TimeMng.SOF_Flag != 0 && (TMR1_SoftwareCounterGet() > TimeMng.Timeout))
     {
-        UART_States = eBackTask_Idle;
+        u8_UART_State = eBackTask_Idle;
         TimeMng.SOF_Flag = 0;
     }
     else
@@ -51,26 +51,29 @@ void ManageBackTask(void)
             /* Do nothing */
         }
         RxData = U1RXREG; /* Read/flush incoming Rx data */
-        switch (UART_States)
+        switch (u8_UART_State)
         {
         case eBackTask_Idle:
-            UART_States = CheckIdleState(RxData);
+            u8_UART_State = CheckIdleState(RxData);
             break;
 
         case eBackTask_StartOfFrame:
             Checksum += RxData;
             DataBuffer[BufferIndex] = RxData; /* Load incoming data into frame buffer */
             BufferIndex ++;
-            UART_States = CheckHeader();
-            TimeMng.Timeout += INTER_FRAME_TIMEOUT;
+            u8_UART_State = CheckHeader();
             break;
 
         case eBackTask_Data:
             Checksum += RxData;
             DataBuffer[BufferIndex] = RxData; /* Load incoming data into frame buffer */
             BufferIndex ++;
-            UART_States = CheckPayloadLength();
-            TimeMng.Timeout += INTER_FRAME_TIMEOUT;
+            if (BufferIndex == FrameLength + 3)
+            {
+                /* End of frame */
+                u8_UART_State = CheckPayloadLength();
+            }
+            
             break;
 
         default:
@@ -90,13 +93,13 @@ uint8_t CheckIdleState (uint8_t DataIN)
     if (DataIN == 0xA5) /* frame begins with 0xA5 */
     {
         CurrentTime = TMR1_SoftwareCounterGet();
-        UART_States = eBackTask_StartOfFrame; /* Start state machine */
+        u8_UART_State = eBackTask_StartOfFrame; /* Start state machine */
         BufferIndex = 0; /* reset byte counter */
         Checksum = 0; /* Reset checksum */
         Res = eBackTask_StartOfFrame;
         TimeMng.SOF_Flag = 1;
         TimeMng.SOF_Timestamp = CurrentTime;
-        TimeMng.Timeout = CurrentTime + INTER_FRAME_TIMEOUT;
+        TimeMng.Timeout = CurrentTime + FRAME_TIMEOUT;
     }
     else
     {
@@ -123,31 +126,6 @@ uint8_t CheckHeader (void)
             res = eBackTask_Idle;
             TimeMng.SOF_Flag = 0;
         }
-    }
-    else
-    {
-        /* Continue */
-    }
-    return res;
-}
-
-uint8_t CheckPayloadLength (void)
-{
-    uint8_t res = eBackTask_Data;
-    if (BufferIndex >= FrameLength + 3)
-    {
-        if (Checksum == 0xFF)
-        {
-            /* Correct frame */
-            FrameStatus = 1;
-            RxFrameTimestamp = TMR1_SoftwareCounterGet();
-        }
-        else
-        {
-            /* Checksum error */
-        }
-        res = eBackTask_Idle;
-        TimeMng.SOF_Flag = 0;
     }
     else
     {

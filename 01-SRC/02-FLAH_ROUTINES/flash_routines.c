@@ -1,6 +1,6 @@
 #include "../../mcc_generated_files/system.h"
 #include "../../mcc_generated_files/memory/flash.h"
-#include "../01-MAIN/main.h"
+#include "../01-MAIN/BootloaderTypes.h"
 #include "../01-MAIN/bootloader.h"
 #include "flash_routines.h"
 #include "adc1.h"

@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=Bootloader_UART.X
+PROJECTNAME=dsPIC33-Boot
 
 # Active Configuration
 DEFAULTCONF=default

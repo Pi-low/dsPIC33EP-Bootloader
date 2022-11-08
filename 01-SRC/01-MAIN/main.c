@@ -2,7 +2,7 @@
 #include "../../mcc_generated_files/pin_manager.h"
 #include "../../mcc_generated_files/tmr1.h"
 #include "../../mcc_generated_files/memory/flash.h"
-#include "main.h"
+#include "BootloaderTypes.h"
 #include "bootloader.h"
 #include "../02-FLAH_ROUTINES/flash_routines.h"
 #include "../03-TARGET/target.h"

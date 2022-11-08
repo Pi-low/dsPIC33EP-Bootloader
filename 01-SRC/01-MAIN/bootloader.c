@@ -4,7 +4,7 @@
 #include "../../mcc_generated_files/memory/flash.h"
 #include "../03-TARGET/target.h"
 #include "../02-FLAH_ROUTINES/flash_routines.h"
-#include "main.h"
+#include "BootloaderTypes.h"
 #include "bootloader.h"
 
 static UARTmsg_t uartTxMsg;

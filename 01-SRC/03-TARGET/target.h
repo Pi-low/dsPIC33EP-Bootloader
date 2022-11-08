@@ -2,15 +2,14 @@
 #define TARGET_H
 
 /* Max frame length:
- * - Counter : 1 byte
  * - Block NVM address : 3 bytes
- * - data : up to 255 bytes
+ * - data : up to 256 bytes
  * - CRC : 2 bytes
  * - Frame checksum : 1 byte
  */
-#define MAX_FRM_LEN (261U)
-#define RX_BUFFER_SIZE (264U)
-#define INTER_FRAME_TIMEOUT ((uint16_t)20)
+#define MAX_FRM_LEN (262U)
+#define RX_BUFFER_SIZE (266U)
+#define FRAME_TIMEOUT (1000U) /* 1000ms */
 
 enum
 {
@@ -18,14 +17,6 @@ enum
     eBackTask_StartOfFrame = 1,
     eBackTask_Data = 2
 };
-
-typedef struct
-{
-    uint8_t ID;
-    uint16_t Length;
-    uint8_t *Data;
-    uint16_t Timestamp;
-}UARTmsg_t;
 
 typedef struct
 {

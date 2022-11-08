@@ -6,7 +6,7 @@
                    projectFiles="true">
       <logicalFolder name="01-MAIN" displayName="01-MAIN" projectFiles="true">
         <itemPath>01-SRC/01-MAIN/bootloader.h</itemPath>
-        <itemPath>01-SRC/01-MAIN/main.h</itemPath>
+        <itemPath>01-SRC/01-MAIN/BootloaderTypes.h</itemPath>
       </logicalFolder>
       <logicalFolder name="02-FLAH_ROUTINES"
                      displayName="02-FLAH_ROUTINES"
@@ -15,6 +15,7 @@
       </logicalFolder>
       <logicalFolder name="03-TARGET" displayName="03-TARGET" projectFiles="true">
         <itemPath>01-SRC/03-TARGET/target.h</itemPath>
+        <itemPath>01-SRC/03-TARGET/FrameMng.h</itemPath>
       </logicalFolder>
       <logicalFolder name="04-CRC" displayName="04-CRC" projectFiles="true">
         <itemPath>01-SRC/04-CRC/crc.h</itemPath>
@@ -61,6 +62,7 @@
       </logicalFolder>
       <logicalFolder name="03-TARGET" displayName="03-TARGET" projectFiles="true">
         <itemPath>01-SRC/03-TARGET/target.c</itemPath>
+        <itemPath>01-SRC/03-TARGET/FrameMng.c</itemPath>
       </logicalFolder>
       <logicalFolder name="04-CRC" displayName="04-CRC" projectFiles="true">
         <itemPath>01-SRC/04-CRC/crc.c</itemPath>
@@ -108,7 +110,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>noID</platformTool>
         <languageToolchain>XC16</languageToolchain>
-        <languageToolchainVersion>1.41</languageToolchainVersion>
+        <languageToolchainVersion>2.00</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>
@@ -482,7 +484,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>noID</platformTool>
         <languageToolchain>XC16</languageToolchain>
-        <languageToolchainVersion>1.41</languageToolchainVersion>
+        <languageToolchainVersion>2.00</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>
