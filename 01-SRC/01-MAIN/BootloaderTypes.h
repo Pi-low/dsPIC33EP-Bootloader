@@ -30,9 +30,28 @@ typedef enum
 
 typedef struct
 {
-    uint8_t ID;
-    uint16_t Length;
-    uint8_t *Data;
-}tsUARTmsg;
+    uint8_t u8ID;
+    uint16_t u16Length;
+    uint8_t *pu8Data;
+}tsBootMsg;
+
+typedef union
+{
+    struct
+    {
+        uint8_t SOF : 1;
+        uint8_t Tmout : 1;
+        uint8_t Available : 1;
+    }bit;
+}tuFFlags;
+
+typedef struct
+{
+    uint16_t u16BufferIndex;
+    uint16_t u16Timeout;
+    uint8_t u8Status;
+    uint8_t* pu8RawData;
+}tsUartFrm;
+
 
 #endif

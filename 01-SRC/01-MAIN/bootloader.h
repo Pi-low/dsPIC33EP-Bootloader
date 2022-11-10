@@ -42,12 +42,12 @@ enum
     eMaskError_FlashRoutineProblem =        0x30
 };
 
-uint8_t serviceEcho(tsUARTmsg * uartMsg);
-uint8_t serviceGetInfo(tsUARTmsg * uartMsg);
-uint8_t serviceEraseFlash(tsUARTmsg * uartMsg);
-uint8_t serviceDataTransfer(tsUARTmsg * uartMsg);
-uint8_t serviceCheckFlash(tsUARTmsg * uartMsg);
-uint8_t serviceWritePin(tsUARTmsg * uartMsg);
-uint8_t serviceReadPin(tsUARTmsg * uartMsg);
+uint8_t serviceEcho(tsBootMsg * uartMsg);
+uint8_t serviceGetInfo(tsBootMsg * uartMsg);
+uint8_t serviceEraseFlash(tsBootMsg * uartMsg);
+uint8_t serviceDataTransfer(tsBootMsg * uartMsg);
+uint8_t serviceCheckFlash(tsBootMsg * uartMsg);
+uint8_t serviceWritePin(tsBootMsg * uartMsg);
+uint8_t serviceReadPin(tsBootMsg * uartMsg);
 
 #endif

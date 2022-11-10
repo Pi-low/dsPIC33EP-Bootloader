@@ -5,33 +5,28 @@
 #include "../01-MAIN/bootloader.h"
 #include "target.h"
 
-static uint8_t u8_UART_State, FrameStatus, Checksum;
-static uint8_t DataBuffer[RX_BUFFER_SIZE];
-static uint16_t BufferIndex, FrameLength, RxFrameTimestamp;
+static teBackTaskStates teCurrentState;
+static uint8_t pu8Buffer[RX_BUFFER_SIZE];
+static tsUartFrm tsUartFrame;
 
 static uint8_t CheckHeader (void);
 static uint8_t CheckPayloadLength (void);
 static uint8_t CheckIdleState (uint8_t DataIN);
 
-static TimeProtocol_t TimeMng;
 
 void InitBackTask(void)
 {
     uint16_t i;
-    u8_UART_State = eBackTask_Idle;
-    BufferIndex = 0;
-    for (i = 0; i < RX_BUFFER_SIZE; i++)
-    {
-        DataBuffer[i] = 0;
-    }
-    TimeMng.SOF_Flag = 0;
-    TimeMng.SOF_Timestamp = 0;
+    teCurrentState = eBackTask_Idle;
+    tsUartFrame.pu8RawData = pu8Buffer;
+    tsUartFrame.u16BufferIndex = 0;
+    tsUartFrame.tuStatus = 0;
 }
 
 void ManageBackTask(void)
 {
     uint8_t RxData;
-    if (TimeMng.SOF_Flag != 0 && (TMR1_SoftwareCounterGet() > TimeMng.Timeout))
+    if (tsUartFrame.tuStatus != 0 && (TMR1_SoftwareCounterGet() > TimeMng.Timeout))
     {
         u8_UART_State = eBackTask_Idle;
         TimeMng.SOF_Flag = 0;

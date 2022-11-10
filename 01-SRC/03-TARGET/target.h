@@ -11,21 +11,12 @@
 #define RX_BUFFER_SIZE (266U)
 #define FRAME_TIMEOUT (1000U) /* 1000ms */
 
-enum
+typedef enum
 {
     eBackTask_Idle = 0,
     eBackTask_StartOfFrame = 1,
     eBackTask_Data = 2
-};
-
-typedef struct
-{
-    uint8_t SOF_Flag;
-    uint16_t SOF_Timestamp;
-    uint16_t Timeout;
-}TimeProtocol_t;
-
-
+}teBackTaskStates;
 
 void InitBackTask(void);
 void ManageBackTask(void);
