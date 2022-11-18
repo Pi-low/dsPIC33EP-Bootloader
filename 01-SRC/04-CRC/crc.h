@@ -2,5 +2,5 @@
 #define CRC_H
 
 void initCRCengine(uint16_t Poly);
-uint16_t runCRCOnBuffer(uint8_t buffer[], uint16_t buflen);
+uint16_t RunCRC(uint8_t buffer[], uint16_t buflen);
 #endif
