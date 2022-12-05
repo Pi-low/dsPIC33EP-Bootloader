@@ -33,25 +33,33 @@ typedef struct
     uint8_t u8ID;
     uint16_t u16Length;
     uint8_t *pu8Data;
+    uint8_t ValidFalg;
 }tsBootMsg;
 
-typedef union
+typedef struct
 {
-    struct
-    {
-        uint8_t SOF : 1;
-        uint8_t Tmout : 1;
-        uint8_t Available : 1;
-    }bit;
-}tuFFlags;
+    uint8_t SOF : 1;
+    uint8_t Tmout : 1;
+    uint8_t Available : 1;
+}tsbFlags;
 
 typedef struct
 {
     uint16_t u16BufferIndex;
     uint16_t u16Timeout;
+    uint16_t u16FrameSize;
     uint8_t u8Status;
     uint8_t* pu8RawData;
+    tsbFlags tsStatus;
 }tsUartFrm;
+
+typedef struct
+{
+    uint32_t blockAddress;
+    uint16_t blockSize;
+    uint32_t *u32WordArray;
+    uint16_t blockCRC;
+}DataBlock_t;
 
 
 #endif

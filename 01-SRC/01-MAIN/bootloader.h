@@ -21,27 +21,6 @@
 #define RESET() asm ("RESET");
 #define StartApplication() __asm__ volatile("goto %0"::"i"(ADDR_FLASH_APPLI))
 
-typedef struct
-{
-    uint32_t blockAddress;
-    uint16_t blockSize;
-    uint32_t *u32WordArray;
-    uint16_t blockCRC;
-}DataBlock_t;
-
-enum
-{
-    eBootStandbyState =         0x01,
-    eBootLoadingState =         0x02
-};
-
-enum
-{
-    eMaskError_UnknownParameter =           0x10,
-    eMaskError_IncorrectFrameLength =       0x20,
-    eMaskError_FlashRoutineProblem =        0x30
-};
-
 uint8_t serviceEcho(tsBootMsg * uartMsg);
 uint8_t serviceGetInfo(tsBootMsg * uartMsg);
 uint8_t serviceEraseFlash(tsBootMsg * uartMsg);

@@ -16,14 +16,13 @@ const uint32_t AppliFlag __attribute__((address(0x4000), space(prog))) = 0xAABBC
 const uint16_t SWVersion __attribute__((address(0x40C0), space(prog))) = 0x0201;
 #endif
 
-uint8_t RxMsgBuffer[MAX_FRM_LEN];
+static tsBootMsg tsMainMsg;
+static uint8_t RxMsgBuffer[MAX_FRM_LEN];
 
 void main(void)
 {
     uint32_t AppliPresent = readAppFlag();
-    UARTmsg_t Rx_Msg;
-    
-    Rx_Msg.Data = RxMsgBuffer;
+    tsMainMsg.pu8Data = RxMsgBuffer;
     
     if (BootRequest != BOOTFLAG && AppliPresent == APPLIVALID) /* Application is present, no bootmode requested */
     {
@@ -40,20 +39,20 @@ void main(void)
     {
         TMR1_Tasks_16BitOperation(); /* SW timer management */
         ManageBackTask(); /* UART frame management */
-        if (FrameAvailable(&Rx_Msg) == 1) /* On Rx frame */
+        if (FrameAvailable(&tsMainMsg) == 1) /* On Rx frame */
         {
-            switch(Rx_Msg.ID)
+            switch(tsMainMsg.u8ID)
             {
             case eService_echo:
-                serviceEcho(&Rx_Msg);
+                serviceEcho(&tsMainMsg);
                 break;
                 
             case eService_getInfo:
-                serviceGetInfo(&Rx_Msg);
+                serviceGetInfo(&tsMainMsg);
                 break;
                 
             case eService_eraseFlash:
-                serviceEraseFlash(&Rx_Msg);
+                serviceEraseFlash(&tsMainMsg);
                 break;
                 
             case eService_dataTransfer:
