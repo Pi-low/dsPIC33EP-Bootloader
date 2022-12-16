@@ -8,6 +8,7 @@
 static teBackTaskStates teCurrentState;
 static uint8_t pu8Buffer[RX_BUFFER_SIZE];
 static tsUartFrm tsUartFrame;
+static tsBootMsg tsBootMessage;
 
 static uint8_t CheckHeader (void);
 static uint8_t CheckPayloadLength (void);
@@ -47,7 +48,7 @@ void ManageBackTask(void)
         switch (teCurrentState)
         {
         case eBackTask_Idle:
-            teCurrentState = CheckIdleState(RxData);
+            teCurrentState = CheckIdleState(RxData); /* escape SOF byte */
             break;
 
         case eBackTask_StartOfFrame:
@@ -63,7 +64,7 @@ void ManageBackTask(void)
             {
                 /* End of frame */
                 teCurrentState = eBackTask_Idle;
-                RxFrameHandler();
+                RxFrameHandler(&tsUartFrame, &tsBootMessage);
             }
             
             break;
@@ -107,12 +108,11 @@ teBackTaskStates CheckHeader (void)
     return RetVal;
 }
 
-void constructFrame(uint8_t FrameID, uint8_t *Data, uint16_t BuffLength, tsBootMsg *BootMsg)
+void constructFrame(uint8_t FrameID, uint8_t *Data, uint16_t BuffLength, tsUartFrm *TxMsg)
 {
     uint16_t i;
-    BootMsg->u8ID = FrameID;
-    BootMsg->u16Length = BuffLength;
-    BootMsg->pu8Data = Data;
+    TxMsg->pu8RawData = FrameID;
+    TxMsg->u16FrameSize = BuffLength;
 }
 
 void sendFrame(tsBootMsg *TxMsg)
@@ -131,8 +131,8 @@ void sendFrame(tsBootMsg *TxMsg)
     
     for (i = 0; i < TxMsg->u16Length; i++)
     {
-        TxBuffer[4 + i] = TxMsg->pu8Data[i];
-        Checksum += TxMsg->pu8Data[i];
+        TxBuffer[4 + i] = TxMsg->u8Data[i];
+        Checksum += TxMsg->u8Data[i];
     }
     
     Checksum = ~Checksum;
@@ -142,4 +142,9 @@ void sendFrame(tsBootMsg *TxMsg)
     {
         UART1_Write(TxBuffer[i]);
     }
+}
+
+void FrameAvailable(tsBootMsg* FpBootMsg)
+{
+    
 }

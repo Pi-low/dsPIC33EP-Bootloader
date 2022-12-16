@@ -16,13 +16,11 @@ const uint32_t AppliFlag __attribute__((address(0x4000), space(prog))) = 0xAABBC
 const uint16_t SWVersion __attribute__((address(0x40C0), space(prog))) = 0x0201;
 #endif
 
-static tsBootMsg tsMainMsg;
 static uint8_t RxMsgBuffer[MAX_FRM_LEN];
 
 void main(void)
 {
     uint32_t AppliPresent = readAppFlag();
-    tsMainMsg.pu8Data = RxMsgBuffer;
     
     if (BootRequest != BOOTFLAG && AppliPresent == APPLIVALID) /* Application is present, no bootmode requested */
     {

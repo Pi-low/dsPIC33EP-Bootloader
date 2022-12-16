@@ -1,6 +1,8 @@
 #ifndef TARGET_H
 #define TARGET_H
 
+#include "FrameMng.h"
+
 /* Max frame length:
  * - Block NVM address : 3 bytes
  * - data : up to 256 bytes
@@ -20,8 +22,8 @@ typedef enum
 
 void InitBackTask(void);
 void ManageBackTask(void);
-uint8_t FrameAvailable(UARTmsg_t *ReceiveFrame);
-void constructFrame(uint8_t FrameID, uint8_t *Paylod, uint16_t PayloadLength, UARTmsg_t *MakeFrame);
-void sendFrame(UARTmsg_t *TxFrame);
+uint8_t FrameAvailable(tsUartFrm *ReceiveFrame);
+void constructFrame(uint8_t FrameID, uint8_t *Paylod, uint16_t PayloadLength, tsUartFrm *MakeFrame);
+void sendFrame(tsUartFrm *TxFrame);
 
 #endif

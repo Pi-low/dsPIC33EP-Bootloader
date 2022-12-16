@@ -1,6 +1,10 @@
 #ifndef BOOT_TYPES_H
 #define BOOT_TYPES_H
 
+#include <stdint.h>
+#include "bootloader.h"
+#include "../03-TARGET/target.h"
+
 typedef enum
 {
     eOperationSuccess = 0,
@@ -27,31 +31,6 @@ typedef enum
     eService_writePin =         0x0A,
     eService_readPin =          0x0B
 }teBootServices;
-
-typedef struct
-{
-    uint8_t u8ID;
-    uint16_t u16Length;
-    uint8_t *pu8Data;
-    uint8_t ValidFalg;
-}tsBootMsg;
-
-typedef struct
-{
-    uint8_t SOF : 1;
-    uint8_t Tmout : 1;
-    uint8_t Available : 1;
-}tsbFlags;
-
-typedef struct
-{
-    uint16_t u16BufferIndex;
-    uint16_t u16Timeout;
-    uint16_t u16FrameSize;
-    uint8_t u8Status;
-    uint8_t* pu8RawData;
-    tsbFlags tsStatus;
-}tsUartFrm;
 
 typedef struct
 {
