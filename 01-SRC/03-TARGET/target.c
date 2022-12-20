@@ -105,7 +105,7 @@ void sendFrame(tsGenericMsg *FptsTxMsg)
     }
 }
 
-teOperationRetVal FrameAvailable(tsBootMsg* FptsBootMsg)
+teOperationRetVal FrameAvailable(tsGenericMsg* FptsBootMsg)
 {
     teOperationRetVal teRetVal = eOperationNotAvailable;
     if (Mcr_GetAvailable(tsUartFrame) == 1)

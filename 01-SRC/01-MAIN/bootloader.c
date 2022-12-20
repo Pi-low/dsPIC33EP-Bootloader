@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "../../mcc_generated_files/system.h"
 #include "../../mcc_generated_files/pin_manager.h"
 #include "../../mcc_generated_files/tmr1.h"
@@ -11,104 +12,87 @@ static uint8_t u8BlankFlashFlag;
 
 teOperationRetVal serviceEcho(tsGenericMsg* FptsGenMsg, tsGenericMsg* FptsRetMsg)
 {
-    uint8_t CharBuff[100];
+    teOperationRetVal eRetVal = eOperationSuccess;
+    tsGenericMsg tsRetMsg;
     uint16_t u16i;
     
     for (u16i = 0; u16i < FptsGenMsg->u16Length; u16i++)
     {
-        CharBuff[u16i] = FptsGenMsg->pu8Data[u16i];
+        tsRetMsg->pu8Data[u16i] = FptsGenMsg->pu8Data[u16i];
     }
+    tsRetMsg.u16Length = FptsGenMsg->u16Length;
     
-    return 0;
+    FptsRetMsg = &tsRetMsg;
+    
+    return eRetVal;
 }
 
 teOperationRetVal serviceGetInfo(tsGenericMsg * FptsGenMsg, tsGenericMsg* FptsRetMsg)
 {
-    uint8_t Logistics[64];
-    uint8_t DataLen, SID;
-    uint16_t SwVersion;
-    uint32_t ApplicationPresentFlag;
-    
-    SID = eService_getInfo;
-    
-    if (uartMsg->Length == 1)
+    teOperationRetVal eRetVal = eOperationSuccess;
+    tsGenericMsg tsRetMsg;
+    uint16_t u16SwVersion;
+    uint32_t u32ApplicationPresentFlag;
+    FptsRetMsg = &tsRetMsg;
+    switch (FptsGenMsg->pu8Data[0])
     {
-        switch (uartMsg->Data[0])
-        {
-        case 0: /* Get application present flag */
-            ApplicationPresentFlag = readAppFlag();
-            Logistics[0] = ApplicationPresentFlag >> 24;
-            Logistics[1] = ApplicationPresentFlag >> 16;
-            Logistics[2] = ApplicationPresentFlag >> 8;
-            Logistics[3] = ApplicationPresentFlag;
-            DataLen = 4;
-            break;
+    case 0: /* Get application present flag */
+        u32ApplicationPresentFlag = readAppFlag();
+        tsRetMsg.pu8Data[0] = u32ApplicationPresentFlag >> 24;
+        tsRetMsg.pu8Data[1] = u32ApplicationPresentFlag >> 16;
+        tsRetMsg.pu8Data[2] = u32ApplicationPresentFlag >> 8;
+        tsRetMsg.pu8Data[3] = u32ApplicationPresentFlag;
+        tsRetMsg.u16Length = 4;
+        break;
 
-        case 1: /* Get application version */
-            SwVersion = readSWVersion();
-            Logistics[0] = SwVersion >> 8;
-            Logistics[1] = SwVersion;
-            DataLen = 2;
-            break;
+    case 1: /* Get application version */
+        u16SwVersion = readSWVersion();
+        tsRetMsg.pu8Data[0] = u16SwVersion >> 8;
+        tsRetMsg.pu8Data[1] = u16SwVersion;
+        tsRetMsg.u16Length = 2;
+        break;
 
-        case 2: /* Get application logistic ascii string */
-            readLogisticChar(Logistics);
-            DataLen = 64;
-            break;
+    case 2: /* Get application logistic ascii string */
+        readLogisticChar(tsRetMsg.pu8Data);
+        tsRetMsg.u16Length = 64;
+        break;
 
-        default:
-            SID |= eMaskError_UnknownParameter;
-            Logistics[0] = 0xFF;
-            DataLen = 1;
-            break;
-        }
+    default:
+        eRetVal = eOperationFail;
+        FptsRetMsg = NULL;
+        break;
     }
-    else
-    {
-        SID |= eMaskError_IncorrectFrameLength;
-        Logistics[0] = 0xFF;
-        DataLen = 1;
-    }
-    constructFrame(SID, Logistics, DataLen, &uartTxMsg);
-    sendFrame(&uartTxMsg);
-    return 0;
+    
+    return eRetVal;
 }
 
 teOperationRetVal serviceEraseFlash(tsGenericMsg * FptsGenMsg, tsGenericMsg* FptsRetMsg)
 {
-    uint32_t i = 0;
-    uint8_t Err = 1, SID = eService_eraseFlash;
-    uint8_t Buff[2];
-    if (uartMsg->Length == 0)
+    teOperationRetVal eRetVal = eOperationSuccess;
+    uint32_t u32i = 0;
+    uint8_t u8Err = 1;
+    
+
+    FLASH_Unlock(FLASH_UNLOCK_KEY);
+
+    while ((u32i < FLASH_APPLI_PAGES) && (u8Err != 1)) /* break loop in case of error */
     {
-        FLASH_Unlock(FLASH_UNLOCK_KEY);
-        
-        while ((i < FLASH_APPLI_PAGES) && (Err != 1)) /* break loop in case of error */
-        {
-            /* Page start address % 0x400 */
-            Err &= FLASH_ErasePage(ADDR_FLASH_LOGISTIC + (i * FLASH_ERASE_PAGE_SIZE_IN_PC_UNITS));
-            i++;
-        }
-        if ((Err == 1) && (i == FLASH_APPLI_PAGES))
-        {
-            u8BlankFlashFlag = 1;
-        }
-        else
-        {
-            /* Do nothing */
-        }
-        Buff[0] = Err;
-        
-        FLASH_Lock();
+        /* Page start address % 0x400 */
+        u8Err &= FLASH_ErasePage(ADDR_FLASH_LOGISTIC + (u32i * FLASH_ERASE_PAGE_SIZE_IN_PC_UNITS));
+        u32i++;
+    }
+    if ((u8Err == 1) && (u32i == FLASH_APPLI_PAGES))
+    {
+        u8BlankFlashFlag = 1;
     }
     else
     {
-        SID |= eMaskError_IncorrectFrameLength;
-        Buff[0] = 0xFF;
+        eRetVal = eFlashEraseError;
     }
-    constructFrame(SID, Buff, 1, &uartTxMsg);
-    sendFrame(&uartTxMsg);
-    return 0;
+
+    FLASH_Lock();
+    
+    return eRetVal;
 }
 
 teOperationRetVal serviceDataTransfer(tsGenericMsg * FptsGenMsg, tsGenericMsg* FptsRetMsg)
