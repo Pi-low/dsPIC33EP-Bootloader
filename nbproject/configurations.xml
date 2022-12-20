@@ -6,6 +6,7 @@
                    projectFiles="true">
       <logicalFolder name="01-MAIN" displayName="01-MAIN" projectFiles="true">
         <itemPath>01-SRC/01-MAIN/bootloader.h</itemPath>
+        <itemPath>01-SRC/01-MAIN/main.h</itemPath>
         <itemPath>01-SRC/01-MAIN/BootloaderTypes.h</itemPath>
       </logicalFolder>
       <logicalFolder name="02-FLAH_ROUTINES"
@@ -110,7 +111,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>noID</platformTool>
         <languageToolchain>XC16</languageToolchain>
-        <languageToolchainVersion>1.41</languageToolchainVersion>
+        <languageToolchainVersion>2.00</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>
@@ -484,7 +485,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>noID</platformTool>
         <languageToolchain>XC16</languageToolchain>
-        <languageToolchainVersion>1.41</languageToolchainVersion>
+        <languageToolchainVersion>2.00</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>

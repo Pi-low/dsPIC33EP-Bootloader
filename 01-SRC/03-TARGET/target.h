@@ -22,8 +22,8 @@ typedef enum
 
 void InitBackTask(void);
 void ManageBackTask(void);
-uint8_t FrameAvailable(tsUartFrm *ReceiveFrame);
-void constructFrame(uint8_t FrameID, uint8_t *Paylod, uint16_t PayloadLength, tsUartFrm *MakeFrame);
-void sendFrame(tsUartFrm *TxFrame);
+teOperationRetVal FrameAvailable(tsGenericMsg* FptsBootMsg);
+void sendFrame(tsGenericMsg *FptsTxMsg);
+
 
 #endif

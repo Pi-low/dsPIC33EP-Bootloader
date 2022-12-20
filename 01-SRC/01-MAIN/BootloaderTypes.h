@@ -3,11 +3,11 @@
 
 #include <stdint.h>
 #include "bootloader.h"
-#include "../03-TARGET/target.h"
 
 typedef enum
 {
     eOperationSuccess = 0,
+    eOperationNotAvailable,
     eOperationFail,
     eBadChecksum,
     eBadFrameLength,
@@ -34,10 +34,10 @@ typedef enum
 
 typedef struct
 {
-    uint32_t blockAddress;
-    uint16_t blockSize;
-    uint32_t *u32WordArray;
-    uint16_t blockCRC;
+    uint32_t u32BlockAddr;
+    uint16_t u16BlockSize;
+    uint32_t *pu32WordArray;
+    uint16_t u16BlockCRC;
 }DataBlock_t;
 
 

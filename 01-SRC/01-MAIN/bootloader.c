@@ -7,26 +7,22 @@
 #include "BootloaderTypes.h"
 #include "bootloader.h"
 
-static UARTmsg_t uartTxMsg;
-static uint8_t BlankFlashFlag;
-uint32_t u32Buffer[64];
+static uint8_t u8BlankFlashFlag;
 
-uint8_t serviceEcho(UARTmsg_t * uartMsg)
+teOperationRetVal serviceEcho(tsGenericMsg* FptsGenMsg, tsGenericMsg* FptsRetMsg)
 {
     uint8_t CharBuff[100];
-    uint16_t i;
+    uint16_t u16i;
     
-    for (i = 0; i < uartMsg->Length; i++)
+    for (u16i = 0; u16i < FptsGenMsg->u16Length; u16i++)
     {
-        CharBuff[i] = uartMsg->Data[i];
+        CharBuff[u16i] = FptsGenMsg->pu8Data[u16i];
     }
-    constructFrame(eService_echo, CharBuff, uartMsg->Length, &uartTxMsg);
-    sendFrame(&uartTxMsg);
     
     return 0;
 }
 
-uint8_t serviceGetInfo(UARTmsg_t * uartMsg)
+teOperationRetVal serviceGetInfo(tsGenericMsg * FptsGenMsg, tsGenericMsg* FptsRetMsg)
 {
     uint8_t Logistics[64];
     uint8_t DataLen, SID;
@@ -78,7 +74,7 @@ uint8_t serviceGetInfo(UARTmsg_t * uartMsg)
     return 0;
 }
 
-uint8_t serviceEraseFlash(UARTmsg_t * uartMsg)
+teOperationRetVal serviceEraseFlash(tsGenericMsg * FptsGenMsg, tsGenericMsg* FptsRetMsg)
 {
     uint32_t i = 0;
     uint8_t Err = 1, SID = eService_eraseFlash;
@@ -95,7 +91,7 @@ uint8_t serviceEraseFlash(UARTmsg_t * uartMsg)
         }
         if ((Err == 1) && (i == FLASH_APPLI_PAGES))
         {
-            BlankFlashFlag = 1;
+            u8BlankFlashFlag = 1;
         }
         else
         {
@@ -115,7 +111,7 @@ uint8_t serviceEraseFlash(UARTmsg_t * uartMsg)
     return 0;
 }
 
-uint8_t serviceDataTransfer(UARTmsg_t * uartMsg)
+teOperationRetVal serviceDataTransfer(tsGenericMsg * FptsGenMsg, tsGenericMsg* FptsRetMsg)
 {
     if (uartMsg->Length != 0)
     {
@@ -124,17 +120,17 @@ uint8_t serviceDataTransfer(UARTmsg_t * uartMsg)
     return 0;
 }
 
-uint8_t serviceCheckFlash(UARTmsg_t * uartMsg)
+teOperationRetVal serviceCheckFlash(tsGenericMsg * FptsGenMsg, tsGenericMsg* FptsRetMsg)
 {
     return 0;
 }
 
-uint8_t serviceWritePin(UARTmsg_t * uartMsg)
+teOperationRetVal serviceWritePin(tsGenericMsg * FptsGenMsg, tsGenericMsg* FptsRetMsg)
 {
     return 0;
 }
 
-uint8_t serviceReadPin(UARTmsg_t * uartMsg)
+teOperationRetVal serviceReadPin(tsGenericMsg * FptsGenMsg, tsGenericMsg* FptsRetMsg)
 {
     uint8_t SID = eService_readPin;
     if (uartMsg->Length == 0)
@@ -144,7 +140,7 @@ uint8_t serviceReadPin(UARTmsg_t * uartMsg)
     return 0;
 }
 
-uint8_t createDataBlock(UARTmsg_t * MSG, DataBlock_t * Row)
+teOperationRetVal createDataBlock(tsGenericMsg * FptsGenMsg, DataBlock_t * Row)
 {
     uint16_t u16Tmp, u16i;
     uint8_t u8Temp, u8RetVal = 1;

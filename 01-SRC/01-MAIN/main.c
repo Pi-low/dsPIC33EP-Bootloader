@@ -16,7 +16,8 @@ const uint32_t AppliFlag __attribute__((address(0x4000), space(prog))) = 0xAABBC
 const uint16_t SWVersion __attribute__((address(0x40C0), space(prog))) = 0x0201;
 #endif
 
-static uint8_t RxMsgBuffer[MAX_FRM_LEN];
+static tsGenericMsg* ptsMsg;
+static tsGenericMsg* ptRespMsg;
 
 void main(void)
 {
@@ -37,20 +38,20 @@ void main(void)
     {
         TMR1_Tasks_16BitOperation(); /* SW timer management */
         ManageBackTask(); /* UART frame management */
-        if (FrameAvailable(&tsMainMsg) == 1) /* On Rx frame */
+        if (FrameAvailable(ptsMsg) == eOperationSuccess) /* On Rx frame */
         {
-            switch(tsMainMsg.u8ID)
+            switch(ptsMsg->u8ID)
             {
             case eService_echo:
-                serviceEcho(&tsMainMsg);
+                serviceEcho(ptsMsg);
                 break;
                 
             case eService_getInfo:
-                serviceGetInfo(&tsMainMsg);
+                serviceGetInfo(ptsMsg);
                 break;
                 
             case eService_eraseFlash:
-                serviceEraseFlash(&tsMainMsg);
+                serviceEraseFlash(ptsMsg);
                 break;
                 
             case eService_dataTransfer:
