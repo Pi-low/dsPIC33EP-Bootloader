@@ -5,7 +5,7 @@
 static tsFrameSize tsFrameLength[REGISTERED_FRAMES] = 
 {
     {1,     0,      1},
-    {2,     3,      67},
+    {2,     0,      32},
     {3,     2,      2},
     {4,     0,      1},
     {5,     7,      262},

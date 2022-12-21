@@ -1,9 +1,6 @@
 #ifndef BOOT_TYPES_H
 #define BOOT_TYPES_H
 
-#include <stdint.h>
-#include "bootloader.h"
-
 typedef enum
 {
     eOperationSuccess = 0,
@@ -14,7 +11,7 @@ typedef enum
     eUnknownFrameID,
     eFrameTimeout,
     eFlashEraseError,
-    eForbiddenBlockAddr,
+    eBadBlockAddr,
     eBadCRCBlock,
     eFlashWriteError,
     eAppliCheckError
@@ -35,9 +32,10 @@ typedef enum
 typedef struct
 {
     uint32_t u32BlockAddr;
-    uint16_t u16BlockSize;
-    uint32_t *pu32WordArray;
-    uint16_t u16BlockCRC;
+    uint16_t u16BlockSize8;
+    uint8_t pu8Data[256];
+    uint32_t pu32Word[32];
+    uint16_t u16CRC;
 }DataBlock_t;
 
 

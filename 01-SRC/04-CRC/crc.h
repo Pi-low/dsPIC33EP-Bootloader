@@ -3,6 +3,6 @@
 
 #inlude <stdint.h>
 
-void initCRCengine(uint16_t Poly);
-uint16_t RunCRC(uint8_t buffer[], uint16_t buflen);
+void initCRCengine(uint16_t u16Poly);
+uint16_t RunCRC(uint8_t pu8Data[], uint16_t u16buflen);
 #endif

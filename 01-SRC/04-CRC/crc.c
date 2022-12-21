@@ -3,21 +3,21 @@
 #include "../01-MAIN/bootloader.h"
 #include "crc.h"
 
-void initCRCengine(uint16_t Poly)
+void initCRCengine(uint16_t u16Poly)
 {
     CRCCON1 = 0x1008;
     CRCCON2 = 0x070F; /* Data length = 8, Poly length = 16 */
-    CRCXORL = Poly;
+    CRCXORL = u16Poly;
     CRCXORH = 0;
 }
 
-uint16_t RunCRC(uint8_t buffer[], uint16_t buflen)
+uint16_t RunCRC(uint8_t pu8Data[], uint16_t u16buflen)
 {
-    uint16_t i;
+    uint16_t u16i;
     CRCCON1bits.CRCGO = 1;
-    for (i = 0; i < buflen; i++)
+    for (u16i = 0; u16i < u16buflen; u16i++)
     {
-        CRCDATL = buffer[i];
+        CRCDATL = pu8Data[u16i];
         while (CRCCON1bits.CRCFUL == 1); /* Wait FIFO to empty to continue */
     }
     CRCCON1bits.CRCGO = 0;

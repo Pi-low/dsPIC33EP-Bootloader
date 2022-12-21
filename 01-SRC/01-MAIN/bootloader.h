@@ -2,7 +2,6 @@
 #define BOOTLOADER_H
 
 #include "../03-TARGET/FrameMng.h"
-#include "../03-TARGET/target.h"
 #include "BootloaderTypes.h"
 
 #define BOOT_ROW_SIZE_BYTE          (256U)
@@ -20,16 +19,16 @@
 
 #define BOOTFLAG (0xC0DEFEED)
 #define APPLIVALID (0xA1B2C3D4)
-#define RESET() asm ("RESET");
+#define RESET() asm ("RESET")
 #define StartApplication() __asm__ volatile("goto %0"::"i"(ADDR_FLASH_APPLI))
 
-teOperationRetVal serviceEcho(tsGenericMsg* FptsGenMsg, tsGenericMsg* FptsRetMsg);
-teOperationRetVal serviceGetInfo(tsGenericMsg* FptsGenMsg, tsGenericMsg* FptsRetMsg);
-teOperationRetVal serviceEraseFlash(tsGenericMsg* FptsGenMsg, tsGenericMsg* FptsRetMsg);
-teOperationRetVal serviceDataTransfer(tsGenericMsg* FptsGenMsg, tsGenericMsg* FptsRetMsg);
-teOperationRetVal serviceCheckFlash(tsGenericMsg* FptsGenMsg, tsGenericMsg* FptsRetMsg);
-teOperationRetVal serviceWritePin(tsGenericMsg* FptsGenMsg, tsGenericMsg* FptsRetMsg);
-teOperationRetVal serviceReadPin(tsGenericMsg* FptsGenMsg, tsGenericMsg* FptsRetMsg);
-teOperationRetVal createDataBlock(tsGenericMsg* FptsGenMsg, DataBlock_t* Row);
+teOperationRetVal serviceEcho(tsGenericMsg* FptsGenMsg);
+teOperationRetVal serviceGetInfo(tsGenericMsg* FptsGenMsg);
+teOperationRetVal serviceEraseFlash(tsGenericMsg* FptsGenMsg);
+teOperationRetVal serviceDataTransfer(tsGenericMsg* FptsGenMsg);
+teOperationRetVal serviceCheckFlash(tsGenericMsg* FptsGenMsg);
+teOperationRetVal serviceWritePin(tsGenericMsg* FptsGenMsg);
+teOperationRetVal serviceReadPin(tsGenericMsg* FptsGenMsg);
+teOperationRetVal createDataBlock(tsGenericMsg * FptsGenMsg, DataBlock_t * FptsBlock);
 
 #endif

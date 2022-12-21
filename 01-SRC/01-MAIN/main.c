@@ -16,12 +16,12 @@ const uint32_t AppliFlag __attribute__((address(0x4000), space(prog))) = 0xAABBC
 const uint16_t SWVersion __attribute__((address(0x40C0), space(prog))) = 0x0201;
 #endif
 
-static tsGenericMsg* ptsMsg;
-static tsGenericMsg* ptRespMsg;
+static tsGenericMsg tsMainMsg;
 
 void main(void)
 {
     uint32_t AppliPresent = readAppFlag();
+    teOperationRetVal eRetVal;
     
     if (BootRequest != BOOTFLAG && AppliPresent == APPLIVALID) /* Application is present, no bootmode requested */
     {
@@ -38,20 +38,20 @@ void main(void)
     {
         TMR1_Tasks_16BitOperation(); /* SW timer management */
         ManageBackTask(); /* UART frame management */
-        if (FrameAvailable(ptsMsg) == eOperationSuccess) /* On Rx frame */
+        if (FrameAvailable(&tsMainMsg) == eOperationSuccess) /* On Rx frame */
         {
-            switch(ptsMsg->u8ID)
+            switch(tsMainMsg.u8ID)
             {
             case eService_echo:
-                serviceEcho(ptsMsg);
+                eRetVal = serviceEcho(&tsMainMsg);
                 break;
                 
             case eService_getInfo:
-                serviceGetInfo(ptsMsg);
+                eRetVal = serviceGetInfo(&tsMainMsg);
                 break;
                 
             case eService_eraseFlash:
-                serviceEraseFlash(ptsMsg);
+                eRetVal = serviceEraseFlash(&tsMainMsg);
                 break;
                 
             case eService_dataTransfer:

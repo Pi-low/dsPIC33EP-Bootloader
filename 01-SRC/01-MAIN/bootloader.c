@@ -9,70 +9,94 @@
 #include "bootloader.h"
 
 static uint8_t u8BlankFlashFlag;
+static DataBlock_t tsDataBlock;
 
-teOperationRetVal serviceEcho(tsGenericMsg* FptsGenMsg, tsGenericMsg* FptsRetMsg)
+teOperationRetVal serviceEcho(tsGenericMsg* FptsGenMsg)
 {
     teOperationRetVal eRetVal = eOperationSuccess;
-    tsGenericMsg tsRetMsg;
-    uint16_t u16i;
+    uint8_t u8TmpBuff[32];
+    uint8_t u8i;
     
-    for (u16i = 0; u16i < FptsGenMsg->u16Length; u16i++)
+    u8TmpBuff[0] = eOperationSuccess;
+    FptsGenMsg->u8ID += 0x80;
+    
+    for (u8i = 0; u8i < FptsGenMsg->u16Length; u8i++)
     {
-        tsRetMsg->pu8Data[u16i] = FptsGenMsg->pu8Data[u16i];
+        u8TmpBuff[u8i + 1] = FptsGenMsg->pu8Data[u8i];
     }
-    tsRetMsg.u16Length = FptsGenMsg->u16Length;
     
-    FptsRetMsg = &tsRetMsg;
+    FptsGenMsg->u16Length ++;
+    
+    BufCopy(FptsGenMsg->pu8Data, u8TmpBuff, FptsGenMsg->u16Length);
+    
+    sendFrame(FptsGenMsg);
     
     return eRetVal;
 }
 
-teOperationRetVal serviceGetInfo(tsGenericMsg * FptsGenMsg, tsGenericMsg* FptsRetMsg)
+teOperationRetVal serviceGetInfo(tsGenericMsg * FptsGenMsg)
 {
     teOperationRetVal eRetVal = eOperationSuccess;
-    tsGenericMsg tsRetMsg;
+    uint8_t u8TmpBuff[64];
     uint16_t u16SwVersion;
     uint32_t u32ApplicationPresentFlag;
-    FptsRetMsg = &tsRetMsg;
+    
+    FptsGenMsg->u8ID += 0x80;
+    u8TmpBuff[0] = eRetVal;
+    
     switch (FptsGenMsg->pu8Data[0])
     {
     case 0: /* Get application present flag */
         u32ApplicationPresentFlag = readAppFlag();
-        tsRetMsg.pu8Data[0] = u32ApplicationPresentFlag >> 24;
-        tsRetMsg.pu8Data[1] = u32ApplicationPresentFlag >> 16;
-        tsRetMsg.pu8Data[2] = u32ApplicationPresentFlag >> 8;
-        tsRetMsg.pu8Data[3] = u32ApplicationPresentFlag;
-        tsRetMsg.u16Length = 4;
+        u8TmpBuff[1] = u32ApplicationPresentFlag >> 24;
+        u8TmpBuff[2] = u32ApplicationPresentFlag >> 16;
+        u8TmpBuff[3] = u32ApplicationPresentFlag >> 8;
+        u8TmpBuff[4] = u32ApplicationPresentFlag;
+        FptsGenMsg->u16Length = 4;
         break;
 
     case 1: /* Get application version */
         u16SwVersion = readSWVersion();
-        tsRetMsg.pu8Data[0] = u16SwVersion >> 8;
-        tsRetMsg.pu8Data[1] = u16SwVersion;
-        tsRetMsg.u16Length = 2;
+        u8TmpBuff[1] = u16SwVersion >> 8;
+        u8TmpBuff[2] = u16SwVersion;
+        FptsGenMsg->u16Length = 2;
         break;
 
     case 2: /* Get application logistic ascii string */
-        readLogisticChar(tsRetMsg.pu8Data);
-        tsRetMsg.u16Length = 64;
+        readLogisticChar((uint8_t*)(u8TmpBuff+1));
+        FptsGenMsg->u16Length = 64;
         break;
 
     default:
         eRetVal = eOperationFail;
-        FptsRetMsg = NULL;
         break;
     }
+    
+    if (eRetVal == eOperationSuccess)
+    {
+        FptsGenMsg->u16Length++;
+        BufCopy(FptsGenMsg->pu8Data, u8TmpBuff, FptsGenMsg->u16Length);
+    }
+    else
+    {
+        FptsGenMsg->u16Length = 1;
+        FptsGenMsg->pu8Data[0] = eRetVal;
+    }
+    
+    sendFrame(FptsGenMsg);
     
     return eRetVal;
 }
 
-teOperationRetVal serviceEraseFlash(tsGenericMsg * FptsGenMsg, tsGenericMsg* FptsRetMsg)
+teOperationRetVal serviceEraseFlash(tsGenericMsg * FptsGenMsg)
 {
     teOperationRetVal eRetVal = eOperationSuccess;
     uint32_t u32i = 0;
     uint8_t u8Err = 1;
     
-
+    FptsGenMsg->u8ID += 0x80;
+    FptsGenMsg->u16Length = 1;
+    
     FLASH_Unlock(FLASH_UNLOCK_KEY);
 
     while ((u32i < FLASH_APPLI_PAGES) && (u8Err != 1)) /* break loop in case of error */
@@ -92,67 +116,103 @@ teOperationRetVal serviceEraseFlash(tsGenericMsg * FptsGenMsg, tsGenericMsg* Fpt
 
     FLASH_Lock();
     
+    FptsGenMsg->pu8Data[0] = eRetVal;
+    
+    sendFrame(FptsGenMsg);
+    
     return eRetVal;
 }
 
-teOperationRetVal serviceDataTransfer(tsGenericMsg * FptsGenMsg, tsGenericMsg* FptsRetMsg)
+teOperationRetVal serviceDataTransfer(tsGenericMsg * FptsGenMsg)
 {
-    if (uartMsg->Length != 0)
-    {
-        
-    }
-    return 0;
-}
-
-teOperationRetVal serviceCheckFlash(tsGenericMsg * FptsGenMsg, tsGenericMsg* FptsRetMsg)
-{
-    return 0;
-}
-
-teOperationRetVal serviceWritePin(tsGenericMsg * FptsGenMsg, tsGenericMsg* FptsRetMsg)
-{
-    return 0;
-}
-
-teOperationRetVal serviceReadPin(tsGenericMsg * FptsGenMsg, tsGenericMsg* FptsRetMsg)
-{
-    uint8_t SID = eService_readPin;
-    if (uartMsg->Length == 0)
-    {
-        
-    }
-    return 0;
-}
-
-teOperationRetVal createDataBlock(tsGenericMsg * FptsGenMsg, DataBlock_t * Row)
-{
-    uint16_t u16Tmp, u16i;
-    uint8_t u8Temp, u8RetVal = 1;
+    teOperationRetVal eRetVal = eOperationSuccess;
     
-    if (MSG->Length > 7)
+    eRetVal = createDataBlock(FptsGenMsg, &tsDataBlock);
+    
+    if (eRetVal == eOperationSuccess)
     {
-        Row->blockAddress = MSG->Data[3] & 0xFF; /* ADDR24 low */
-        Row->blockAddress |= (MSG->Data[2] << 8) & 0xFF00; /* ADDR24 mid */
-        Row->blockAddress |= (MSG->Data[1] << 16) & 0xFF0000; /* ADDR24 high */
-        Row->blockAddress >>= 1;
-  
-        Row->u32WordArray = u32Buffer;
         
-        Row->blockSize = u16Tmp - 6;
-        Row->blockCRC = MSG->Data[u16Tmp - 1] & 0xFF; /* CRC16 low */
-        Row->blockCRC |= (MSG->Data[u16Tmp - 2] << 8) & 0xFF00; /* CRC16 high */
+    }
+    
+    return eRetVal;
+}
+
+teOperationRetVal serviceCheckFlash(tsGenericMsg * FptsGenMsg)
+{
+    return eOperationSuccess;
+}
+
+teOperationRetVal serviceWritePin(tsGenericMsg * FptsGenMsg)
+{
+    return eOperationSuccess;
+}
+
+teOperationRetVal serviceReadPin(tsGenericMsg * FptsGenMsg)
+{
+
+    return eOperationSuccess;
+}
+
+teOperationRetVal createDataBlock(tsGenericMsg * FptsGenMsg, DataBlock_t * FptsBlock)
+{
+    teOperationRetVal eRetVal = eOperationSuccess;
+    uint16_t u16Tmp;
+    uint32_t u32RowAddress = 0;
+    uint32_t u32Offset = 0;
+    uint16_t u16CRC = 0;
+    
+    FptsBlock->u32BlockAddr = FptsGenMsg->pu8Data[3] & 0xFF; /* ADDR24 low */
+    FptsBlock->u32BlockAddr |= (FptsGenMsg->pu8Data[2] << 8) & 0xFF00; /* ADDR24 mid */
+    FptsBlock->u32BlockAddr |= (FptsGenMsg->pu8Data[1] << 16) & 0xFF0000; /* ADDR24 high */
+    FptsBlock->u32BlockAddr >>= 1;
+    
+    u16Tmp = FptsGenMsg->u16Length - 6;
+    
+    FptsBlock->u16BlockSize8 = u16Tmp;
+    FptsBlock->u16CRC = FptsGenMsg->pu8Data[FptsGenMsg->u16Length - 2] & 0xFF; /* CRC16 low */
+    FptsBlock->u16CRC |= (FptsGenMsg->pu8Data[FptsGenMsg->u16Length - 3] << 8) & 0xFF00; /* CRC16 high */
+    
+    if ((FptsBlock->u32BlockAddr % 2) == 0 &&
+            (FptsBlock->u32BlockAddr >= ADDR_FLASH_APPLI) &&
+            (FptsBlock->u32BlockAddr < ADDR_FLASH_END))
+    {
+        u32Offset = FptsBlock->u32BlockAddr % BOOT_ROW_OFFSET_ADDR;
+        u32RowAddress = FptsBlock->u32BlockAddr - u32Offset;
+        u32Offset >>= 1;
         
-        if((Row->blockAddress % 2) == 0)
+        if ((u32Offset + FptsBlock->u16BlockSize8) <= BOOT_ROW_SIZE_BYTE)
         {
             /* Correct block address */
+            for (u16Tmp = 0; u16Tmp < u32Offset; u16Tmp++)
+            {
+                FptsBlock->pu8Data[u16Tmp] = 0xFF;
+            }
+            for (u16Tmp = 0; u16Tmp < FptsBlock->u16BlockSize8; u16Tmp++)
+            {
+                FptsBlock->pu8Data[u16Tmp + u32Offset] = FptsGenMsg->pu8Data[u16Tmp + 3];
+            }
+            FptsBlock->u32BlockAddr = u32RowAddress;
         }
         else
         {
-            /* Start address is not aligned */
-            u8RetVal = 0;
+            eRetVal = eOperationFail;
         }
-        u16Tmp = MSG->Length;
-        
     }
-    return u8Temp;
+    else
+    {
+        /* Start address is not aligned */
+        eRetVal = eBadBlockAddr;
+    }
+    
+    if (eRetVal == eOperationSuccess)
+    {
+        initCRCengine(0x1021);
+        u16CRC = RunCRC((uint8_t*)(FptsGenMsg->pu8Data + 3), FptsBlock->u16BlockSize8);
+        if (u16CRC != FptsBlock->u16CRC)
+        {
+            eRetVal = eBadCRCBlock;
+        }
+    }
+    
+    return eRetVal;
 }

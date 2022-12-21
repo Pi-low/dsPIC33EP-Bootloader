@@ -1,7 +1,6 @@
 #ifndef FRAME_MNG_H
 #define FRAME_MNG_H
 
-#include <stdint.h>
 #include "target.h"
 
 #define REGISTERED_FRAMES 8

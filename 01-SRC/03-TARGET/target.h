@@ -1,8 +1,6 @@
 #ifndef TARGET_H
 #define TARGET_H
 
-#include "FrameMng.h"
-
 /* Max frame length:
  * - Block NVM address : 3 bytes
  * - data : up to 256 bytes
@@ -24,6 +22,6 @@ void InitBackTask(void);
 void ManageBackTask(void);
 teOperationRetVal FrameAvailable(tsGenericMsg* FptsBootMsg);
 void sendFrame(tsGenericMsg *FptsTxMsg);
-
+void BufCopy(const uint8_t* pu8Dest, const uint8_t* pu8Src, uint16_t u16Size);
 
 #endif

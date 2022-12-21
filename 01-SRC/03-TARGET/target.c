@@ -76,7 +76,7 @@ void ManageBackTask(void)
     }
 }
 
-void sendFrame(tsGenericMsg *FptsTxMsg)
+void sendFrame(tsGenericMsg* FptsTxMsg)
 {
     uint8_t u8Checksum = 0;
     uint8_t pu8TxBuffer[100];
@@ -108,15 +108,30 @@ void sendFrame(tsGenericMsg *FptsTxMsg)
 teOperationRetVal FrameAvailable(tsGenericMsg* FptsBootMsg)
 {
     teOperationRetVal teRetVal = eOperationNotAvailable;
+    uint16_t u16i = 0;
     if (Mcr_GetAvailable(tsUartFrame) == 1)
     {
         Mcr_ResetAvailable(tsUartFrame);
-        FptsBootMsg = &tsBootMsg;
         teRetVal = eOperationSuccess;
+        FptsBootMsg->u8ID = tsBootMsg.u8ID;
+        FptsBootMsg->u16Length = tsBootMsg.u16Length;
+        for (u16i = 0; u16i < tsBootMsg.u16Length; u16i++)
+        {
+            FptsBootMsg->pu8Data[u16i] = tsBootMsg.pu8Data[u16i];
+        }
     }
     else
     {
-        FptsBootMsg = NULL;
+        teRetVal = eOperationNotAvailable;
     }
     return teRetVal;
+}
+
+void BufCopy(const uint8_t* pu8Dest, const uint8_t* pu8Src, uint16_t u16Size)
+{
+    uint16_t u16i;
+    for (u16i = 0; u16i < u16Size; u16i++)
+    {
+        *(pu8Dest + u16i) = *(pu8Src + u16i);
+    }
 }
