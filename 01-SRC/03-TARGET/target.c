@@ -3,12 +3,17 @@
 #include "../../mcc_generated_files/uart1.h"
 #include "../../mcc_generated_files/tmr1.h"
 #include "../01-MAIN/BootloaderTypes.h"
-#include "../01-MAIN/bootloader.h"
+#include "FrameMng.h"
 #include "target.h"
 
-static teBackTaskStates teCurrentState = eBackTask_Idle;
+static teBackTaskStates teCurrentState;
 static tsGenericMsg tsBootMsg;
 static tsUartFrm tsUartFrame;
+
+void InitBackTask(void)
+{
+    teCurrentState = eBackTask_Idle;
+}
 
 void ManageBackTask(void)
 {
@@ -127,7 +132,7 @@ teOperationRetVal FrameAvailable(tsGenericMsg* FptsBootMsg)
     return teRetVal;
 }
 
-void BufCopy(const uint8_t* pu8Dest, const uint8_t* pu8Src, uint16_t u16Size)
+void BufCopy(uint8_t* pu8Dest, const uint8_t* pu8Src, uint16_t u16Size)
 {
     uint16_t u16i;
     for (u16i = 0; u16i < u16Size; u16i++)

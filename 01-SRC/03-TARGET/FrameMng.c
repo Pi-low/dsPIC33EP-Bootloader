@@ -4,12 +4,14 @@
 
 static tsFrameSize tsFrameLength[REGISTERED_FRAMES] = 
 {
-    {1,     0,      1},
-    {2,     0,      32},
-    {3,     2,      2},
-    {4,     0,      1},
-    {5,     7,      262},
-    {6,     0,      1}
+    {eService_gotoBoot,     1,  1   },
+    {eService_echo,         2,  65  },
+    {eService_getInfo,      2,  2   },
+    {eService_eraseFlash,   1,  1   },
+    {eService_dataTransfer, 7,  262 },
+    {eService_checkFlash,   1,  1   },
+    {eService_writePin,     2,  2   },
+    {eService_readPin,      2,  2   }
 };
 
 teOperationRetVal RxFrameHandler(tsUartFrm * UARTFrm, tsGenericMsg * FpGenMsg)
@@ -28,9 +30,9 @@ teOperationRetVal RxFrameHandler(tsUartFrm * UARTFrm, tsGenericMsg * FpGenMsg)
     if (RetVal == eOperationSuccess)
     {
         /* Check frame length */
-        FpGenMsg->u8ID = UARTFrm->pu8Data[1];
-        FpGenMsg->u16Length = ((uint16_t) UARTFrm->pu8Data[2] << 8) & 0xFF00;
-        FpGenMsg->u16Length |= (uint16_t) UARTFrm->pu8Data[3] & 0xFF;
+        FpGenMsg->u8ID = UARTFrm->pu8Data[0];
+        FpGenMsg->u16Length = ((uint16_t) UARTFrm->pu8Data[1] << 8) & 0xFF00;
+        FpGenMsg->u16Length |= (uint16_t) UARTFrm->pu8Data[2] & 0xFF;
         if (FpGenMsg->u16Length > MAX_FRM_LEN)
         {
             /* Payload will be too long */
@@ -48,7 +50,8 @@ teOperationRetVal RxFrameHandler(tsUartFrm * UARTFrm, tsGenericMsg * FpGenMsg)
 
             if (FpGenMsg->u8ID == tsFrameLength[u16i].u8ID)
             {
-                if (FpGenMsg->u16Length > tsFrameLength[u16i].u16MaxLen)
+                if ((FpGenMsg->u16Length < tsFrameLength[u16i].u16MinLen) || 
+                        (FpGenMsg->u16Length > tsFrameLength[u16i].u16MaxLen))
                 {
                     RetVal = eBadFrameLength;
                 }
@@ -65,17 +68,23 @@ teOperationRetVal RxFrameHandler(tsUartFrm * UARTFrm, tsGenericMsg * FpGenMsg)
         if (UARTFrm->u16Index == (FpGenMsg->u16Length + 3))
         {
             /* Data fully received */
-            u16j = 3;
-            for (u16i = 0; u16i < FpGenMsg->u16Length; u16i++) /* copy payload */
+            u16j = 0;
+            for (u16i = 0; u16i < (FpGenMsg->u16Length + 3); u16i++) /* copy payload */
             {
-                FpGenMsg->pu8Data[u16i] = UARTFrm->pu8Data[u16j];
-                u8Checksum += FpGenMsg->pu8Data[u16i];
-                u16j++;
+                if (u16i >= 3)
+                {
+                    FpGenMsg->pu8Data[u16j] = UARTFrm->pu8Data[u16i];
+                    u16j++;
+                }
+                
+                u8Checksum += UARTFrm->pu8Data[u16i];
+                
             }
             if (u8Checksum != 0xFF)
             {
                 RetVal = eBadChecksum;
             }
+            FpGenMsg->u16Length --;
         }
         else if(UARTFrm->u16Index > (FpGenMsg->u16Length + 3))
         {

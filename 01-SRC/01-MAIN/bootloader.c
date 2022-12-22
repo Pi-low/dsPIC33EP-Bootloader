@@ -1,10 +1,10 @@
-#include <stdlib.h>
 #include "../../mcc_generated_files/system.h"
 #include "../../mcc_generated_files/pin_manager.h"
 #include "../../mcc_generated_files/tmr1.h"
 #include "../../mcc_generated_files/memory/flash.h"
 #include "../03-TARGET/target.h"
 #include "../02-FLAH_ROUTINES/flash_routines.h"
+#include "../04-CRC/crc.h"
 #include "BootloaderTypes.h"
 #include "bootloader.h"
 
@@ -42,7 +42,6 @@ teOperationRetVal serviceGetInfo(tsGenericMsg * FptsGenMsg)
     uint32_t u32ApplicationPresentFlag;
     
     FptsGenMsg->u8ID += 0x80;
-    u8TmpBuff[0] = eRetVal;
     
     switch (FptsGenMsg->pu8Data[0])
     {
@@ -76,6 +75,7 @@ teOperationRetVal serviceGetInfo(tsGenericMsg * FptsGenMsg)
     {
         FptsGenMsg->u16Length++;
         BufCopy(FptsGenMsg->pu8Data, u8TmpBuff, FptsGenMsg->u16Length);
+        u8TmpBuff[0] = eRetVal;
     }
     else
     {
@@ -99,7 +99,7 @@ teOperationRetVal serviceEraseFlash(tsGenericMsg * FptsGenMsg)
     
     FLASH_Unlock(FLASH_UNLOCK_KEY);
 
-    while ((u32i < FLASH_APPLI_PAGES) && (u8Err != 1)) /* break loop in case of error */
+    while ((u32i < FLASH_APPLI_PAGES) && (u8Err == 1)) /* break loop in case of error */
     {
         /* Page start address % 0x400 */
         u8Err &= FLASH_ErasePage(ADDR_FLASH_LOGISTIC + (u32i * FLASH_ERASE_PAGE_SIZE_IN_PC_UNITS));
@@ -131,7 +131,14 @@ teOperationRetVal serviceDataTransfer(tsGenericMsg * FptsGenMsg)
     
     if (eRetVal == eOperationSuccess)
     {
-        
+        if (u8BlankFlashFlag != 0)
+        {
+            
+        }
+        else
+        {
+            eRetVal = eOperationFail;
+        }
     }
     
     return eRetVal;
@@ -172,9 +179,9 @@ teOperationRetVal createDataBlock(tsGenericMsg * FptsGenMsg, DataBlock_t * FptsB
     FptsBlock->u16CRC = FptsGenMsg->pu8Data[FptsGenMsg->u16Length - 2] & 0xFF; /* CRC16 low */
     FptsBlock->u16CRC |= (FptsGenMsg->pu8Data[FptsGenMsg->u16Length - 3] << 8) & 0xFF00; /* CRC16 high */
     
-    if ((FptsBlock->u32BlockAddr % 2) == 0 &&
-            (FptsBlock->u32BlockAddr >= ADDR_FLASH_APPLI) &&
-            (FptsBlock->u32BlockAddr < ADDR_FLASH_END))
+    if ((FptsBlock->u32BlockAddr % 2) == 0 && /* Address aligned to program counter */
+            (((FptsBlock->u32BlockAddr >= ADDR_FLASH_APPLI) && (FptsBlock->u32BlockAddr < ADDR_FLASH_END)) || /* Application area */
+            (FptsBlock->u32BlockAddr == 0))) /* IVT area */
     {
         u32Offset = FptsBlock->u32BlockAddr % BOOT_ROW_OFFSET_ADDR;
         u32RowAddress = FptsBlock->u32BlockAddr - u32Offset;

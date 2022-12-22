@@ -1,7 +1,7 @@
 #ifndef BOOTLOADER_H
 #define BOOTLOADER_H
 
-#include "../03-TARGET/FrameMng.h"
+#include <stdint.h>
 #include "BootloaderTypes.h"
 
 #define BOOT_ROW_SIZE_BYTE          (256U)

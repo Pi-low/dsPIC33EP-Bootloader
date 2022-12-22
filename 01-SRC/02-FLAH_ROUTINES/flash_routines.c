@@ -3,7 +3,6 @@
 #include "../01-MAIN/BootloaderTypes.h"
 #include "../01-MAIN/bootloader.h"
 #include "flash_routines.h"
-#include "adc1.h"
 
 uint32_t readAppFlag(void)
 {

@@ -2,18 +2,17 @@
 #include "../../mcc_generated_files/pin_manager.h"
 #include "../../mcc_generated_files/tmr1.h"
 #include "../../mcc_generated_files/memory/flash.h"
-#include "BootloaderTypes.h"
-#include "bootloader.h"
 #include "../02-FLAH_ROUTINES/flash_routines.h"
 #include "../03-TARGET/target.h"
-#include "../04-CRC/crc.h"
+#include "BootloaderTypes.h"
+#include "bootloader.h"
 
 volatile uint32_t BootRequest __attribute__((address(0x1080), persistent));
 
 #ifndef _IS_RELEASE
-const char __attribute__((address(0x4080), space(prog))) text[64] = "Ceci est un test";
-const uint32_t AppliFlag __attribute__((address(0x4000), space(prog))) = 0xAABBCCDD;
-const uint16_t SWVersion __attribute__((address(0x40C0), space(prog))) = 0x0201;
+const uint32_t AppliFlag __attribute__((address(0x4000), section("logistic"))) = 0xAABBCCDD;
+const uint16_t SWVersion __attribute__((address(0x40C0), section("logistic"))) = 0x0201;
+const char __attribute__((address(0x4080), section("logistic"))) text[64] = "Ceci est un test";
 #endif
 
 static tsGenericMsg tsMainMsg;
@@ -30,7 +29,6 @@ void main(void)
     
     SYSTEM_Initialize();
     MCU_FPWM_SetHigh();
-    
     InitBackTask();
     TMR1_Start();
     
