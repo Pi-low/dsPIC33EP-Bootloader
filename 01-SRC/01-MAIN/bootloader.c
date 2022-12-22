@@ -42,6 +42,7 @@ teOperationRetVal serviceGetInfo(tsGenericMsg * FptsGenMsg)
     uint32_t u32ApplicationPresentFlag;
     
     FptsGenMsg->u8ID += 0x80;
+    u8TmpBuff[0] = eRetVal;
     
     switch (FptsGenMsg->pu8Data[0])
     {
@@ -62,7 +63,7 @@ teOperationRetVal serviceGetInfo(tsGenericMsg * FptsGenMsg)
         break;
 
     case 2: /* Get application logistic ascii string */
-        readLogisticChar((uint8_t*)(u8TmpBuff+1));
+        readLogisticChar(&u8TmpBuff[1]);
         FptsGenMsg->u16Length = 64;
         break;
 
@@ -75,7 +76,6 @@ teOperationRetVal serviceGetInfo(tsGenericMsg * FptsGenMsg)
     {
         FptsGenMsg->u16Length++;
         BufCopy(FptsGenMsg->pu8Data, u8TmpBuff, FptsGenMsg->u16Length);
-        u8TmpBuff[0] = eRetVal;
     }
     else
     {

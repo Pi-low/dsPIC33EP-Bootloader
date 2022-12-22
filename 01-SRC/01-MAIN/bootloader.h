@@ -22,6 +22,10 @@
 #define RESET() asm ("RESET")
 #define StartApplication() __asm__ volatile("goto %0"::"i"(ADDR_FLASH_APPLI))
 
+#define ADDR_APPL_FLAG      (0x4000)
+#define ADDR_APPL_DESC      (0x4080)
+#define ADDR_APPL_VERSION   (0x40C0)
+
 teOperationRetVal serviceEcho(tsGenericMsg* FptsGenMsg);
 teOperationRetVal serviceGetInfo(tsGenericMsg* FptsGenMsg);
 teOperationRetVal serviceEraseFlash(tsGenericMsg* FptsGenMsg);

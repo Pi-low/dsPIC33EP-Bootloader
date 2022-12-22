@@ -9,9 +9,9 @@ uint32_t readAppFlag(void)
     uint32_t u32;
     uint16_t _tmp;
     
-    _tmp = FLASH_ReadWord16(0x4000);
+    _tmp = FLASH_ReadWord16(ADDR_APPL_FLAG);
     u32 = _tmp;
-    _tmp = FLASH_ReadWord16(0x4002);
+    _tmp = FLASH_ReadWord16(ADDR_APPL_FLAG + 2);
     u32 |= (uint32_t)_tmp << 16L;
     
     return u32;
@@ -24,7 +24,7 @@ void readLogisticChar(uint8_t buffer[])
     j = 0;
     for (i = 0; i < 32; i++)
     {
-        u16 = FLASH_ReadWord16(0x4080 + (i * 2));
+        u16 = FLASH_ReadWord16(ADDR_APPL_DESC + (i * 2));
         buffer[j] = u16 & 0x00FF;
         j++;
         buffer[j] = (u16 >> 8) & 0x00FF;
@@ -35,6 +35,6 @@ void readLogisticChar(uint8_t buffer[])
 uint16_t readSWVersion(void)
 {
     uint16_t u16;
-    u16 = FLASH_ReadWord16(0x40C0);
+    u16 = FLASH_ReadWord16(ADDR_APPL_VERSION);
     return u16;
 }

@@ -10,9 +10,9 @@
 volatile uint32_t BootRequest __attribute__((address(0x1080), persistent));
 
 #ifndef _IS_RELEASE
-const uint32_t AppliFlag __attribute__((address(0x4000), section("logistic"))) = 0xAABBCCDD;
-const uint16_t SWVersion __attribute__((address(0x40C0), section("logistic"))) = 0x0201;
-const char __attribute__((address(0x4080), section("logistic"))) text[64] = "Ceci est un test";
+const uint32_t AppliFlag __attribute__((address(0x4000), space(prog))) = 0xAABBCCDD;
+const char __attribute__((address(0x4080), space(prog))) text[64] = "Ceci est un test";
+const uint16_t SWVersion __attribute__((address(0x40C0), space(prog))) = 0x0201;
 #endif
 
 static tsGenericMsg tsMainMsg;
