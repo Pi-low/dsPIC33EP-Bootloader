@@ -64,6 +64,12 @@ void main(void)
             case eService_readPin:
                 break;
                 
+#ifndef _IS_RELEASE
+            case eService_TestCrc:
+                eRetVal = serviceCRC(&tsMainMsg);
+                break;
+#endif
+                
             default:
                 break;
             }

@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include "../01-MAIN/BootloaderTypes.h"
+#include "target.h"
 #include "FrameMng.h"
 
 static tsFrameSize tsFrameLength[REGISTERED_FRAMES] = 
@@ -11,7 +12,12 @@ static tsFrameSize tsFrameLength[REGISTERED_FRAMES] =
     {eService_dataTransfer, 7,  262 },
     {eService_checkFlash,   1,  1   },
     {eService_writePin,     2,  2   },
-    {eService_readPin,      2,  2   }
+#ifndef _IS_RELEASE
+    {eService_readPin,      2,  2   },
+    {eService_TestCrc,      2,  262 }
+#else
+    {eService_readPin,      2,  2   },
+#endif
 };
 
 teOperationRetVal RxFrameHandler(tsUartFrm * UARTFrm, tsGenericMsg * FpGenMsg)
@@ -84,7 +90,7 @@ teOperationRetVal RxFrameHandler(tsUartFrm * UARTFrm, tsGenericMsg * FpGenMsg)
             {
                 RetVal = eBadChecksum;
             }
-            FpGenMsg->u16Length --;
+            FpGenMsg->u16Length --; /* Substract checksum value from length */
         }
         else if(UARTFrm->u16Index > (FpGenMsg->u16Length + 3))
         {
@@ -95,6 +101,14 @@ teOperationRetVal RxFrameHandler(tsUartFrm * UARTFrm, tsGenericMsg * FpGenMsg)
             /* Continue to receive data  */
             RetVal = eOperationNotAvailable;
         }
+    }
+    
+    if (RetVal > eOperationNotAvailable)
+    {
+        FpGenMsg->u8ID += 0x80;
+        FpGenMsg->pu8Data[0] = RetVal;
+        FpGenMsg->u16Length = 1;
+        sendFrame(FpGenMsg);
     }
     return RetVal;
 }

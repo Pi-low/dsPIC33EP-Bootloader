@@ -34,5 +34,7 @@ teOperationRetVal serviceCheckFlash(tsGenericMsg* FptsGenMsg);
 teOperationRetVal serviceWritePin(tsGenericMsg* FptsGenMsg);
 teOperationRetVal serviceReadPin(tsGenericMsg* FptsGenMsg);
 teOperationRetVal createDataBlock(tsGenericMsg * FptsGenMsg, DataBlock_t * FptsBlock);
-
+#ifndef _IS_RELEASE
+teOperationRetVal serviceCRC(tsGenericMsg* FptsGenMsg);
+#endif
 #endif

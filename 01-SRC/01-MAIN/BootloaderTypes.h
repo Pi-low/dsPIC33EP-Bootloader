@@ -38,7 +38,10 @@ typedef enum
     eService_dataTransfer =     0x05,
     eService_checkFlash =       0x06,
     eService_writePin =         0x0A,
-    eService_readPin =          0x0B
+    eService_readPin =          0x0B,
+#ifndef _IS_RELEASE
+    eService_TestCrc =          0x0C
+#endif
 }teBootServices;
 
 typedef struct

@@ -168,9 +168,9 @@ teOperationRetVal createDataBlock(tsGenericMsg * FptsGenMsg, DataBlock_t * FptsB
     uint32_t u32Offset = 0;
     uint16_t u16CRC = 0;
     
-    FptsBlock->u32BlockAddr = FptsGenMsg->pu8Data[3] & 0xFF; /* ADDR24 low */
-    FptsBlock->u32BlockAddr |= (FptsGenMsg->pu8Data[2] << 8) & 0xFF00; /* ADDR24 mid */
-    FptsBlock->u32BlockAddr |= (FptsGenMsg->pu8Data[1] << 16) & 0xFF0000; /* ADDR24 high */
+    FptsBlock->u32BlockAddr = (uint32_t)FptsGenMsg->pu8Data[3] & 0xFF; /* ADDR24 low */
+    FptsBlock->u32BlockAddr |= ((uint32_t)FptsGenMsg->pu8Data[2] << 8) & 0xFF00; /* ADDR24 mid */
+    FptsBlock->u32BlockAddr |= ((uint32_t)FptsGenMsg->pu8Data[1] << 16) & 0xFF0000; /* ADDR24 high */
     FptsBlock->u32BlockAddr >>= 1;
     
     u16Tmp = FptsGenMsg->u16Length - 6;
@@ -213,13 +213,27 @@ teOperationRetVal createDataBlock(tsGenericMsg * FptsGenMsg, DataBlock_t * FptsB
     
     if (eRetVal == eOperationSuccess)
     {
-        initCRCengine(0x1021);
-        u16CRC = RunCRC((uint8_t*)(FptsGenMsg->pu8Data + 3), FptsBlock->u16BlockSize8);
+        BufUpdateCrc16(&u16CRC, (uint8_t*)(FptsGenMsg->pu8Data + 3), FptsBlock->u16BlockSize8);
         if (u16CRC != FptsBlock->u16CRC)
         {
             eRetVal = eBadCRCBlock;
         }
     }
     
+    return eRetVal;
+}
+
+teOperationRetVal serviceCRC(tsGenericMsg* FptsGenMsg)
+{
+    teOperationRetVal eRetVal = eOperationSuccess;
+    uint16_t u16CRC = 0;
+    BufUpdateCrc16(&u16CRC, FptsGenMsg->pu8Data, FptsGenMsg->u16Length);
+    FptsGenMsg->u8ID += 0x80;
+    FptsGenMsg->pu8Data[0] = eRetVal;
+    FptsGenMsg->pu8Data[1] = u16CRC >> 8;
+    FptsGenMsg->pu8Data[2] = u16CRC;
+    FptsGenMsg->u16Length = 3;
+    
+    sendFrame(FptsGenMsg);
     return eRetVal;
 }
