@@ -48,8 +48,8 @@ teOperationRetVal serviceGetInfo(tsGenericMsg * FptsGenMsg)
     switch (FptsGenMsg->pu8Data[0])
     {
     case 0: /* Get application present flag */
-        u32ApplicationPresentFlag = (FLASH_ReadWord16(ADDR_APPL_FLAG) & 0xFFFF)| 
-                FLASH_ReadWord16(ADDR_APPL_FLAG + 2);
+        u32ApplicationPresentFlag = (uint32_t)FLASH_ReadWord16(ADDR_APPL_FLAG)| 
+                ((uint32_t)FLASH_ReadWord16(ADDR_APPL_FLAG + 2) << 16);
         
         u8TmpBuff[1] = u32ApplicationPresentFlag >> 24;
         u8TmpBuff[2] = u32ApplicationPresentFlag >> 16;
@@ -194,9 +194,9 @@ teOperationRetVal createDataBlock(tsGenericMsg * FptsGenMsg, DataBlock_t * FptsB
     uint32_t u32RowAddress = 0;
     uint32_t u32Offset = 0;
     
-    FptsBlock->u32BlockAddr = (uint32_t)FptsGenMsg->pu8Data[3] & 0xFF; /* ADDR24 low */
-    FptsBlock->u32BlockAddr |= ((uint32_t)FptsGenMsg->pu8Data[2] << 8) & 0xFF00; /* ADDR24 mid */
-    FptsBlock->u32BlockAddr |= ((uint32_t)FptsGenMsg->pu8Data[1] << 16) & 0xFF0000; /* ADDR24 high */
+    FptsBlock->u32BlockAddr = (uint32_t)FptsGenMsg->pu8Data[2] & 0xFF; /* ADDR24 low */
+    FptsBlock->u32BlockAddr |= ((uint32_t)FptsGenMsg->pu8Data[1] << 8) & 0xFF00; /* ADDR24 mid */
+    FptsBlock->u32BlockAddr |= ((uint32_t)FptsGenMsg->pu8Data[0] << 16) & 0xFF0000; /* ADDR24 high */
     FptsBlock->u32BlockAddr >>= 1; /* Virtual addressing transform */
     
     u16Tmp = FptsGenMsg->u16Length - 6;
