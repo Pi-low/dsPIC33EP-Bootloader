@@ -4,27 +4,29 @@
 #include <stdint.h>
 #include "BootloaderTypes.h"
 
-#define BOOT_ROW_SIZE_BYTE          (256U)
-#define BOOT_PAGE_SIZE_BYTE         (2048U)
-#define BOOT_ROW_SIZE_WORD          (64U)
-#define BOOT_PAGE_SIZE_WORD         (512U)
-#define BOOT_ROW_OFFSET_ADDR        (0x80U)
-#define BOOT_PAGE_OFFSET_ADDR       (0x200U)
+#define BOOT_ROW_SIZE_BYTE          (256)
+#define BOOT_PAGE_SIZE_BYTE         (2048)
+#define BOOT_ROW_SIZE_WORD          (64)
+#define BOOT_PAGE_SIZE_WORD         (512)
+#define BOOT_ROW_OFFSET_ADDR        (0x80)
+#define BOOT_PAGE_OFFSET_ADDR       (0x200)
 
-#define ADDR_FLASH_LOGISTIC         (0x4000L)
-#define ADDR_FLASH_APPLI            (0x4400L)
-#define ADDR_FLASH_END              (0x55400L)
+#define ADDR_FLASH_LOGISTIC         (0x200)
+#define ADDR_FLASH_BOOT             (0x400)
+#define ADDR_FLASH_APPLI            (0x4000)
+#define ADDR_FLASH_END              (0x55400)
 
-#define FLASH_APPLI_PAGES           (144U)
+#define FLASH_APPLI_PAGES           (144)
+#define FLASH_LOGISTIC_CHAR_SIZE    (64)
 
 #define BOOTFLAG (0xC0DEFEED)
 #define APPLIVALID (0xA1B2C3D4)
 #define RESET() asm ("RESET")
 #define StartApplication() __asm__ volatile("goto %0"::"i"(ADDR_FLASH_APPLI))
 
-#define ADDR_APPL_FLAG      (0x4000)
-#define ADDR_APPL_DESC      (0x4080)
-#define ADDR_APPL_VERSION   (0x40C0)
+#define ADDR_APPL_FLAG      (0x200)
+#define ADDR_APPL_DESC      (0x280)
+#define ADDR_APPL_VERSION   (0x300)
 
 teOperationRetVal serviceEcho(tsGenericMsg* FptsGenMsg);
 teOperationRetVal serviceGetInfo(tsGenericMsg* FptsGenMsg);

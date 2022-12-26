@@ -10,19 +10,19 @@
 volatile uint32_t BootRequest __attribute__((address(0x1080), persistent));
 
 #ifndef _IS_RELEASE
-const uint32_t AppliFlag __attribute__((address(0x4000), space(prog))) = 0xAABBCCDD;
-const char __attribute__((address(0x4080), space(prog))) text[64] = "Ceci est un test";
-const uint16_t SWVersion __attribute__((address(0x40C0), space(prog))) = 0x0201;
+const uint32_t AppliFlag __attribute__((address(ADDR_APPL_FLAG), space(prog))) = 0xAABBCCDD;
+const char __attribute__((address(ADDR_APPL_DESC), space(prog))) text[128] = "Ceci est un test";
+const uint16_t SWVersion __attribute__((address(ADDR_APPL_VERSION), space(prog))) = 0x0201;
 #endif
 
 static tsGenericMsg tsMainMsg;
 
 void main(void)
 {
-    uint32_t AppliPresent = readAppFlag();
     teOperationRetVal eRetVal;
+    uint32_t AppliPresent = (FLASH_ReadWord16(ADDR_APPL_FLAG) & 0xFFFF)| FLASH_ReadWord16(ADDR_APPL_FLAG + 2);
     
-    if (BootRequest != BOOTFLAG && AppliPresent == APPLIVALID) /* Application is present, no bootmode requested */
+    if (AppliPresent == APPLIVALID) /* Application is present */
     {
         StartApplication();
     }
@@ -53,6 +53,7 @@ void main(void)
                 break;
                 
             case eService_dataTransfer:
+                eRetVal = serviceDataTransfer(&tsMainMsg);
                 break;
                 
             case eService_checkFlash:
