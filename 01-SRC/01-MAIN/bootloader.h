@@ -16,7 +16,7 @@
 #define ADDR_FLASH_APPLI            (0x4000)
 #define ADDR_FLASH_END              (0x55400)
 
-#define FLASH_APPLI_PAGES           (144)
+#define FLASH_APPLI_PAGES           ((ADDR_FLASH_END - ADDR_FLASH_APPLI) / (BOOT_PAGE_SIZE_WORD * 2))
 #define FLASH_LOGISTIC_CHAR_SIZE    (64)
 
 #define BOOTFLAG (0xC0DEFEED)

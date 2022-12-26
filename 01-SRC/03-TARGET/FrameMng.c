@@ -105,7 +105,7 @@ teOperationRetVal RxFrameHandler(tsUartFrm * UARTFrm, tsGenericMsg * FpGenMsg)
     
     if (RetVal > eOperationNotAvailable)
     {
-        FpGenMsg->u8ID += 0x80;
+        FpGenMsg->u8ID += 0x90;
         FpGenMsg->pu8Data[0] = RetVal;
         FpGenMsg->u16Length = 1;
         sendFrame(FpGenMsg);

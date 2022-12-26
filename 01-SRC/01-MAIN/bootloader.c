@@ -10,6 +10,7 @@
 
 static uint8_t u8BlankFlashFlag;
 static DataBlock_t tsDataBlock;
+static uint32_t pu32SaveRstVector[2];
 
 teOperationRetVal serviceEcho(tsGenericMsg* FptsGenMsg)
 {
@@ -96,15 +97,18 @@ teOperationRetVal serviceEraseFlash(tsGenericMsg * FptsGenMsg)
     uint32_t u32i = 0;
     uint8_t u8Err = 1;
     
-    FptsGenMsg->u8ID += 0x80;
-    FptsGenMsg->u16Length = 1;
+    pu32SaveRstVector[0] = FLASH_ReadWord24(0);
+    pu32SaveRstVector[1] = FLASH_ReadWord24(2);
     
     FLASH_Unlock(FLASH_UNLOCK_KEY);
+    
+    u8Err = FLASH_ErasePage(0);
+    u8Err &= FLASH_WriteDoubleWord24(0, pu32SaveRstVector[0], pu32SaveRstVector[1]);
 
     while ((u32i < FLASH_APPLI_PAGES) && (u8Err == 1)) /* break loop in case of error */
     {
         /* Page start address % 0x400 */
-        u8Err &= FLASH_ErasePage(ADDR_FLASH_LOGISTIC + (u32i * FLASH_ERASE_PAGE_SIZE_IN_PC_UNITS));
+        u8Err &= FLASH_ErasePage(ADDR_FLASH_APPLI + (u32i * FLASH_ERASE_PAGE_SIZE_IN_PC_UNITS));
         u32i++;
     }
     if ((u8Err == 1) && (u32i == FLASH_APPLI_PAGES))
@@ -118,6 +122,8 @@ teOperationRetVal serviceEraseFlash(tsGenericMsg * FptsGenMsg)
 
     FLASH_Lock();
     
+    FptsGenMsg->u8ID += 0x80;
+    FptsGenMsg->u16Length = 1;
     FptsGenMsg->pu8Data[0] = eRetVal;
     
     sendFrame(FptsGenMsg);
@@ -206,27 +212,19 @@ teOperationRetVal createDataBlock(tsGenericMsg * FptsGenMsg, DataBlock_t * FptsB
         u32Offset = FptsBlock->u32BlockAddr % BOOT_ROW_OFFSET_ADDR;
         u32RowAddress = FptsBlock->u32BlockAddr - u32Offset;
         u32Offset <<= 1; /* Transform address offset to byte count (to be 0xff)*/
-        
-        if ((u32Offset + FptsBlock->u16BlockSize8) <= BOOT_ROW_SIZE_BYTE)
+
+        /* Fill 0xFF till' block start address */
+        for (u16Tmp = 0; u16Tmp < BOOT_ROW_SIZE_BYTE; u16Tmp++)
         {
-            /* Fill 0xFF till' block start address */
-            for (u16Tmp = 0; u16Tmp < BOOT_ROW_SIZE_BYTE; u16Tmp++)
+            if ((u16Tmp >= u32Offset) && (u8DataCnt < FptsBlock->u16BlockSize8))
             {
-                if ((u16Tmp >= u32Offset) && (u8DataCnt < FptsBlock->u16BlockSize8))
-                {
-                    FptsBlock->pu8Data[u16Tmp] = FptsGenMsg->pu8Data[u8DataCnt + 3]; /* Escape block address data into frame */
-                    u8DataCnt++;
-                }
-                else
-                {
-                    FptsBlock->pu8Data[u16Tmp] = 0xFF;
-                }
+                FptsBlock->pu8Data[u16Tmp] = FptsGenMsg->pu8Data[u8DataCnt + 3]; /* Escape block address data into frame */
+                u8DataCnt++;
             }
-        }
-        else
-        {
-            /* Bad calculation */
-            eRetVal = eOperationFail;
+            else
+            {
+                FptsBlock->pu8Data[u16Tmp] = 0xFF;
+            }
         }
     }
     else
@@ -245,6 +243,11 @@ teOperationRetVal createDataBlock(tsGenericMsg * FptsGenMsg, DataBlock_t * FptsB
         else
         {
             u16Tmp = CharToWordBuffer(FptsBlock->pu32Word, FptsBlock->pu8Data, FptsBlock->u16BlockSize8);
+            if (FptsBlock->u32BlockAddr == 0) /* Restor reset vector */
+            {
+                FptsBlock->pu32Word[0] = pu32SaveRstVector[0];
+                FptsBlock->pu32Word[1] = pu32SaveRstVector[1];
+            }
             if (u16Tmp == 0)
             {
                 eRetVal = eOperationFail;

@@ -20,7 +20,7 @@ static tsGenericMsg tsMainMsg;
 void main(void)
 {
     teOperationRetVal eRetVal;
-    uint32_t AppliPresent = (FLASH_ReadWord16(ADDR_APPL_FLAG) & 0xFFFF)| FLASH_ReadWord16(ADDR_APPL_FLAG + 2);
+    uint32_t AppliPresent = ((uint32_t)FLASH_ReadWord16(ADDR_APPL_FLAG) & 0xFFFF)| (uint32_t)FLASH_ReadWord16(ADDR_APPL_FLAG + 2);
     
     if (AppliPresent == APPLIVALID) /* Application is present */
     {
