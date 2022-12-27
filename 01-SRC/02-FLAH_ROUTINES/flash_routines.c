@@ -1,41 +1,103 @@
 #include "../../mcc_generated_files/system.h"
 #include "../../mcc_generated_files/memory/flash.h"
-#include "../01-MAIN/main.h"
+#include "../01-MAIN/BootloaderTypes.h"
 #include "../01-MAIN/bootloader.h"
 #include "flash_routines.h"
-#include "adc1.h"
 
-uint32_t readAppFlag(void)
+teOperationRetVal FlashReadBufferU8(uint8_t* Fpu8Buffer, uint16_t Fu16Size, uint32_t Fu32FlashAddr)
 {
-    uint32_t u32;
-    uint16_t _tmp;
+    teOperationRetVal eRetVal = eOperationSuccess;
+    uint16_t u16W = 0;
+    uint16_t u8WordCnt = 0;
+    uint16_t u8CharCnt = 0;
+    uint16_t u16WordAmount = Fu16Size >> 1;
     
-    _tmp = FLASH_ReadWord16(0x4000);
-    u32 = _tmp;
-    _tmp = FLASH_ReadWord16(0x4002);
-    u32 |= (uint32_t)_tmp << 16L;
-    
-    return u32;
-}
-
-void readLogisticChar(uint8_t buffer[])
-{
-    uint8_t i, j;
-    uint16_t u16;
-    j = 0;
-    for (i = 0; i < 32; i++)
+    for (u8WordCnt = 0; u8WordCnt < u16WordAmount; u8WordCnt++)
     {
-        u16 = FLASH_ReadWord16(0x4080 + (i * 2));
-        buffer[j] = u16 & 0x00FF;
-        j++;
-        buffer[j] = (u16 >> 8) & 0x00FF;
-        j++;
+        u16W = FLASH_ReadWord16(Fu32FlashAddr + (u8WordCnt * 2)); /* One flash word is 2 PC addr */
+        if (u8CharCnt < Fu16Size)
+        {
+            Fpu8Buffer[u8CharCnt] = u16W & 0x00FF;
+            u8CharCnt++;
+        }
+        if (u8CharCnt < Fu16Size)
+        {
+            Fpu8Buffer[u8CharCnt] = (u16W >> 8) & 0x00FF;
+            u8CharCnt++;
+        }
     }
+    return eRetVal;
 }
 
-uint16_t readSWVersion(void)
+teOperationRetVal FlashReadBufferU32(uint32_t* Fpu32Buffer, uint16_t Fu16Size, uint32_t Fu32FlashAddr)
 {
-    uint16_t u16;
-    u16 = FLASH_ReadWord16(0x40C0);
-    return u16;
+    teOperationRetVal eRetVal = eOperationSuccess;
+    uint16_t u16WCnt = 0;
+    
+    for (u16WCnt = 0; u16WCnt < Fu16Size; u16WCnt++)
+    {
+        *(Fpu32Buffer + u16WCnt) = FLASH_ReadWord24(Fu32FlashAddr + (u16WCnt * 2));
+    }
+    
+    return eRetVal;
+}
+
+teOperationRetVal FlashCheckRow(DataBlock_t* FptsWrittenBlock)
+{
+    teOperationRetVal eRetVal = eOperationSuccess;
+    uint32_t u32FlashWord;
+    uint32_t u32Err = 0;
+    uint16_t u16Cnt = 0;
+    
+    for (u16Cnt = 0; u16Cnt < BOOT_ROW_SIZE_WORD; u16Cnt++)
+    {
+        u32FlashWord = FLASH_ReadWord24(FptsWrittenBlock->u32BlockAddr + (2 * u16Cnt));
+        u32Err |= u32FlashWord ^ FptsWrittenBlock->pu32Word[u16Cnt];
+    }
+    
+    if (u32Err != 0)
+    {
+        eRetVal = eFlashWriteError;
+    }
+    return eRetVal;
+}
+
+uint16_t CharToWordBuffer(uint32_t* Fpu32WordData, uint8_t* Fpu8CharData, uint16_t Fu16CharSize)
+{
+    uint16_t u16RetVal = 0;
+    uint16_t u16CharCnt = 0;
+    uint16_t u16WordCnt = 0;
+    uint8_t u8Char0 = 0, u8Char1 = 0, u8Char2 = 0;
+    
+    while (u16CharCnt < Fu16CharSize)
+    {
+        u8Char0 = *(Fpu8CharData + u16CharCnt);
+        u16CharCnt ++;
+        if (u16CharCnt < Fu16CharSize)
+        {
+            u8Char1 = *(Fpu8CharData + u16CharCnt);
+            u16CharCnt ++;
+        }
+        else
+        {
+            u8Char1 = 0;
+        }
+        if (u16CharCnt < Fu16CharSize)
+        {
+            u8Char2 = *(Fpu8CharData + u16CharCnt);
+            u16CharCnt += 2; /* escape phantom byte */
+        }
+        else
+        {
+            u8Char2 = 0;
+        }
+        
+        *(Fpu32WordData + u16WordCnt) = (uint32_t) u8Char0 | 
+                (((uint32_t) u8Char1 << 8) & 0xFF00) | 
+                (((uint32_t) u8Char2 << 16) & 0xFF0000) ;
+        u16WordCnt ++;
+    }
+    
+    
+    return u16RetVal;
 }

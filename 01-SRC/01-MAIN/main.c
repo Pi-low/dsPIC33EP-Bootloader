@@ -2,37 +2,34 @@
 #include "../../mcc_generated_files/pin_manager.h"
 #include "../../mcc_generated_files/tmr1.h"
 #include "../../mcc_generated_files/memory/flash.h"
-#include "main.h"
-#include "bootloader.h"
 #include "../02-FLAH_ROUTINES/flash_routines.h"
 #include "../03-TARGET/target.h"
-#include "../04-CRC/crc.h"
+#include "BootloaderTypes.h"
+#include "bootloader.h"
 
 volatile uint32_t BootRequest __attribute__((address(0x1080), persistent));
 
 #ifndef _IS_RELEASE
-const char __attribute__((address(0x4080), space(prog))) text[64] = "Ceci est un test";
-const uint32_t AppliFlag __attribute__((address(0x4000), space(prog))) = 0xAABBCCDD;
-const uint16_t SWVersion __attribute__((address(0x40C0), space(prog))) = 0x0201;
+const uint32_t AppliFlag __attribute__((address(ADDR_APPL_FLAG), space(prog))) = 0xAABBCCDD;
+const char __attribute__((address(ADDR_APPL_DESC), space(prog))) text[128] = "Ceci est un test";
+const uint16_t SWVersion __attribute__((address(ADDR_APPL_VERSION), space(prog))) = 0x0201;
 #endif
 
-uint8_t RxMsgBuffer[MAX_FRM_LEN];
+static tsGenericMsg tsMainMsg;
 
 void main(void)
 {
-    uint32_t AppliPresent = readAppFlag();
-    UARTmsg_t Rx_Msg;
+    teOperationRetVal eRetVal;
+    uint32_t AppliPresent = (uint32_t)FLASH_ReadWord16(ADDR_APPL_FLAG)| 
+            ((uint32_t)FLASH_ReadWord16(ADDR_APPL_FLAG + 2) << 16);
     
-    Rx_Msg.Data = RxMsgBuffer;
-    
-    if (BootRequest != BOOTFLAG && AppliPresent == APPLIVALID) /* Application is present, no bootmode requested */
+    if (AppliPresent == APPLIVALID) /* Application is present */
     {
         StartApplication();
     }
     
     SYSTEM_Initialize();
     MCU_FPWM_SetHigh();
-    
     InitBackTask();
     TMR1_Start();
     
@@ -40,23 +37,24 @@ void main(void)
     {
         TMR1_Tasks_16BitOperation(); /* SW timer management */
         ManageBackTask(); /* UART frame management */
-        if (FrameAvailable(&Rx_Msg) == 1) /* On Rx frame */
+        if (FrameAvailable(&tsMainMsg) == eOperationSuccess) /* On Rx frame */
         {
-            switch(Rx_Msg.ID)
+            switch(tsMainMsg.u8ID)
             {
             case eService_echo:
-                serviceEcho(&Rx_Msg);
+                eRetVal = serviceEcho(&tsMainMsg);
                 break;
                 
             case eService_getInfo:
-                serviceGetInfo(&Rx_Msg);
+                eRetVal = serviceGetInfo(&tsMainMsg);
                 break;
                 
             case eService_eraseFlash:
-                serviceEraseFlash(&Rx_Msg);
+                eRetVal = serviceEraseFlash(&tsMainMsg);
                 break;
                 
             case eService_dataTransfer:
+                eRetVal = serviceDataTransfer(&tsMainMsg);
                 break;
                 
             case eService_checkFlash:
@@ -67,6 +65,12 @@ void main(void)
                 
             case eService_readPin:
                 break;
+                
+#ifndef _IS_RELEASE
+            case eService_TestCrc:
+                eRetVal = serviceCRC(&tsMainMsg);
+                break;
+#endif
                 
             default:
                 break;

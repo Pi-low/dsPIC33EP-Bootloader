@@ -1,6 +1,9 @@
 #ifndef CRC_H
 #define CRC_H
 
-void initCRCengine(uint16_t Poly);
-uint16_t runCRCOnBuffer(uint8_t buffer[], uint16_t buflen);
+#include <stdint.h>
+
+void WupdateCRC16(uint16_t* Fpu16Input, uint8_t Fu8Data);
+void BufUpdateCrc16(uint16_t* Fpu16Input, uint8_t* Fpu8Data, uint16_t Fu16Length);
+
 #endif
