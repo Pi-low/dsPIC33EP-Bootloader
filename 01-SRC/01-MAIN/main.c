@@ -32,11 +32,12 @@ void main(void)
     MCU_FPWM_SetHigh();
     InitBackTask();
     TMR1_Start();
-    
+    resetBootState();
     while(1)
     {
         TMR1_Tasks_16BitOperation(); /* SW timer management */
         ManageBackTask(); /* UART frame management */
+        manageTimeout();
         if (FrameAvailable(&tsMainMsg) == eOperationSuccess) /* On Rx frame */
         {
             switch(tsMainMsg.u8ID)

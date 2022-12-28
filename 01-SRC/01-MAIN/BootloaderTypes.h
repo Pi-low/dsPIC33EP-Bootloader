@@ -15,18 +15,20 @@
 
 typedef enum
 {
-    eOperationSuccess = 0,
-    eOperationNotAvailable,
-    eOperationFail,
-    eBadChecksum,
-    eBadFrameLength,
-    eUnknownFrameID,
-    eFrameTimeout,
-    eFlashEraseError,
-    eBadBlockAddr,
-    eBadCRCBlock,
-    eFlashWriteError,
-    eAppliCheckError
+    eOperationSuccess =         0,
+    eOperationNotAvailable =    1,
+    eOperationNotAllowed =      2,
+    eOperationFail =            3,
+    eBadChecksum =              4,
+    eBadFrameLength =           5,
+    eUnknownFrameID =           6,
+    eFrameTimeout =             7,
+    eFlashEraseError =          8,
+    eBadBlockAddr =             9,
+    eBadCRCBlock =              10,
+    eFlashWriteError =          11,
+    eAppliCheckError =          12,
+    eBootSessionTimeout =       13
 }teOperationRetVal;
 
 typedef enum

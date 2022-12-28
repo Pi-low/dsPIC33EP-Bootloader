@@ -28,6 +28,11 @@
 #define ADDR_APPL_DESC      (0x280)
 #define ADDR_APPL_VERSION   (0x300)
 
+void resetBootState(void);
+void updateTimeout(void);
+void setBootSession(void);
+void manageTimeout(void);
+teOperationRetVal serviceGoToBoot(tsGenericMsg* FptsGenMsg);
 teOperationRetVal serviceEcho(tsGenericMsg* FptsGenMsg);
 teOperationRetVal serviceGetInfo(tsGenericMsg* FptsGenMsg);
 teOperationRetVal serviceEraseFlash(tsGenericMsg* FptsGenMsg);
@@ -35,7 +40,7 @@ teOperationRetVal serviceDataTransfer(tsGenericMsg* FptsGenMsg);
 teOperationRetVal serviceCheckFlash(tsGenericMsg* FptsGenMsg);
 teOperationRetVal serviceWritePin(tsGenericMsg* FptsGenMsg);
 teOperationRetVal serviceReadPin(tsGenericMsg* FptsGenMsg);
-teOperationRetVal createDataBlock(tsGenericMsg * FptsGenMsg, DataBlock_t * FptsBlock);
+teOperationRetVal manageDataBlock(tsGenericMsg * FptsGenMsg, DataBlock_t * FptsBlock);
 #ifndef _IS_RELEASE
 teOperationRetVal serviceCRC(tsGenericMsg* FptsGenMsg);
 #endif
