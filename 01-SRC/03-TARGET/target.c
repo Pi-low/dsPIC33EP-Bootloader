@@ -113,6 +113,13 @@ void sendFrame(tsGenericMsg* FptsTxMsg)
     {
         UART1_Write(pu8TxBuffer[u16i]);
     }
+    
+    FptsTxMsg->u8ID = 0;
+    FptsTxMsg->u16Length = 0;
+    for (u16i = 0; u16i < MAX_FRM_LEN; u16i++)
+    {
+        FptsTxMsg->pu8Data[u16i] = 0;
+    }
 }
 
 teOperationRetVal FrameAvailable(tsGenericMsg* FptsBootMsg)
