@@ -8,6 +8,7 @@
 
 static teBackTaskStates teCurrentState;
 static tsGenericMsg tsBootMsg;
+static tsGenericMsg tsReturnMsg;
 static tsUartFrm tsUartFrame;
 
 void InitBackTask(void)
@@ -17,7 +18,6 @@ void InitBackTask(void)
 
 void ManageBackTask(void)
 {
-    tsGenericMsg tsReturnMsg;
     uint8_t RxData;
     teOperationRetVal eRetVal;
     if ((Mcr_GetStartFrame(tsUartFrame) == 1) && 
