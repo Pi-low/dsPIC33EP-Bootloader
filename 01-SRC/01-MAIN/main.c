@@ -11,8 +11,8 @@ volatile uint32_t BootRequest __attribute__((address(0x1080), persistent));
 
 #ifndef _IS_RELEASE
 const uint32_t AppliFlag __attribute__((address(ADDR_APPL_FLAG), space(prog))) = 0xAABBCCDD;
-const char __attribute__((address(ADDR_APPL_DESC), space(prog))) text[128] = "Ceci est un test";
-const uint16_t SWVersion __attribute__((address(ADDR_APPL_VERSION), space(prog))) = 0x0201;
+const char __attribute__((address(ADDR_APPL_DESC), space(prog))) text[128] = "Bootloader standalone";
+const uint16_t SWVersion __attribute__((address(ADDR_APPL_VERSION), space(prog))) = 0xC0DE;
 #endif
 
 static tsGenericMsg tsMainMsg;
@@ -37,11 +37,15 @@ void main(void)
     {
         TMR1_Tasks_16BitOperation(); /* SW timer management */
         ManageBackTask(); /* UART frame management */
-        manageTimeout();
+        //manageTimeout();
         if (FrameAvailable(&tsMainMsg) == eOperationSuccess) /* On Rx frame */
         {
             switch(tsMainMsg.u8ID)
             {
+            case eService_gotoBoot:
+                eRetVal = serviceGoToBoot(&tsMainMsg);
+                break;
+                
             case eService_echo:
                 eRetVal = serviceEcho(&tsMainMsg);
                 break;

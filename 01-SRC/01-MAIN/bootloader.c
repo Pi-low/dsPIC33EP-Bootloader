@@ -108,11 +108,11 @@ teOperationRetVal serviceEcho(tsGenericMsg* FptsGenMsg)
 teOperationRetVal serviceGetInfo(tsGenericMsg * FptsGenMsg)
 {
     teOperationRetVal eRetVal = eOperationSuccess;
-    uint8_t u8TmpBuff[65];
+    uint8_t* pu8Buff = tsInternalMsg.pu8Data;
     uint16_t u16SwVersion;
     uint32_t u32ApplicationPresentFlag;
     
-    u8TmpBuff[0] = eRetVal;
+    pu8Buff[0] = eRetVal;
     tsInternalMsg.u8ID = FptsGenMsg->u8ID | 0x80;
     tsInternalMsg.u16Length = 1;
     
@@ -122,22 +122,22 @@ teOperationRetVal serviceGetInfo(tsGenericMsg * FptsGenMsg)
         u32ApplicationPresentFlag = (uint32_t)FLASH_ReadWord16(ADDR_APPL_FLAG)| 
                 ((uint32_t)FLASH_ReadWord16(ADDR_APPL_FLAG + 2) << 16);
         
-        u8TmpBuff[1] = u32ApplicationPresentFlag >> 24;
-        u8TmpBuff[2] = u32ApplicationPresentFlag >> 16;
-        u8TmpBuff[3] = u32ApplicationPresentFlag >> 8;
-        u8TmpBuff[4] = u32ApplicationPresentFlag;
+        pu8Buff[1] = u32ApplicationPresentFlag >> 24;
+        pu8Buff[2] = u32ApplicationPresentFlag >> 16;
+        pu8Buff[3] = u32ApplicationPresentFlag >> 8;
+        pu8Buff[4] = u32ApplicationPresentFlag;
         tsInternalMsg.u16Length += 4;
         break;
 
     case 1: /* Get application version */
         u16SwVersion = FLASH_ReadWord16(ADDR_APPL_VERSION);
-        u8TmpBuff[1] = u16SwVersion >> 8;
-        u8TmpBuff[2] = u16SwVersion;
+        pu8Buff[1] = u16SwVersion >> 8;
+        pu8Buff[2] = u16SwVersion;
         tsInternalMsg.u16Length += 2;
         break;
 
     case 2: /* Get application logistic ascii string */
-        FlashReadBufferU8(&u8TmpBuff[1], FLASH_LOGISTIC_CHAR_SIZE, ADDR_APPL_DESC);
+        FlashReadBufferU8(&pu8Buff[1], FLASH_LOGISTIC_CHAR_SIZE, ADDR_APPL_DESC);
         tsInternalMsg.u16Length += 64;
         break;
 
@@ -146,11 +146,7 @@ teOperationRetVal serviceGetInfo(tsGenericMsg * FptsGenMsg)
         break;
     }
     
-    if (eRetVal == eOperationSuccess)
-    {
-        BufCopy(tsInternalMsg.pu8Data, u8TmpBuff, FptsGenMsg->u16Length);
-    }
-    else
+    if (eRetVal != eOperationSuccess)
     {
         tsInternalMsg.pu8Data[0] = eRetVal;
     }

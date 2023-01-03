@@ -144,11 +144,11 @@ teOperationRetVal FrameAvailable(tsGenericMsg* FptsBootMsg)
     return teRetVal;
 }
 
-void BufCopy(uint8_t* pu8Dest, const uint8_t* pu8Src, uint16_t u16Size)
+void BufCopy(uint8_t* pu8Dest, uint8_t* pu8Src, uint16_t u16Size)
 {
     uint16_t u16i;
     for (u16i = 0; u16i < u16Size; u16i++)
     {
-        *(pu8Dest + u16i) = *(pu8Src + u16i);
+        pu8Dest[u16i] = pu8Src[u16i];
     }
 }
