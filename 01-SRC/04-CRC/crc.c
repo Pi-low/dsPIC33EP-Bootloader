@@ -47,9 +47,11 @@ void updateCrc16(uint16_t* Fpu16Input, uint8_t Fu8Data)
 void BufUpdateCrc16(uint16_t* Fpu16Input, uint8_t* Fpu8Data, uint16_t Fu16Length)
 {
     uint16_t u16i = 0;
+	uint16_t* pu16CRC = Fpu16Input;
+	uint8_t* pu8Data = Fpu8Data;
     
     for (u16i = 0; u16i < Fu16Length; u16i++)
     {
-        updateCrc16(Fpu16Input, *(Fpu8Data + u16i));
+        updateCrc16(pu16CRC, *(pu8Data + u16i));
     }
 }
