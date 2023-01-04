@@ -64,7 +64,6 @@ teOperationRetVal FlashCheckRow(DataBlock_t* FptsWrittenBlock)
 
 uint16_t CharToWordBuffer(uint32_t* Fpu32WordData, uint8_t* Fpu8CharData, uint16_t Fu16CharSize)
 {
-    uint16_t u16RetVal = 0;
     uint16_t u16CharCnt = 0;
     uint16_t u16WordCnt = 0;
     uint8_t u8Char0 = 0, u8Char1 = 0, u8Char2 = 0;
@@ -99,5 +98,5 @@ uint16_t CharToWordBuffer(uint32_t* Fpu32WordData, uint8_t* Fpu8CharData, uint16
     }
     
     
-    return u16RetVal;
+    return u16WordCnt;
 }

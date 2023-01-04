@@ -24,11 +24,12 @@ typedef enum
     eUnknownFrameID =           6,
     eFrameTimeout =             7,
     eFlashEraseError =          8,
-    eBadBlockAddr =             9,
-    eBadCRCBlock =              10,
-    eFlashWriteError =          11,
-    eAppliCheckError =          12,
-    eBootSessionTimeout =       13
+    eMemoryNotBlanked =         9,
+    eBadBlockAddr =             10,
+    eBadCRCBlock =              11,
+    eFlashWriteError =          12,
+    eAppliCheckError =          13,
+    eBootSessionTimeout =       14
 }teOperationRetVal;
 
 typedef enum

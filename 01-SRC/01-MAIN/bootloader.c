@@ -8,14 +8,14 @@
 #include "BootloaderTypes.h"
 #include "bootloader.h"
 
-static uint8_t u8BlankFlashFlag = 0;
-static uint8_t u8NotifyTimeout = 0;
-static uint8_t u8BootloadingFlag = 0;
-static uint16_t u16BootTimeout = 0;
-static uint16_t u16TimeoutConst = 0;
+static uint8_t u8BlankFlashFlag;
+static uint8_t u8NotifyTimeout;
+static uint8_t u8BootloadingFlag;
+static uint16_t u16BootTimeout;
+static uint16_t u16TimeoutConst;
 static DataBlock_t tsDataBlock;
 static uint32_t pu32SaveRstVector[2] = {0};
-static uint32_t u32PrevBlockAddr = 0;
+static uint32_t u32PrevBlockAddr;
 static tsGenericMsg tsInternalMsg;
 
 void resetBootState(void)
@@ -66,7 +66,9 @@ teOperationRetVal serviceGoToBoot(tsGenericMsg* FptsGenMsg)
     
     if (u16TimeoutConst >= 1000)
     {
-        setBootSession();
+        u8BootloadingFlag = 1;
+        u32PrevBlockAddr = 0;
+        updateTimeout();
     }
     else
     {
@@ -203,11 +205,7 @@ teOperationRetVal serviceDataTransfer(tsGenericMsg * FptsGenMsg)
 {
     teOperationRetVal eRetVal = eOperationSuccess;
     
-    if (u8BlankFlashFlag == 0)
-    {
-        eRetVal = eOperationFail;
-    }
-    else if (u8BootloadingFlag == 0)
+    if (u8BootloadingFlag == 0)
     {
         if (u8NotifyTimeout == 1)
         {
@@ -218,6 +216,10 @@ teOperationRetVal serviceDataTransfer(tsGenericMsg * FptsGenMsg)
         {
             eRetVal = eOperationNotAllowed;
         }
+    }
+    else if (u8BlankFlashFlag == 0)
+    {
+        eRetVal = eMemoryNotBlanked;
     }
     
     
@@ -231,7 +233,7 @@ teOperationRetVal serviceDataTransfer(tsGenericMsg * FptsGenMsg)
         FLASH_Unlock(FLASH_UNLOCK_KEY);
         if (FLASH_WriteRow24(tsDataBlock.u32BlockAddr, tsDataBlock.pu32Word) != true)
         {
-            eRetVal = eOperationFail;
+            eRetVal = eFlashWriteError;
         }
         FLASH_Lock();
     }
@@ -289,11 +291,7 @@ teOperationRetVal manageDataBlock(tsGenericMsg * FptsGenMsg, DataBlock_t * FptsB
     
    
     /* STEP 1: CRC check */
-    //BufUpdateCrc16(&u16CRC, FptsGenMsg->pu8Data, FptsGenMsg->u16Length);
-    for (u16Tmp = 0; u16Tmp < FptsGenMsg->u16Length; u16Tmp++)
-    {
-        updateCrc16(&u16CRC, FptsGenMsg->pu8Data[u16Tmp]);
-    }
+    BufUpdateCrc16(&u16CRC, FptsGenMsg->pu8Data, FptsGenMsg->u16Length);
     if (u16CRC != 0xF0B8)
     {
         eRetVal = eBadCRCBlock;
@@ -321,10 +319,10 @@ teOperationRetVal manageDataBlock(tsGenericMsg * FptsGenMsg, DataBlock_t * FptsB
         {
             eRetVal = eBadBlockAddr;
         }
-        if (u32PrevBlockAddr > FptsBlock->u32BlockAddr) /* Prevent from writing back */
-        {
-            eRetVal = eBadBlockAddr;
-        }
+//        if (u32PrevBlockAddr > FptsBlock->u32BlockAddr) /* Prevent from writing back */
+//        {
+//            eRetVal = eBadBlockAddr;
+//        }
     }
     
     /* STEP 3: Generate flash row from received data */
@@ -348,7 +346,7 @@ teOperationRetVal manageDataBlock(tsGenericMsg * FptsGenMsg, DataBlock_t * FptsB
             }
         }
         
-        u16Tmp = CharToWordBuffer(FptsBlock->pu32Word, FptsBlock->pu8Data, FptsBlock->u16BlockSize8);
+        u16Tmp = CharToWordBuffer(FptsBlock->pu32Word, FptsBlock->pu8Data, BOOT_ROW_SIZE_BYTE);
         
         if (FptsBlock->u32BlockAddr == 0) /* Restor reset vector */
         {
