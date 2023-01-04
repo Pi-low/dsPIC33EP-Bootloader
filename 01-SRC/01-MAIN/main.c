@@ -37,7 +37,7 @@ void main(void)
     {
         TMR1_Tasks_16BitOperation(); /* SW timer management */
         ManageBackTask(); /* UART frame management */
-        //manageTimeout();
+        manageTimeout();
         if (FrameAvailable(&tsMainMsg) == eOperationSuccess) /* On Rx frame */
         {
             switch(tsMainMsg.u8ID)
@@ -59,10 +59,12 @@ void main(void)
                 break;
                 
             case eService_dataTransfer:
+                updateTimeout();
                 eRetVal = serviceDataTransfer(&tsMainMsg);
                 break;
                 
             case eService_checkFlash:
+                eRetVal = serviceCheckFlash(&tsMainMsg);
                 break;
                 
             case eService_writePin:

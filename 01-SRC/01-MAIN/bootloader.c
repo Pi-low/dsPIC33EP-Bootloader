@@ -9,12 +9,13 @@
 #include "bootloader.h"
 
 static uint8_t u8BlankFlashFlag = 0;
+static uint8_t u8NotifyTimeout = 0;
 static uint8_t u8BootloadingFlag = 0;
 static uint16_t u16BootTimeout = 0;
 static uint16_t u16TimeoutConst = 0;
 static DataBlock_t tsDataBlock;
 static uint32_t pu32SaveRstVector[2] = {0};
-static uint32_t u32LastBlockAddr = 0;
+static uint32_t u32PrevBlockAddr = 0;
 static tsGenericMsg tsInternalMsg;
 
 void resetBootState(void)
@@ -23,13 +24,14 @@ void resetBootState(void)
     u8BootloadingFlag = 0;
     u16BootTimeout = 0;
     u16TimeoutConst = 0;
-    u32LastBlockAddr = 0;
+    u32PrevBlockAddr = 0;
     pu32SaveRstVector[0] = 0;
     pu32SaveRstVector[1] = 0;
-    tsInternalMsg.u8ID = 0xF0;
-    tsInternalMsg.u16Length = 1;
-    tsInternalMsg.pu8Data[0] = 0;
-    sendFrame(&tsInternalMsg);
+    u8NotifyTimeout = 0;
+//    tsInternalMsg.u8ID = 0xF0;
+//    tsInternalMsg.u16Length = 1;
+//    tsInternalMsg.pu8Data[0] = 0;
+//    sendFrame(&tsInternalMsg);
 }
 
 void updateTimeout(void)
@@ -45,13 +47,14 @@ void setBootSession(void)
 
 void manageTimeout(void)
 {
-    if ( (TMR1_SoftwareCounterGet() >= u16TimeoutConst) && (u8BootloadingFlag == 1))
+    if ((TMR1_SoftwareCounterGet() >= u16TimeoutConst) && (u8BootloadingFlag == 1))
     {
         resetBootState();
-        tsInternalMsg.u8ID = 0xF0;
-        tsInternalMsg.u16Length = 1;
-        tsInternalMsg.pu8Data[0] = eBootSessionTimeout;
-        sendFrame(&tsInternalMsg);
+        u8NotifyTimeout = 1;
+//        tsInternalMsg.u8ID = 0xF0;
+//        tsInternalMsg.u16Length = 1;
+//        tsInternalMsg.pu8Data[0] = eBootSessionTimeout;
+//        sendFrame(&tsInternalMsg);
     }
 }
 
@@ -204,15 +207,28 @@ teOperationRetVal serviceDataTransfer(tsGenericMsg * FptsGenMsg)
     {
         eRetVal = eOperationFail;
     }
+    else if (u8BootloadingFlag == 0)
+    {
+        if (u8NotifyTimeout == 1)
+        {
+            u8NotifyTimeout = 0;
+            eRetVal = eBootSessionTimeout;
+        }
+        else
+        {
+            eRetVal = eOperationNotAllowed;
+        }
+    }
+    
     
     if(eRetVal == eOperationSuccess)
     {
         eRetVal = manageDataBlock(FptsGenMsg, &tsDataBlock);
-        FLASH_Unlock(FLASH_UNLOCK_KEY);
     }
 
     if (eRetVal == eOperationSuccess)
     {
+        FLASH_Unlock(FLASH_UNLOCK_KEY);
         if (FLASH_WriteRow24(tsDataBlock.u32BlockAddr, tsDataBlock.pu32Word) != true)
         {
             eRetVal = eOperationFail;
@@ -273,7 +289,11 @@ teOperationRetVal manageDataBlock(tsGenericMsg * FptsGenMsg, DataBlock_t * FptsB
     
    
     /* STEP 1: CRC check */
-    BufUpdateCrc16(&u16CRC, FptsGenMsg->pu8Data, FptsGenMsg->u16Length);
+    //BufUpdateCrc16(&u16CRC, FptsGenMsg->pu8Data, FptsGenMsg->u16Length);
+    for (u16Tmp = 0; u16Tmp < FptsGenMsg->u16Length; u16Tmp++)
+    {
+        updateCrc16(&u16CRC, FptsGenMsg->pu8Data[u16Tmp]);
+    }
     if (u16CRC != 0xF0B8)
     {
         eRetVal = eBadCRCBlock;
@@ -289,10 +309,19 @@ teOperationRetVal manageDataBlock(tsGenericMsg * FptsGenMsg, DataBlock_t * FptsB
 
         FptsBlock->u16BlockSize8 = FptsGenMsg->u16Length - 5; /* escape block address (3 bytes) + CRC16 (2 bytes) */;
         
-        if (((FptsBlock->u32BlockAddr % 2) != 0) || /* Address aligned to program counter */
-                ((FptsBlock->u32BlockAddr >= ADDR_FLASH_BOOT) && (FptsBlock->u32BlockAddr < ADDR_FLASH_APPLI)) || /* prevent from writing into boot section */
-                (FptsBlock->u32BlockAddr >= ADDR_FLASH_END) ||  /* prevent from writing over application area */
-                (u32LastBlockAddr > FptsBlock->u32BlockAddr)) /* Prevent from writing back */
+        if ((FptsBlock->u32BlockAddr % 2) != 0)
+        {
+            eRetVal = eBadBlockAddr;
+        }
+        if ((FptsBlock->u32BlockAddr >= ADDR_FLASH_BOOT) && (FptsBlock->u32BlockAddr < ADDR_FLASH_APPLI))
+        {
+            eRetVal = eBadBlockAddr;
+        }
+        if (FptsBlock->u32BlockAddr >= ADDR_FLASH_END)
+        {
+            eRetVal = eBadBlockAddr;
+        }
+        if (u32PrevBlockAddr > FptsBlock->u32BlockAddr) /* Prevent from writing back */
         {
             eRetVal = eBadBlockAddr;
         }
@@ -330,7 +359,7 @@ teOperationRetVal manageDataBlock(tsGenericMsg * FptsGenMsg, DataBlock_t * FptsB
         {
             eRetVal = eOperationFail;
         }
-        u32LastBlockAddr = FptsBlock->u32BlockAddr + 2;
+        u32PrevBlockAddr = FptsBlock->u32BlockAddr + 2;
     }
     return eRetVal;
 }
