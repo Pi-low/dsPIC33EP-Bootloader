@@ -28,10 +28,6 @@ void resetBootState(void)
     pu32SaveRstVector[0] = 0;
     pu32SaveRstVector[1] = 0;
     u8NotifyTimeout = 0;
-//    tsInternalMsg.u8ID = 0xF0;
-//    tsInternalMsg.u16Length = 1;
-//    tsInternalMsg.pu8Data[0] = 0;
-//    sendFrame(&tsInternalMsg);
 }
 
 void updateTimeout(void)
@@ -51,10 +47,6 @@ void manageTimeout(void)
     {
         resetBootState();
         u8NotifyTimeout = 1;
-//        tsInternalMsg.u8ID = 0xF0;
-//        tsInternalMsg.u16Length = 1;
-//        tsInternalMsg.pu8Data[0] = eBootSessionTimeout;
-//        sendFrame(&tsInternalMsg);
     }
 }
 
@@ -100,10 +92,7 @@ teOperationRetVal serviceEcho(tsGenericMsg* FptsGenMsg)
         tsInternalMsg.u16Length++;
     }
     
-    
-    
     BufCopy(tsInternalMsg.pu8Data, u8TmpBuff, tsInternalMsg.u16Length);
-    
     
     sendFrame(&tsInternalMsg);
     
@@ -180,6 +169,7 @@ teOperationRetVal serviceEraseFlash(tsGenericMsg * FptsGenMsg)
         /* Page start address % 0x400 */
         u8Err &= FLASH_ErasePage(ADDR_FLASH_APPLI + (u32i * FLASH_ERASE_PAGE_SIZE_IN_PC_UNITS));
         u32i++;
+        updateTimeout();
     }
     if ((u8Err == 1) && (u32i == FLASH_APPLI_PAGES))
     {
@@ -254,9 +244,24 @@ teOperationRetVal serviceDataTransfer(tsGenericMsg * FptsGenMsg)
 teOperationRetVal serviceCheckFlash(tsGenericMsg * FptsGenMsg)
 {
     teOperationRetVal eRetVal = eOperationSuccess;
-    if (u8BlankFlashFlag == 0)
+    uint8_t pu8DataRowByte[256];
+    uint16_t u16CRCFlash = 0;
+    
+    if (u8BootloadingFlag == 0)
     {
-        eRetVal = eOperationFail;
+        if (u8NotifyTimeout == 1)
+        {
+            u8NotifyTimeout = 0;
+            eRetVal = eBootSessionTimeout;
+        }
+        else
+        {
+            eRetVal = eOperationNotAllowed;
+        }
+    }
+    else if (u8BlankFlashFlag == 0)
+    {
+        eRetVal = eMemoryNotBlanked;
     }
     
     tsInternalMsg.u8ID = FptsGenMsg->u8ID | 0x80;

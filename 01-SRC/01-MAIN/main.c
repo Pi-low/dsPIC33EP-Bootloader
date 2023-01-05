@@ -10,8 +10,7 @@
 volatile uint32_t BootRequest __attribute__((address(0x1080), persistent));
 
 #ifndef _IS_RELEASE
-const uint32_t AppliFlag __attribute__((address(ADDR_APPL_FLAG), space(prog))) = 0xAABBCCDD;
-const char __attribute__((address(ADDR_APPL_DESC), space(prog))) text[128] = "Bootloader standalone";
+const char __attribute__((address(ADDR_APPL_DESC), space(prog))) text[128] = "[Build]"__DATE__" "__TIME__"\r\n[Decription]: Bootloader standalone ";
 const uint16_t SWVersion __attribute__((address(ADDR_APPL_VERSION), space(prog))) = 0xC0DE;
 #endif
 
@@ -25,7 +24,10 @@ void main(void)
     
     if (AppliPresent == APPLIVALID) /* Application is present */
     {
-        StartApplication();
+        if (BootRequest != 0xC0DEFEED)
+        {
+            StartApplication();
+        }
     }
     
     SYSTEM_Initialize();
@@ -37,24 +39,28 @@ void main(void)
     {
         TMR1_Tasks_16BitOperation(); /* SW timer management */
         ManageBackTask(); /* UART frame management */
-        //manageTimeout();
+        manageTimeout();
         if (FrameAvailable(&tsMainMsg) == eOperationSuccess) /* On Rx frame */
         {
             switch(tsMainMsg.u8ID)
             {
             case eService_gotoBoot:
+                updateTimeout();
                 eRetVal = serviceGoToBoot(&tsMainMsg);
                 break;
                 
             case eService_echo:
+                updateTimeout();
                 eRetVal = serviceEcho(&tsMainMsg);
                 break;
                 
             case eService_getInfo:
+                updateTimeout();
                 eRetVal = serviceGetInfo(&tsMainMsg);
                 break;
                 
             case eService_eraseFlash:
+                updateTimeout();
                 eRetVal = serviceEraseFlash(&tsMainMsg);
                 break;
                 
@@ -64,13 +70,16 @@ void main(void)
                 break;
                 
             case eService_checkFlash:
+                updateTimeout();
                 eRetVal = serviceCheckFlash(&tsMainMsg);
                 break;
                 
             case eService_writePin:
+                updateTimeout();
                 break;
                 
             case eService_readPin:
+                updateTimeout();
                 break;
                 
 #ifndef _IS_RELEASE

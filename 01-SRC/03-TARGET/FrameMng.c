@@ -5,12 +5,13 @@
 
 static tsFrameSize tsFrameLength[REGISTERED_FRAMES] = 
 {
-    {eService_gotoBoot,     3,  3   },
+    /* Service ID          MIN MAX  */
+    {eService_gotoBoot,     1,  3   },
     {eService_echo,         2,  65  },
     {eService_getInfo,      2,  2   },
     {eService_eraseFlash,   1,  1   },
     {eService_dataTransfer, 7,  262 },
-    {eService_checkFlash,   1,  1   },
+    {eService_checkFlash,   3,  3   },
     {eService_writePin,     2,  2   },
 #ifndef _IS_RELEASE
     {eService_readPin,      2,  2   },

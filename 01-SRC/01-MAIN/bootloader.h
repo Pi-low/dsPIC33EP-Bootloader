@@ -23,15 +23,19 @@
 #define APPLIVALID (0xA1B2C3D4)
 #define RESET() asm ("RESET")
 #define StartApplication() __asm__ volatile("goto %0"::"i"(ADDR_FLASH_APPLI))
+#define MAIN_TM_VALUE       (10000) /* 10 seconds */
 
 #define ADDR_APPL_FLAG      (0x200)
 #define ADDR_APPL_DESC      (0x280)
 #define ADDR_APPL_VERSION   (0x300)
 
+extern volatile uint32_t BootRequest;
+
 void resetBootState(void);
 void updateTimeout(void);
 void setBootSession(void);
 void manageTimeout(void);
+
 teOperationRetVal serviceGoToBoot(tsGenericMsg* FptsGenMsg);
 teOperationRetVal serviceEcho(tsGenericMsg* FptsGenMsg);
 teOperationRetVal serviceGetInfo(tsGenericMsg* FptsGenMsg);
