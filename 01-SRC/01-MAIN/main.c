@@ -10,7 +10,7 @@
 volatile uint32_t BootRequest __attribute__((address(0x1080), persistent));
 
 #ifndef _IS_RELEASE
-const char __attribute__((address(ADDR_APPL_DESC), space(prog))) text[128] = __DATE__" "__TIME__"\r\nBootloader standalone ";
+const char __attribute__((address(ADDR_APPL_DESC), space(prog))) text[FLASH_LOGISTIC_CHAR_SIZE] = __DATE__" "__TIME__"\r\nBootloader standalone ";
 const uint16_t SWVersion __attribute__((address(ADDR_APPL_VERSION), space(prog))) = 0xB101;
 #endif
 
@@ -39,7 +39,7 @@ void main(void)
     {
         TMR1_Tasks_16BitOperation(); /* SW timer management */
         ManageBackTask(); /* UART frame management */
-        //manageTimeout();
+        manageTimeout();
         if (FrameAvailable(&tsMainMsg) == eOperationSuccess) /* On Rx frame */
         {
             switch(tsMainMsg.u8ID)

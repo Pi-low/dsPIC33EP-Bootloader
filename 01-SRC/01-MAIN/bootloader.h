@@ -19,8 +19,10 @@
 #define FLASH_APPLI_PAGES           ((ADDR_FLASH_END - ADDR_FLASH_APPLI) / (BOOT_PAGE_SIZE_WORD * 2))
 #define FLASH_LOGISTIC_CHAR_SIZE    (128u)
 
+#define BOOT_TIMEOUT    (5000) /* ms */
+#define STARTUP_DELAY   (300) /* ms */
 #define BOOTFLAG (0xC0DEFEED)
-#define APPLIVALID (0xA1B2C3D4)
+#define APPLIVALID (0xA1B2C3D4L)
 #define RESET() asm ("RESET")
 #define StartApplication() __asm__ volatile("goto %0"::"i"(ADDR_FLASH_APPLI))
 #define MAIN_TM_VALUE       (10000) /* 10 seconds */

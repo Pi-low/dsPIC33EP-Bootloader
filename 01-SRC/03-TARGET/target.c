@@ -89,7 +89,7 @@ void ManageBackTask(void)
 void sendFrame(tsGenericMsg* FptsTxMsg)
 {
     uint8_t u8Checksum = 0;
-    uint8_t pu8TxBuffer[100];
+    uint8_t pu8TxBuffer[256];
     uint16_t u16FrmLength = FptsTxMsg->u16Length + 1;
     uint16_t u16i;
     
