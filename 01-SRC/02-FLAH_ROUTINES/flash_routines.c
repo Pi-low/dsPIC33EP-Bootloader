@@ -1,4 +1,3 @@
-
 #include <stdlib.h>
 #include "../../mcc_generated_files/system.h"
 #include "../../mcc_generated_files/memory/flash.h"
@@ -11,21 +10,22 @@ teOperationRetVal FlashReadBufferU8(uint8_t* Fpu8Buffer, uint16_t Fu16Size, uint
     teOperationRetVal eRetVal = eOperationSuccess;
     uint16_t u16W = 0;
     uint16_t u8WordCnt = 0;
-    uint16_t u8CharCnt = 0;
+    uint16_t u16CharCnt = 0;
     uint16_t u16WordAmount = Fu16Size >> 1;
+    uint8_t *pu8Buff = Fpu8Buffer;
     
     for (u8WordCnt = 0; u8WordCnt < u16WordAmount; u8WordCnt++)
     {
         u16W = FLASH_ReadWord16(Fu32FlashAddr + (u8WordCnt * 2)); /* One flash word is 2 PC addr */
-        if (u8CharCnt < Fu16Size)
+        if (u16CharCnt < Fu16Size)
         {
-            Fpu8Buffer[u8CharCnt] = u16W & 0x00FF;
-            u8CharCnt++;
+            pu8Buff[u16CharCnt] = u16W & 0x00FF;
+            u16CharCnt++;
         }
-        if (u8CharCnt < Fu16Size)
+        if (u16CharCnt < Fu16Size)
         {
-            Fpu8Buffer[u8CharCnt] = (u16W >> 8) & 0x00FF;
-            u8CharCnt++;
+            pu8Buff[u16CharCnt] = (u16W >> 8) & 0x00FF;
+            u16CharCnt++;
         }
     }
     return eRetVal;

@@ -1,3 +1,5 @@
+
+#include <stdlib.h>
 #include "../../mcc_generated_files/system.h"
 #include "../../mcc_generated_files/pin_manager.h"
 #include "../../mcc_generated_files/tmr1.h"
@@ -131,8 +133,8 @@ teOperationRetVal serviceGetInfo(tsGenericMsg * FptsGenMsg)
         break;
 
     case 2: /* Get application logistic ascii string */
-        FlashReadBufferU8(&pu8Buff[1], FLASH_LOGISTIC_CHAR_SIZE, ADDR_APPL_DESC);
-        tsInternalMsg.u16Length += 64;
+        FlashReadBufferU8(&pu8Buff[1], 128, ADDR_APPL_DESC);
+        tsInternalMsg.u16Length += 128;
         break;
 
     default:
@@ -244,8 +246,12 @@ teOperationRetVal serviceDataTransfer(tsGenericMsg * FptsGenMsg)
 teOperationRetVal serviceCheckFlash(tsGenericMsg * FptsGenMsg)
 {
     teOperationRetVal eRetVal = eOperationSuccess;
+    uint16_t u16Cnt = 0;
     uint8_t pu8DataRowByte[256];
-    uint16_t u16CRCFlash = 0;
+    uint16_t u16AppliRowCnt = (uint16_t)FptsGenMsg->pu8Data[2]; /* amount of pages*/
+    uint16_t u16CRC = 0;
+    uint32_t u32RowAddr = 0;
+    bool bRetVal = true;
     
     if (u8BootloadingFlag == 0)
     {
@@ -262,6 +268,39 @@ teOperationRetVal serviceCheckFlash(tsGenericMsg * FptsGenMsg)
     else if (u8BlankFlashFlag == 0)
     {
         eRetVal = eMemoryNotBlanked;
+    }
+    
+    if (eRetVal == eOperationSuccess)
+    {
+        u16AppliRowCnt <<= 3; /* one page is 8 rows */
+        for (u16Cnt = 0; u16Cnt < 8; u16Cnt++)
+        {
+            u32RowAddr = u16Cnt * BOOT_ROW_SIZE_WORD * 2;
+            FlashReadBufferU32(NULL, pu8DataRowByte, u32RowAddr, BOOT_ROW_SIZE_BYTE);
+            BufUpdateCrc16(&u16CRC, pu8DataRowByte, BOOT_ROW_SIZE_BYTE);
+        }
+        for (u16Cnt = 0; u16Cnt < u16AppliRowCnt; u16Cnt++)
+        {
+            u32RowAddr = 0x4000 + (u16Cnt * BOOT_ROW_SIZE_WORD * 2);
+            FlashReadBufferU32(NULL, pu8DataRowByte, u32RowAddr, BOOT_ROW_SIZE_BYTE);
+            BufUpdateCrc16(&u16CRC, pu8DataRowByte, BOOT_ROW_SIZE_BYTE);
+        }
+        updateCrc16(&u16CRC, FptsGenMsg->pu8Data[0]);
+        updateCrc16(&u16CRC, FptsGenMsg->pu8Data[1]);
+        if (u16CRC == 0xF0B8)
+        {
+            FLASH_Unlock(FLASH_UNLOCK_KEY);
+            bRetVal = FLASH_WriteDoubleWord24(ADDR_APPL_FLAG, 0xC3D4, 0xA1B2);
+            FLASH_Lock();
+            if (bRetVal != true)
+            {
+                eRetVal = eOperationFail;
+            }
+        }
+        else
+        {
+            eRetVal = eAppliCheckError;
+        }
     }
     
     tsInternalMsg.u8ID = FptsGenMsg->u8ID | 0x80;

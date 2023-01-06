@@ -10,8 +10,8 @@
 volatile uint32_t BootRequest __attribute__((address(0x1080), persistent));
 
 #ifndef _IS_RELEASE
-const char __attribute__((address(ADDR_APPL_DESC), space(prog))) text[128] = "[Build]"__DATE__" "__TIME__"\r\n[Decription]: Bootloader standalone ";
-const uint16_t SWVersion __attribute__((address(ADDR_APPL_VERSION), space(prog))) = 0xC0DE;
+const char __attribute__((address(ADDR_APPL_DESC), space(prog))) text[128] = __DATE__" "__TIME__"\r\nBootloader standalone ";
+const uint16_t SWVersion __attribute__((address(ADDR_APPL_VERSION), space(prog))) = 0xB101;
 #endif
 
 static tsGenericMsg tsMainMsg;
@@ -39,7 +39,7 @@ void main(void)
     {
         TMR1_Tasks_16BitOperation(); /* SW timer management */
         ManageBackTask(); /* UART frame management */
-        manageTimeout();
+        //manageTimeout();
         if (FrameAvailable(&tsMainMsg) == eOperationSuccess) /* On Rx frame */
         {
             switch(tsMainMsg.u8ID)
