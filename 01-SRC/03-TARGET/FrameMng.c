@@ -6,7 +6,7 @@
 static tsFrameSize tsFrameLength[REGISTERED_FRAMES] = 
 {
     /* Service ID          MIN MAX  */
-    {eService_gotoBoot,     1,  3   },
+    {eService_gotoBoot,     1,  1   },
     {eService_echo,         2,  65  },
     {eService_getInfo,      2,  2   },
     {eService_eraseFlash,   1,  1   },

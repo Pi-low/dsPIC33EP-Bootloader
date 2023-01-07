@@ -11,12 +11,12 @@
 #include "bootloader.h"
 
 static uint8_t u8BlankFlashFlag;
-static uint8_t u8NotifyTimeout;
 static uint8_t u8BootloadingFlag;
 static uint16_t u16BootTimeout;
 static DataBlock_t tsDataBlock;
 static uint32_t pu32SaveRstVector[2] = {0};
 static uint32_t u32PrevBlockAddr;
+static uint8_t u8AppPresentFlag;
 static tsGenericMsg tsInternalMsg;
 
 void resetBootState(void)
@@ -38,11 +38,23 @@ void setBootSession(void)
     updateTimeout();
 }
 
+void SetAppPresentFlag(void)
+{
+    u8AppPresentFlag = 1;
+}
+
 void manageTimeout(void)
 {
-    if ((TMR1_SoftwareCounterGet() >= u16BootTimeout) && (u8BootloadingFlag == 1))
+    if (TMR1_SoftwareCounterGet() >= u16BootTimeout)
     {
-        RESET();
+        if (u8AppPresentFlag != 0)
+        {
+            RESET();
+        }
+        if (u8BootloadingFlag != 0)
+        {
+            resetBootState();
+        }
     }
 }
 
@@ -198,7 +210,6 @@ teOperationRetVal serviceDataTransfer(tsGenericMsg * FptsGenMsg)
         eRetVal = eMemoryNotBlanked;
     }
     
-    
     if(eRetVal == eOperationSuccess)
     {
         eRetVal = manageDataBlock(FptsGenMsg, &tsDataBlock);
@@ -240,15 +251,8 @@ teOperationRetVal serviceCheckFlash(tsGenericMsg * FptsGenMsg)
     
     if (u8BootloadingFlag == 0)
     {
-        if (u8NotifyTimeout == 1)
-        {
-            u8NotifyTimeout = 0;
-            eRetVal = eBootSessionTimeout;
-        }
-        else
-        {
-            eRetVal = eOperationNotAllowed;
-        }
+        eRetVal = eOperationNotAllowed;
+
     }
     else if (u8BlankFlashFlag == 0)
     {
@@ -299,6 +303,8 @@ teOperationRetVal serviceCheckFlash(tsGenericMsg * FptsGenMsg)
             eRetVal = eAppliCheckError;
         }
     }
+    
+    resetBootState();
     
     tsInternalMsg.u8ID = FptsGenMsg->u8ID | 0x80;
     tsInternalMsg.u16Length = 1;

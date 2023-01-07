@@ -10,7 +10,7 @@
 volatile uint32_t BootRequest __attribute__((address(0x1080), persistent));
 
 #ifndef _IS_RELEASE
-const char __attribute__((address(ADDR_APPL_DESC), space(prog))) text[FLASH_LOGISTIC_CHAR_SIZE] = __DATE__" "__TIME__"\r\nBootloader standalone ";
+const char __attribute__((address(ADDR_APPL_DESC), space(prog))) text[FLASH_LOGISTIC_CHAR_SIZE] = __DATE__" "__TIME__" : Bootloader standalone";
 const uint16_t SWVersion __attribute__((address(ADDR_APPL_VERSION), space(prog))) = 0xB101;
 #endif
 
@@ -24,10 +24,12 @@ void main(void)
     
     if (AppliPresent == APPLIVALID) /* Application is present */
     {
+        SetAppPresentFlag();
         if (BootRequest != 0xC0DEFEED)
         {
             StartApplication();
         }
+        
     }
     
     SYSTEM_Initialize();

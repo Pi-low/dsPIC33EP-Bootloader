@@ -36,6 +36,7 @@ extern volatile uint32_t BootRequest;
 void resetBootState(void);
 void updateTimeout(void);
 void setBootSession(void);
+void SetAppPresentFlag(void);
 void manageTimeout(void);
 
 teOperationRetVal serviceGoToBoot(tsGenericMsg* FptsGenMsg);
