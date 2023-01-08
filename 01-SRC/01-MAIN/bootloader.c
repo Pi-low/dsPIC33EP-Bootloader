@@ -267,26 +267,26 @@ teOperationRetVal serviceCheckFlash(tsGenericMsg * FptsGenMsg)
         for (u16Cnt = 0; u16Cnt < 8; u16Cnt++)
         {
             /* Calc first page (IVT + logistic info data), one page is 8 rows */
-            u32RowAddr = u16Cnt * BOOT_ROW_OFFSET_ADDR;
-            FlashReadBufferU32(NULL, pu8DataRowByte, u32RowAddr, BOOT_ROW_SIZE_BYTE);
+            u32RowAddr = u16Cnt * BOOT_ROW_SIZE_WORD;
+            FlashReadRow(pu8DataRowByte, u32RowAddr);
             if (u32RowAddr == 0)
             {
                 /* Blank reset vector address */
                 pu8DataRowByte[0] = 0xFF;
                 pu8DataRowByte[1] = 0xFF;
                 pu8DataRowByte[2] = 0xFF;
-                pu8DataRowByte[3] = 0xFF;
+                pu8DataRowByte[3] = 0x00;
                 pu8DataRowByte[4] = 0xFF;
                 pu8DataRowByte[5] = 0xFF;
                 pu8DataRowByte[6] = 0xFF;
-                pu8DataRowByte[7] = 0xFF;
+                pu8DataRowByte[7] = 0x00;
             }
             BufUpdateCrc16(&u16CRC, pu8DataRowByte, BOOT_ROW_SIZE_BYTE);
         }
         for (u16Cnt = 0; u16Cnt < u16AppliRowCnt; u16Cnt++)
         {
-            u32RowAddr = u16Cnt * BOOT_ROW_OFFSET_ADDR;
-            FlashReadBufferU32(NULL, pu8DataRowByte, ADDR_FLASH_APPLI + u32RowAddr, BOOT_ROW_SIZE_BYTE);
+            u32RowAddr = ADDR_FLASH_APPLI + (u16Cnt * BOOT_ROW_SIZE_WORD);
+            FlashReadRow(pu8DataRowByte, u32RowAddr);
             BufUpdateCrc16(&u16CRC, pu8DataRowByte, BOOT_ROW_SIZE_BYTE);
         }
         updateCrc16(&u16CRC, FptsGenMsg->pu8Data[0]);
@@ -299,6 +299,14 @@ teOperationRetVal serviceCheckFlash(tsGenericMsg * FptsGenMsg)
             if (bRetVal != true)
             {
                 eRetVal = eOperationFail;
+            }
+            else
+            {
+                tsInternalMsg.u8ID = FptsGenMsg->u8ID | 0x80;
+                tsInternalMsg.u16Length = 1;
+                tsInternalMsg.pu8Data[0] = eRetVal;
+                sendFrame(&tsInternalMsg);
+                RESET();
             }
         }
         else

@@ -31,42 +31,28 @@ teOperationRetVal FlashReadBufferU8(uint8_t* Fpu8Buffer, uint16_t Fu16Size, uint
     return eRetVal;
 }
 
-teOperationRetVal FlashReadBufferU32(uint32_t* Fpu32Buffer, uint8_t* Fpu8Buffer, uint32_t Fu32FlashAddr, uint16_t Fu16Size)
+teOperationRetVal FlashReadRow(uint8_t* Fpu8Buffer, uint32_t Fu32FlashAddr)
 {
     teOperationRetVal eRetVal = eOperationSuccess;
-    uint16_t u16WCnt = 0;
+    uint16_t u8Cnt = 0;
     uint32_t u32Word = 0;
     uint8_t* pu8buf = Fpu8Buffer;
-    uint32_t* pu32buf = Fpu32Buffer;
-    
-    if (pu8buf != NULL || pu32buf != NULL)
+
+    for (u8Cnt = 0; u8Cnt < BOOT_ROW_SIZE_WORD; u8Cnt++)
     {
-        for (u16WCnt = 0; u16WCnt < Fu16Size; u16WCnt++)
+        u32Word = FLASH_ReadWord24(Fu32FlashAddr + (u8Cnt * 2));
+        if (pu8buf != NULL)
         {
-            u32Word = FLASH_ReadWord24(Fu32FlashAddr + (u16WCnt * 2));
-            if (pu8buf != NULL)
-            {
-                *pu8buf = u32Word & 0xFF;
-                pu8buf++;
-                *pu8buf = (u32Word >> 8) & 0xFF;
-                pu8buf++;
-                *pu8buf = (u32Word >> 16) & 0xFF;
-                pu8buf++;
-                *pu8buf = 0;
-                pu8buf++;
-            }
-            if (pu32buf != NULL)
-            {
-                *pu32buf = u32Word;
-                pu32buf++;
-            }
+            *pu8buf = u32Word & 0xFF;
+            pu8buf++;
+            *pu8buf = (u32Word >> 8) & 0xFF;
+            pu8buf++;
+            *pu8buf = (u32Word >> 16) & 0xFF;
+            pu8buf++;
+            *pu8buf = 0;
+            pu8buf++;
         }
     }
-    else
-    {
-        eRetVal = eOperationFail;
-    }
-    
     return eRetVal;
 }
 
