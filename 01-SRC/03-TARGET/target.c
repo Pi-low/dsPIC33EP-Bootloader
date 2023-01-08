@@ -27,10 +27,6 @@ void ManageBackTask(void)
         /* Frame timeout */
         teCurrentState = eBackTask_Idle;
         Mcr_ResetStartFrame(tsUartFrame);
-//        tsReturnMsg.u8ID = 0x90;
-//        tsReturnMsg.u16Length = 1;
-//        tsReturnMsg.pu8Data[0] = eFrameTimeout;
-//        sendFrame(&tsReturnMsg);
     }
     
     if (U1STAbits.URXDA == 1)

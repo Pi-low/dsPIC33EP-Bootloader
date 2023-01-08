@@ -11,7 +11,7 @@ static tsFrameSize tsFrameLength[REGISTERED_FRAMES] =
     {eService_getInfo,      2,  2   },
     {eService_eraseFlash,   1,  1   },
     {eService_dataTransfer, 7,  262 },
-    {eService_checkFlash,   4,  4   },
+    {eService_checkFlash,   5,  5   },
     {eService_writePin,     2,  2   },
 #ifndef _IS_RELEASE
     {eService_readPin,      2,  2   },

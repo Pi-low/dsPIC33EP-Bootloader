@@ -29,7 +29,6 @@ void main(void)
         {
             StartApplication();
         }
-        
     }
     
     SYSTEM_Initialize();
@@ -41,7 +40,7 @@ void main(void)
     {
         TMR1_Tasks_16BitOperation(); /* SW timer management */
         ManageBackTask(); /* UART frame management */
-        manageTimeout();
+        //manageTimeout();
         if (FrameAvailable(&tsMainMsg) == eOperationSuccess) /* On Rx frame */
         {
             switch(tsMainMsg.u8ID)
