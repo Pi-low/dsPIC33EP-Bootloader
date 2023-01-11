@@ -39,16 +39,17 @@ const uint16_t KermitCRC16_Table[256] = {
 
 void updateCrc16(uint16_t* Fpu16Input, uint8_t Fu8Data)
 {
+    uint16_t *pu16InOut = Fpu16Input;
     uint16_t u16short = 0x00FF & (uint16_t)Fu8Data;
-    uint16_t u16Tmp = *(Fpu16Input) ^ u16short;
-    *(Fpu16Input) = (*(Fpu16Input) >> 8) ^ KermitCRC16_Table[u16Tmp & 0xFF];
+    uint16_t u16Tmp = *(pu16InOut) ^ u16short;
+    *pu16InOut = (*(pu16InOut) >> 8) ^ KermitCRC16_Table[u16Tmp & 0xFF];
 }
 
 void BufUpdateCrc16(uint16_t* Fpu16Input, uint8_t* Fpu8Data, uint16_t Fu16Length)
 {
     uint16_t u16i = 0;
-	uint16_t* pu16CRC = Fpu16Input;
-	uint8_t* pu8Data = Fpu8Data;
+    uint16_t* pu16CRC = Fpu16Input;
+    uint8_t* pu8Data = Fpu8Data;
     
     for (u16i = 0; u16i < Fu16Length; u16i++)
     {
