@@ -248,7 +248,7 @@ teOperationRetVal serviceCheckFlash(tsGenericMsg * FptsGenMsg)
     uint16_t u16Cnt = 0;
     uint8_t pu8DataRowByte[256];
     uint16_t u16AppliRowCnt = (((uint16_t)FptsGenMsg->pu8Data[2] << 8) & 0xFF00) | ((uint16_t)FptsGenMsg->pu8Data[3] & 0x00FF); /* amount of rows after app start address*/
-    uint16_t u16CRC = 0;
+    uint16_t u16CRC = 0, u16CrcIvt = 0, u16CrcApp = 0;
     uint32_t u32RowAddr = 0;
     uint16_t pu16AppliFlag[2] = {APPLIVALID & 0xFFFF, (APPLIVALID >> 16) & 0xFFFF};
     bool bRetVal = true;
@@ -283,12 +283,14 @@ teOperationRetVal serviceCheckFlash(tsGenericMsg * FptsGenMsg)
             }
             BufUpdateCrc16(&u16CRC, pu8DataRowByte, BOOT_ROW_SIZE_BYTE);
         }
+        u16CrcIvt = u16CRC;
         for (u16Cnt = 0; u16Cnt < u16AppliRowCnt; u16Cnt++)
         {
             u32RowAddr = ADDR_FLASH_APPLI + (u16Cnt * BOOT_ROW_SIZE_WORD);
             FlashReadRow(pu8DataRowByte, u32RowAddr);
             BufUpdateCrc16(&u16CRC, pu8DataRowByte, BOOT_ROW_SIZE_BYTE);
         }
+        u16CrcApp = u16CRC;
         updateCrc16(&u16CRC, FptsGenMsg->pu8Data[0]);
         updateCrc16(&u16CRC, FptsGenMsg->pu8Data[1]);
         if (u16CRC == 0xF0B8)
@@ -318,8 +320,16 @@ teOperationRetVal serviceCheckFlash(tsGenericMsg * FptsGenMsg)
     resetBootState();
     
     tsInternalMsg.u8ID = FptsGenMsg->u8ID | 0x80;
-    tsInternalMsg.u16Length = 1;
+    tsInternalMsg.u16Length = 7;
+    
     tsInternalMsg.pu8Data[0] = eRetVal;
+    tsInternalMsg.pu8Data[1] = u16CrcIvt >> 8;
+    tsInternalMsg.pu8Data[2] = u16CrcIvt;
+    tsInternalMsg.pu8Data[3] = u16CrcApp >> 8;
+    tsInternalMsg.pu8Data[4] = u16CrcApp;
+    tsInternalMsg.pu8Data[5] = u16CRC >> 8;
+    tsInternalMsg.pu8Data[6] = u16CRC;
+    
     sendFrame(&tsInternalMsg);
     
     return eRetVal;
