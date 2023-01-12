@@ -314,23 +314,23 @@ teOperationRetVal serviceCheckFlash(tsGenericMsg * FptsGenMsg)
         else
         {
             eRetVal = eAppliCheckError;
+            tsInternalMsg.u8ID = FptsGenMsg->u8ID | 0x80;
+            tsInternalMsg.u16Length = 7;
+
+            tsInternalMsg.pu8Data[0] = eRetVal;
+            tsInternalMsg.pu8Data[1] = u16CrcIvt >> 8;
+            tsInternalMsg.pu8Data[2] = u16CrcIvt;
+            tsInternalMsg.pu8Data[3] = u16CrcApp >> 8;
+            tsInternalMsg.pu8Data[4] = u16CrcApp;
+            tsInternalMsg.pu8Data[5] = u16CRC >> 8;
+            tsInternalMsg.pu8Data[6] = u16CRC;
+            sendFrame(&tsInternalMsg);
         }
     }
     
     resetBootState();
     
-    tsInternalMsg.u8ID = FptsGenMsg->u8ID | 0x80;
-    tsInternalMsg.u16Length = 7;
     
-    tsInternalMsg.pu8Data[0] = eRetVal;
-    tsInternalMsg.pu8Data[1] = u16CrcIvt >> 8;
-    tsInternalMsg.pu8Data[2] = u16CrcIvt;
-    tsInternalMsg.pu8Data[3] = u16CrcApp >> 8;
-    tsInternalMsg.pu8Data[4] = u16CrcApp;
-    tsInternalMsg.pu8Data[5] = u16CRC >> 8;
-    tsInternalMsg.pu8Data[6] = u16CRC;
-    
-    sendFrame(&tsInternalMsg);
     
     return eRetVal;
 }
