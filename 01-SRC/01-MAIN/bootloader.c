@@ -267,7 +267,7 @@ teOperationRetVal serviceCheckFlash(tsGenericMsg * FptsGenMsg)
         for (u16Cnt = 0; u16Cnt < 8; u16Cnt++)
         {
             /* Calc first page (IVT + logistic info data), one page is 8 rows */
-            u32RowAddr = u16Cnt * BOOT_ROW_SIZE_WORD;
+            u32RowAddr = u16Cnt * BOOT_ROW_SIZE_WORD * 2;
             FlashReadRow(pu8DataRowByte, u32RowAddr);
             if (u32RowAddr == 0)
             {
@@ -284,9 +284,9 @@ teOperationRetVal serviceCheckFlash(tsGenericMsg * FptsGenMsg)
             BufUpdateCrc16(&u16CRC, pu8DataRowByte, BOOT_ROW_SIZE_BYTE);
         }
         u16CrcIvt = u16CRC;
-        for (u16Cnt = 0; u16Cnt < u16AppliRowCnt; u16Cnt++)
+        for (u16Cnt = 0; u16Cnt < u16AppliRowCnt - 8; u16Cnt++)
         {
-            u32RowAddr = ADDR_FLASH_APPLI + (u16Cnt * BOOT_ROW_SIZE_WORD);
+            u32RowAddr = ADDR_FLASH_APPLI + (u16Cnt * BOOT_ROW_SIZE_WORD * 2);
             FlashReadRow(pu8DataRowByte, u32RowAddr);
             BufUpdateCrc16(&u16CRC, pu8DataRowByte, BOOT_ROW_SIZE_BYTE);
         }
@@ -308,7 +308,7 @@ teOperationRetVal serviceCheckFlash(tsGenericMsg * FptsGenMsg)
                 tsInternalMsg.u16Length = 1;
                 tsInternalMsg.pu8Data[0] = eRetVal;
                 sendFrame(&tsInternalMsg);
-                RESET();
+                //RESET();
             }
         }
         else

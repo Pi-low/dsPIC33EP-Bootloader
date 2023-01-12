@@ -8,7 +8,6 @@
 
 static teBackTaskStates teCurrentState;
 static tsGenericMsg tsBootMsg;
-static tsGenericMsg tsReturnMsg;
 static tsUartFrm tsUartFrame;
 
 void InitBackTask(void)
