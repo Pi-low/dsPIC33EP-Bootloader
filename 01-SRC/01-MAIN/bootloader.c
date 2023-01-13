@@ -58,6 +58,11 @@ void manageTimeout(void)
     }
 }
 
+void StartupRoutine(void)
+{
+    
+}
+
 teOperationRetVal serviceGoToBoot(tsGenericMsg* FptsGenMsg)
 {
     teOperationRetVal eRetVal = eOperationSuccess;
@@ -251,6 +256,7 @@ teOperationRetVal serviceCheckFlash(tsGenericMsg * FptsGenMsg)
     uint16_t u16CRC = 0, u16CrcIvt = 0, u16CrcApp = 0;
     uint32_t u32RowAddr = 0;
     uint16_t pu16AppliFlag[2] = {APPLIVALID & 0xFFFF, (APPLIVALID >> 16) & 0xFFFF};
+    uint16_t u16DelayTime = 0;
     bool bRetVal = true;
     
     if (u8BootloadingFlag == 0)
@@ -308,7 +314,9 @@ teOperationRetVal serviceCheckFlash(tsGenericMsg * FptsGenMsg)
                 tsInternalMsg.u16Length = 1;
                 tsInternalMsg.pu8Data[0] = eRetVal;
                 sendFrame(&tsInternalMsg);
-                //RESET();
+                u16DelayTime = TMR1_SoftwareCounterGet() + 50; /* delay 50ms */
+                while (u16DelayTime > TMR1_SoftwareCounterGet());
+                RESET();
             }
         }
         else
@@ -425,20 +433,3 @@ teOperationRetVal manageDataBlock(tsGenericMsg * FptsGenMsg, DataBlock_t * FptsB
     }
     return eRetVal;
 }
-
-#ifndef _IS_REALEASE
-teOperationRetVal serviceCRC(tsGenericMsg* FptsGenMsg)
-{
-    teOperationRetVal eRetVal = eOperationSuccess;
-    uint16_t u16CRC = 0;
-    BufUpdateCrc16(&u16CRC, FptsGenMsg->pu8Data, FptsGenMsg->u16Length);
-    FptsGenMsg->u8ID += 0x80;
-    FptsGenMsg->pu8Data[0] = eRetVal;
-    FptsGenMsg->pu8Data[1] = u16CRC >> 8;
-    FptsGenMsg->pu8Data[2] = u16CRC;
-    FptsGenMsg->u16Length = 3;
-    
-    sendFrame(FptsGenMsg);
-    return eRetVal;
-}
-#endif

@@ -11,7 +11,7 @@
  */
 #define MAX_FRM_LEN (262U)
 #define RX_BUFFER_SIZE (266U)
-#define FRAME_TIMEOUT (1000U) /* 1000ms */
+#define FRAME_TIMEOUT (60U) /* 60ms */
 
 typedef enum
 {
@@ -42,9 +42,6 @@ typedef enum
     eService_checkFlash =       0x06,
     eService_writePin =         0x0A,
     eService_readPin =          0x0B,
-#ifndef _IS_RELEASE
-    eService_TestCrc =          0x0C
-#endif
 }teBootServices;
 
 typedef struct

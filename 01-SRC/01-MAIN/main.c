@@ -10,7 +10,7 @@
 volatile uint32_t BootRequest __attribute__((address(0x1080), persistent));
 
 #ifndef _IS_RELEASE
-const char __attribute__((address(ADDR_APPL_DESC), space(prog))) text[FLASH_LOGISTIC_CHAR_SIZE] = __DATE__""__TIME__" : Bootloader standalone";
+const char __attribute__((address(ADDR_APPL_DESC), space(prog))) text[FLASH_LOGISTIC_CHAR_SIZE] = __DATE__" "__TIME__" : Bootloader standalone";
 const uint16_t SWVersion __attribute__((address(ADDR_APPL_VERSION), space(prog))) = 0xB101;
 #endif
 
@@ -83,11 +83,6 @@ void main(void)
                 updateTimeout();
                 break;
                 
-#ifndef _IS_RELEASE
-            case eService_TestCrc:
-                eRetVal = serviceCRC(&tsMainMsg);
-                break;
-#endif
                 
             default:
                 break;

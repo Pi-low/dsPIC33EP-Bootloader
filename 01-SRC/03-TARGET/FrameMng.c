@@ -13,12 +13,7 @@ static tsFrameSize tsFrameLength[REGISTERED_FRAMES] =
     {eService_dataTransfer, 7,  262 },
     {eService_checkFlash,   5,  5   },
     {eService_writePin,     2,  2   },
-#ifndef _IS_RELEASE
     {eService_readPin,      2,  2   },
-    {eService_TestCrc,      2,  262 }
-#else
-    {eService_readPin,      2,  2   },
-#endif
 };
 
 teOperationRetVal RxFrameHandler(tsUartFrm * UARTFrm, tsGenericMsg * FpGenMsg)

@@ -25,7 +25,7 @@
 #define APPLIVALID (0xA1B2C3D4L)
 #define RESET() asm ("RESET")
 #define StartApplication() __asm__ volatile("goto %0"::"i"(ADDR_FLASH_APPLI))
-#define MAIN_TM_VALUE       (10000) /* 10 seconds */
+#define MAIN_TM_VALUE       (5000) /* 5 seconds */
 
 #define ADDR_APPL_FLAG      (0x200)
 #define ADDR_APPL_DESC      (0x280)
@@ -38,6 +38,7 @@ void updateTimeout(void);
 void setBootSession(void);
 void SetAppPresentFlag(void);
 void manageTimeout(void);
+void StartupRoutine(void);
 
 teOperationRetVal serviceGoToBoot(tsGenericMsg* FptsGenMsg);
 teOperationRetVal serviceEcho(tsGenericMsg* FptsGenMsg);
@@ -48,7 +49,5 @@ teOperationRetVal serviceCheckFlash(tsGenericMsg* FptsGenMsg);
 teOperationRetVal serviceWritePin(tsGenericMsg* FptsGenMsg);
 teOperationRetVal serviceReadPin(tsGenericMsg* FptsGenMsg);
 teOperationRetVal manageDataBlock(tsGenericMsg * FptsGenMsg, DataBlock_t * FptsBlock);
-#ifndef _IS_RELEASE
-teOperationRetVal serviceCRC(tsGenericMsg* FptsGenMsg);
-#endif
+
 #endif
