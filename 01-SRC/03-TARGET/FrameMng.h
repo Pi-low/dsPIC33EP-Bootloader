@@ -2,7 +2,7 @@
 #define FRAME_MNG_H
 
 #include <stdint.h>
-#include "../01-MAIN/BootloaderTypes.h"
+#include "../05-BOOTLOADER/BootloaderTypes.h"
 
 #ifndef _IS_RELEASE
 #define REGISTERED_FRAMES 9

@@ -1,6 +1,3 @@
-#include "../../mcc_generated_files/system.h"
-#include "../01-MAIN/BootloaderTypes.h"
-#include "../01-MAIN/bootloader.h"
 #include "crc.h"
 
 const uint16_t KermitCRC16_Table[256] = {

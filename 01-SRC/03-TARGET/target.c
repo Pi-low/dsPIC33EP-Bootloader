@@ -2,7 +2,7 @@
 #include "../../mcc_generated_files/system.h"
 #include "../../mcc_generated_files/uart1.h"
 #include "../../mcc_generated_files/tmr1.h"
-#include "../01-MAIN/BootloaderTypes.h"
+#include "../05-BOOTLOADER/BootloaderTypes.h"
 #include "FrameMng.h"
 #include "target.h"
 
@@ -127,6 +127,7 @@ teOperationRetVal FrameAvailable(tsGenericMsg* FptsBootMsg)
         teRetVal = eOperationSuccess;
         FptsBootMsg->u8ID = tsBootMsg.u8ID;
         FptsBootMsg->u16Length = tsBootMsg.u16Length;
+        
         for (u16i = 0; u16i < tsBootMsg.u16Length; u16i++)
         {
             FptsBootMsg->pu8Data[u16i] = tsBootMsg.pu8Data[u16i];

@@ -44,6 +44,13 @@ typedef enum
     eService_readPin =          0x0B,
 }teBootServices;
 
+typedef enum
+{
+    eStateTransition,
+    eStateIdle,
+    eStateFlash
+}teMainStates;
+
 typedef struct
 {
     uint32_t u32BlockAddr;

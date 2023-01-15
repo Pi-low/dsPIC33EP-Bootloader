@@ -4,8 +4,9 @@
 #include "../../mcc_generated_files/memory/flash.h"
 #include "../02-FLAH_ROUTINES/flash_routines.h"
 #include "../03-TARGET/target.h"
-#include "BootloaderTypes.h"
-#include "bootloader.h"
+#include "../05-BOOTLOADER/BootloaderTypes.h"
+#include "../05-BOOTLOADER/bootloader.h"
+#include "Misc.h"
 
 volatile uint32_t BootRequest __attribute__((address(0x1080), persistent));
 
@@ -18,13 +19,13 @@ static tsGenericMsg tsMainMsg;
 
 void main(void)
 {
-    teOperationRetVal eRetVal;
+    teMainStates teCurrentState = eStateTransition;
+    
     uint32_t AppliPresent = (uint32_t)FLASH_ReadWord16(ADDR_APPL_FLAG)| 
             ((uint32_t)FLASH_ReadWord16(ADDR_APPL_FLAG + 2) << 16);
     
     if (AppliPresent == APPLIVALID) /* Application is present */
     {
-        SetAppPresentFlag();
         if (BootRequest != 0xC0DEFEED)
         {
             StartApplication();
@@ -40,53 +41,23 @@ void main(void)
     {
         TMR1_Tasks_16BitOperation(); /* SW timer management */
         ManageBackTask(); /* UART frame management */
-        //manageTimeout();
-        if (FrameAvailable(&tsMainMsg) == eOperationSuccess) /* On Rx frame */
+    
+        switch(teCurrentState)
         {
-            switch(tsMainMsg.u8ID)
-            {
-            case eService_gotoBoot:
-                updateTimeout();
-                eRetVal = serviceGoToBoot(&tsMainMsg);
-                break;
-                
-            case eService_echo:
-                updateTimeout();
-                eRetVal = serviceEcho(&tsMainMsg);
-                break;
-                
-            case eService_getInfo:
-                updateTimeout();
-                eRetVal = serviceGetInfo(&tsMainMsg);
-                break;
-                
-            case eService_eraseFlash:
-                updateTimeout();
-                eRetVal = serviceEraseFlash(&tsMainMsg);
-                break;
-                
-            case eService_dataTransfer:
-                updateTimeout();
-                eRetVal = serviceDataTransfer(&tsMainMsg);
-                break;
-                
-            case eService_checkFlash:
-                updateTimeout();
-                eRetVal = serviceCheckFlash(&tsMainMsg);
-                break;
-                
-            case eService_writePin:
-                updateTimeout();
-                break;
-                
-            case eService_readPin:
-                updateTimeout();
-                break;
-                
-                
-            default:
-                break;
-            }
+        case eStateTransition:
+            
+            break;
+            
+        case eStateIdle:
+            teCurrentState = State_BootIdle();
+            break;
+            
+        case eStateFlash:
+            teCurrentState = State_Bootloading();
+            break;
+            
+        default:
+            break;
         }
     }
 }

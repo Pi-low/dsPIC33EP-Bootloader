@@ -18,6 +18,7 @@
                 <sourceRootElem>01-SRC/02-FLAH_ROUTINES</sourceRootElem>
                 <sourceRootElem>01-SRC/03-TARGET</sourceRootElem>
                 <sourceRootElem>01-SRC/04-CRC</sourceRootElem>
+                <sourceRootElem>01-SRC/05-BOOTLOADER</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

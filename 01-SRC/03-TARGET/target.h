@@ -2,7 +2,7 @@
 #define TARGET_H
 
 #include <stdint.h>
-#include "../01-MAIN/BootloaderTypes.h"
+#include "../05-BOOTLOADER/BootloaderTypes.h"
 
 typedef enum
 {

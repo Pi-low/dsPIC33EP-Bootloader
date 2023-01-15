@@ -7,6 +7,7 @@
 #include "../03-TARGET/target.h"
 #include "../02-FLAH_ROUTINES/flash_routines.h"
 #include "../04-CRC/crc.h"
+#include "../01-MAIN/Misc.h"
 #include "BootloaderTypes.h"
 #include "bootloader.h"
 
@@ -32,17 +33,6 @@ void updateTimeout(void)
     u16BootTimeout = TMR1_SoftwareCounterGet() + BOOT_TIMEOUT;
 }
 
-void setBootSession(void)
-{
-    u8BootloadingFlag = 1;
-    updateTimeout();
-}
-
-void SetAppPresentFlag(void)
-{
-    u8AppPresentFlag = 1;
-}
-
 void manageTimeout(void)
 {
     if (TMR1_SoftwareCounterGet() >= u16BootTimeout)
@@ -58,9 +48,71 @@ void manageTimeout(void)
     }
 }
 
-void StartupRoutine(void)
+teMainStates State_Transition(void)
 {
-    
+    teMainStates eRetState = eStateTransition;
+    return eRetState;
+}
+
+teMainStates State_Bootloading(void)
+{
+    tsGenericMsg RxMsg;
+    teOperationRetVal eRetVal;
+    teMainStates eRetState = eStateFlash;
+    //manageTimeout();
+    if (FrameAvailable(&RxMsg) == eOperationSuccess) /* On Rx frame */
+    {
+        switch (RxMsg.u8ID)
+        {
+        case eService_gotoBoot:
+            updateTimeout();
+            eRetVal = serviceGoToBoot(&RxMsg);
+            break;
+
+        case eService_echo:
+            updateTimeout();
+            eRetVal = serviceEcho(&RxMsg);
+            break;
+
+        case eService_getInfo:
+            updateTimeout();
+            eRetVal = serviceGetInfo(&RxMsg);
+            break;
+
+        case eService_eraseFlash:
+            updateTimeout();
+            eRetVal = serviceEraseFlash(&RxMsg);
+            break;
+
+        case eService_dataTransfer:
+            updateTimeout();
+            eRetVal = serviceDataTransfer(&RxMsg);
+            break;
+
+        case eService_checkFlash:
+            updateTimeout();
+            eRetVal = serviceCheckFlash(&RxMsg);
+            break;
+
+        case eService_writePin:
+            updateTimeout();
+            break;
+
+        case eService_readPin:
+            updateTimeout();
+            break;
+
+        default:
+            break;
+        }
+    }
+    return eRetState;
+}
+
+teMainStates State_BootIdle(void)
+{
+    teMainStates eRetState = eStateFlash;
+    return eRetState;
 }
 
 teOperationRetVal serviceGoToBoot(tsGenericMsg* FptsGenMsg)
@@ -179,6 +231,7 @@ teOperationRetVal serviceEraseFlash(tsGenericMsg * FptsGenMsg)
             u8Err &= FLASH_ErasePage(ADDR_FLASH_APPLI + (u32i * FLASH_ERASE_PAGE_SIZE_IN_PC_UNITS));
             u32i++;
             updateTimeout();
+            ClrWdt();
         }
         if ((u8Err == 1) && (u32i == FLASH_APPLI_PAGES))
         {
@@ -233,10 +286,6 @@ teOperationRetVal serviceDataTransfer(tsGenericMsg * FptsGenMsg)
     if (eRetVal == eOperationSuccess)
     {
         eRetVal = FlashCheckRow(&tsDataBlock);
-    }
-    if (eRetVal != eOperationSuccess)
-    {
-        resetBootState();
     }
     
     tsInternalMsg.u8ID = FptsGenMsg->u8ID | 0x80;
@@ -301,9 +350,9 @@ teOperationRetVal serviceCheckFlash(tsGenericMsg * FptsGenMsg)
         updateCrc16(&u16CRC, FptsGenMsg->pu8Data[1]);
         if (u16CRC == 0xF0B8)
         {
-            FLASH_Unlock(FLASH_UNLOCK_KEY);
-            bRetVal = FLASH_WriteDoubleWord24(ADDR_APPL_FLAG, pu16AppliFlag[0], pu16AppliFlag[1]);
-            FLASH_Lock();
+            //FLASH_Unlock(FLASH_UNLOCK_KEY);
+            //bRetVal = FLASH_WriteDoubleWord24(ADDR_APPL_FLAG, pu16AppliFlag[0], pu16AppliFlag[1]);
+            //FLASH_Lock();
             if (bRetVal != true)
             {
                 eRetVal = eOperationFail;
@@ -315,7 +364,7 @@ teOperationRetVal serviceCheckFlash(tsGenericMsg * FptsGenMsg)
                 tsInternalMsg.pu8Data[0] = eRetVal;
                 sendFrame(&tsInternalMsg);
                 u16DelayTime = TMR1_SoftwareCounterGet() + 50; /* delay 50ms */
-                while (u16DelayTime > TMR1_SoftwareCounterGet());
+                
                 RESET();
             }
         }
@@ -335,10 +384,6 @@ teOperationRetVal serviceCheckFlash(tsGenericMsg * FptsGenMsg)
             sendFrame(&tsInternalMsg);
         }
     }
-    
-    resetBootState();
-    
-    
     
     return eRetVal;
 }

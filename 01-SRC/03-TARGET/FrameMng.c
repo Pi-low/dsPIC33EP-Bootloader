@@ -1,5 +1,5 @@
 #include <stdint.h>
-#include "../01-MAIN/BootloaderTypes.h"
+#include "../05-BOOTLOADER/BootloaderTypes.h"
 #include "target.h"
 #include "FrameMng.h"
 
