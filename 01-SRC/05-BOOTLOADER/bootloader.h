@@ -36,6 +36,7 @@ extern volatile uint32_t BootRequest;
 void resetBootState(void);
 void updateTimeout(void);
 void manageTimeout(void);
+void InitBootloader(void);
 
 teMainStates State_Transition(void);
 teMainStates State_Bootloading(void);

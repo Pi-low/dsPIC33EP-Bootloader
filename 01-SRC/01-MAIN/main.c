@@ -21,22 +21,11 @@ void main(void)
 {
     teMainStates teCurrentState = eStateTransition;
     
-    uint32_t AppliPresent = (uint32_t)FLASH_ReadWord16(ADDR_APPL_FLAG)| 
-            ((uint32_t)FLASH_ReadWord16(ADDR_APPL_FLAG + 2) << 16);
-    
-    if (AppliPresent == APPLIVALID) /* Application is present */
-    {
-        if (BootRequest != 0xC0DEFEED)
-        {
-            StartApplication();
-        }
-    }
-    
     SYSTEM_Initialize();
     MCU_FPWM_SetHigh();
     InitBackTask();
     TMR1_Start();
-    resetBootState();
+    InitBootloader();
     while(1)
     {
         TMR1_Tasks_16BitOperation(); /* SW timer management */
@@ -45,7 +34,7 @@ void main(void)
         switch(teCurrentState)
         {
         case eStateTransition:
-            
+            teCurrentState = State_Transition();
             break;
             
         case eStateIdle:

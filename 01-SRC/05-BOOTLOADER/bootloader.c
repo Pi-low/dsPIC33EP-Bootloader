@@ -1,5 +1,6 @@
 
 #include <stdlib.h>
+#include <string.h>
 #include "../../mcc_generated_files/system.h"
 #include "../../mcc_generated_files/pin_manager.h"
 #include "../../mcc_generated_files/tmr1.h"
@@ -11,31 +12,34 @@
 #include "BootloaderTypes.h"
 #include "bootloader.h"
 
+static uint8_t u8AppPresentFlag;
 static uint8_t u8BlankFlashFlag;
 static uint8_t u8BootloadingFlag;
-static uint16_t u16BootTimeout;
+static uint16_t u16Timeout1, u16TransitionTimeout;
 static DataBlock_t tsDataBlock;
 static uint32_t pu32SaveRstVector[2] = {0};
 static uint32_t u32PrevBlockAddr;
-static uint8_t u8AppPresentFlag;
 static tsGenericMsg tsInternalMsg;
+
+static void SendBootFrame(uint8_t Fu8Byte0);
 
 void resetBootState(void)
 {
     u8BlankFlashFlag = 0;
     u8BootloadingFlag = 0;
+    u32PrevBlockAddr = 0;
     pu32SaveRstVector[0] = 0;
     pu32SaveRstVector[1] = 0;
 }
 
 void updateTimeout(void)
 {
-    u16BootTimeout = TMR1_SoftwareCounterGet() + BOOT_TIMEOUT;
+    u16Timeout1 = TMR1_SoftwareCounterGet() + BOOT_TIMEOUT;
 }
 
 void manageTimeout(void)
 {
-    if (TMR1_SoftwareCounterGet() >= u16BootTimeout)
+    if (u16Timeout1 < TMR1_SoftwareCounterGet())
     {
         if (u8AppPresentFlag != 0)
         {
@@ -48,50 +52,113 @@ void manageTimeout(void)
     }
 }
 
+void SendBootFrame(uint8_t Fu8Byte0)
+{
+    tsGenericMsg tsTxMsg;
+    tsTxMsg.u8ID = 0;
+    tsTxMsg.pu8Data[0] = Fu8Byte0;
+    tsTxMsg.u16Length = 1;
+}
+
+void InitBootloader(void)
+{
+    uint32_t AppliPresent = (uint32_t) FLASH_ReadWord16(ADDR_APPL_FLAG) | ((uint32_t) FLASH_ReadWord16(ADDR_APPL_FLAG + 2) << 16);
+    u8AppPresentFlag = (AppliPresent == APPLIVALID) ? 1 : 0;
+    resetBootState();
+    u16TransitionTimeout = TMR1_SoftwareCounterGet() + 250;
+    SendBootFrame(0xAA);
+}
+
 teMainStates State_Transition(void)
 {
     teMainStates eRetState = eStateTransition;
+    teOperationRetVal eRetVal = eOperationNotAvailable;
+    tsGenericMsg tsRxMsg;
+    if ((u8AppPresentFlag != 0) && (BootRequest != BOOTFLAG)) /* Application is present, no bootloader flag*/
+    {
+        if ((TMR1_SoftwareCounterGet() % 50) == 0)
+        {
+            SendBootFrame(0xAA);
+        }
+        eRetVal = FrameAvailable(&tsRxMsg);
+        if (eRetVal == eOperationSuccess)
+        {
+            eRetState = eStateIdle;
+        }
+        if ((u16TransitionTimeout < TMR1_SoftwareCounterGet()) && (eRetVal != eOperationSuccess))
+        {
+            TMR1_Stop();
+            StartApplication();
+        }
+    }
+    else
+    {
+        eRetState = eStateIdle;
+    }
+    
     return eRetState;
 }
 
 teMainStates State_Bootloading(void)
 {
-    tsGenericMsg RxMsg;
+    tsGenericMsg tsRxMsg;
     teOperationRetVal eRetVal;
     teMainStates eRetState = eStateFlash;
     //manageTimeout();
-    if (FrameAvailable(&RxMsg) == eOperationSuccess) /* On Rx frame */
+    if (FrameAvailable(&tsRxMsg) == eOperationSuccess) /* On Rx frame */
     {
-        switch (RxMsg.u8ID)
+        switch (tsRxMsg.u8ID)
         {
-        case eService_gotoBoot:
-            updateTimeout();
-            eRetVal = serviceGoToBoot(&RxMsg);
-            break;
-
-        case eService_echo:
-            updateTimeout();
-            eRetVal = serviceEcho(&RxMsg);
-            break;
-
-        case eService_getInfo:
-            updateTimeout();
-            eRetVal = serviceGetInfo(&RxMsg);
-            break;
-
+            
         case eService_eraseFlash:
             updateTimeout();
-            eRetVal = serviceEraseFlash(&RxMsg);
+            eRetVal = serviceEraseFlash(&tsRxMsg);
             break;
 
         case eService_dataTransfer:
             updateTimeout();
-            eRetVal = serviceDataTransfer(&RxMsg);
+            eRetVal = serviceDataTransfer(&tsRxMsg);
             break;
 
         case eService_checkFlash:
             updateTimeout();
-            eRetVal = serviceCheckFlash(&RxMsg);
+            eRetVal = serviceCheckFlash(&tsRxMsg);
+            break;
+
+        default:
+            break;
+        }
+        if (eRetVal != eOperationSuccess)
+        {
+            
+        }
+    }
+    return eRetState;
+}
+
+teMainStates State_BootIdle(void)
+{
+    tsGenericMsg tsRxMsg;
+    teMainStates eRetState = eStateFlash;
+    teOperationRetVal eRetVal = eOperationNotAvailable;
+    
+    if (FrameAvailable(&tsRxMsg) == eOperationSuccess) /* On Rx frame */
+    {
+        switch (tsRxMsg.u8ID)
+        {
+        case eService_gotoBoot:
+            updateTimeout();
+            eRetVal = serviceGoToBoot(&tsRxMsg);
+            break;
+            
+        case eService_echo:
+            updateTimeout();
+            eRetVal = serviceEcho(&tsRxMsg);
+            break;
+
+        case eService_getInfo:
+            updateTimeout();
+            eRetVal = serviceGetInfo(&tsRxMsg);
             break;
 
         case eService_writePin:
@@ -101,17 +168,15 @@ teMainStates State_Bootloading(void)
         case eService_readPin:
             updateTimeout();
             break;
-
-        default:
+            
+        default :
             break;
         }
+        if (u8BootloadingFlag != 0)
+        {
+            eRetState = eStateFlash;
+        }
     }
-    return eRetState;
-}
-
-teMainStates State_BootIdle(void)
-{
-    teMainStates eRetState = eStateFlash;
     return eRetState;
 }
 
@@ -350,9 +415,9 @@ teOperationRetVal serviceCheckFlash(tsGenericMsg * FptsGenMsg)
         updateCrc16(&u16CRC, FptsGenMsg->pu8Data[1]);
         if (u16CRC == 0xF0B8)
         {
-            //FLASH_Unlock(FLASH_UNLOCK_KEY);
-            //bRetVal = FLASH_WriteDoubleWord24(ADDR_APPL_FLAG, pu16AppliFlag[0], pu16AppliFlag[1]);
-            //FLASH_Lock();
+            FLASH_Unlock(FLASH_UNLOCK_KEY);
+            bRetVal = FLASH_WriteDoubleWord24(ADDR_APPL_FLAG, pu16AppliFlag[0], pu16AppliFlag[1]);
+            FLASH_Lock();
             if (bRetVal != true)
             {
                 eRetVal = eOperationFail;
