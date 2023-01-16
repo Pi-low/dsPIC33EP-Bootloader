@@ -39,11 +39,12 @@ void updateTimeout(void)
 
 void manageTimeout(void)
 {
+    TMR1_Tasks_16BitOperation();
     if (u16Timeout1 < TMR1_SoftwareCounterGet())
     {
         if ((u8AppPresentFlag != 0) || (u8BootloadingFlag != 0))
         {
-            SendBootFrame(eBootSessionTimeout);
+            //SendBootFrame(eBootSessionTimeout);
             resetBootState();
             RESET();
         }
@@ -74,9 +75,10 @@ teMainStates State_Transition(void)
     teMainStates eRetState = eStateTransition;
     teOperationRetVal eRetVal = eOperationNotAvailable;
     tsGenericMsg tsRxMsg;
+    TMR1_Tasks_16BitOperation();
     if ((u8AppPresentFlag != 0) && (BootRequest != BOOTFLAG)) /* Application is present, no bootloader flag*/
     {
-        if ((TMR1_SoftwareCounterGet() % 50) == 0)
+        if (((TMR1_SoftwareCounterGet() % 100) == 0) && (TMR1_SoftwareCounterGet() != 0))
         {
             SendBootFrame(eBootAttention);
         }
@@ -86,7 +88,7 @@ teMainStates State_Transition(void)
             SendBootFrame(eBootIdle);
             eRetState = eStateIdle;
         }
-        if ((u16TransitionTimeout < TMR1_SoftwareCounterGet()) && (eRetVal != eOperationSuccess))
+        else if ((u16TransitionTimeout < TMR1_SoftwareCounterGet()) && (eRetVal != eOperationSuccess))
         {
             TMR1_Stop();
             StartApplication();
@@ -103,7 +105,7 @@ teMainStates State_Transition(void)
 teMainStates State_BootIdle(void)
 {
     tsGenericMsg tsRxMsg;
-    teMainStates eRetState = eStateFlash;
+    teMainStates eRetState = eStateIdle;
     teOperationRetVal eRetVal = eOperationNotAvailable;
     ClrWdt();
     if (FrameAvailable(&tsRxMsg) == eOperationSuccess) /* On Rx frame */
@@ -113,7 +115,6 @@ teMainStates State_BootIdle(void)
         {
         case eService_gotoBoot:
             eRetVal = serviceGoToBoot(&tsRxMsg);
-            updateTimeout();
             break;
             
         case eService_echo:
@@ -183,7 +184,8 @@ teOperationRetVal serviceGoToBoot(tsGenericMsg* FptsGenMsg)
     teOperationRetVal eRetVal = eOperationSuccess;
     
     u8BootloadingFlag = 1;
-    
+    updateTimeout();
+    TMR1_Tasks_16BitOperation();
     tsInternalMsg.u8ID = FptsGenMsg->u8ID | 0x80;
     tsInternalMsg.pu8Data[0] = eRetVal;
     tsInternalMsg.u16Length = 1;
@@ -428,7 +430,7 @@ teOperationRetVal serviceCheckFlash(tsGenericMsg * FptsGenMsg)
                 tsInternalMsg.u16Length = 1;
                 tsInternalMsg.pu8Data[0] = eRetVal;
                 sendFrame(&tsInternalMsg);
-                u16DelayTime = TMR1_SoftwareCounterGet() + 50; /* delay 50ms */
+                BlockingDelay(50);
                 resetBootState();
                 RESET();
             }
