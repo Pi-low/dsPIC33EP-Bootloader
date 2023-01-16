@@ -29,7 +29,9 @@ typedef enum
     eBadCRCBlock =              11,
     eFlashWriteError =          12,
     eAppliCheckError =          13,
-    eBootSessionTimeout =       14
+    eBootSessionTimeout =       14,
+    eBootIdle =                 15,
+    eBootAttention =            16,
 }teOperationRetVal;
 
 typedef enum

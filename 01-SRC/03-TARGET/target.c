@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include "../../mcc_generated_files/system.h"
 #include "../../mcc_generated_files/uart1.h"
 #include "../../mcc_generated_files/tmr1.h"
@@ -19,6 +20,7 @@ void ManageBackTask(void)
 {
     uint8_t RxData;
     teOperationRetVal eRetVal;
+    ClrWdt();
     if ((Mcr_GetStartFrame(tsUartFrame) == 1) && 
             (TMR1_SoftwareCounterGet() > tsUartFrame.u16Timeout) && 
             (Mcr_GetAvailable(tsUartFrame) == 0))
@@ -103,7 +105,7 @@ void sendFrame(tsGenericMsg* FptsTxMsg)
     
     u8Checksum = ~u8Checksum;
     pu8TxBuffer[4 + u16i] = u8Checksum;
-    
+    ClrWdt();
     for (u16i = 0; u16i < u16FrmLength + 4; u16i++)
     {
         UART1_Write(pu8TxBuffer[u16i]);
@@ -120,18 +122,18 @@ void sendFrame(tsGenericMsg* FptsTxMsg)
 teOperationRetVal FrameAvailable(tsGenericMsg* FptsBootMsg)
 {
     teOperationRetVal teRetVal = eOperationNotAvailable;
-    uint16_t u16i = 0;
+//    uint16_t u16i = 0;
     if (Mcr_GetAvailable(tsUartFrame) == 1)
     {
         Mcr_ResetAvailable(tsUartFrame);
         teRetVal = eOperationSuccess;
         FptsBootMsg->u8ID = tsBootMsg.u8ID;
         FptsBootMsg->u16Length = tsBootMsg.u16Length;
-        
-        for (u16i = 0; u16i < tsBootMsg.u16Length; u16i++)
-        {
-            FptsBootMsg->pu8Data[u16i] = tsBootMsg.pu8Data[u16i];
-        }
+        memcpy(FptsBootMsg->pu8Data, tsBootMsg.pu8Data, tsBootMsg.u16Length);
+//        for (u16i = 0; u16i < tsBootMsg.u16Length; u16i++)
+//        {
+//            FptsBootMsg->pu8Data[u16i] = tsBootMsg.pu8Data[u16i];
+//        }
     }
     else
     {
@@ -140,11 +142,11 @@ teOperationRetVal FrameAvailable(tsGenericMsg* FptsBootMsg)
     return teRetVal;
 }
 
-void BufCopy(uint8_t* pu8Dest, uint8_t* pu8Src, uint16_t u16Size)
-{
-    uint16_t u16i;
-    for (u16i = 0; u16i < u16Size; u16i++)
-    {
-        pu8Dest[u16i] = pu8Src[u16i];
-    }
-}
+//void BufCopy(uint8_t* pu8Dest, uint8_t* pu8Src, uint16_t u16Size)
+//{
+//    uint16_t u16i;
+//    for (u16i = 0; u16i < u16Size; u16i++)
+//    {
+//        pu8Dest[u16i] = pu8Src[u16i];
+//    }
+//}
