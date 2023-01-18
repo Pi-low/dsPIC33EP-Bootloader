@@ -45,6 +45,7 @@ void manageTimeout(void)
         {
             //SendBootFrame(eBootSessionTimeout);
             resetBootState();
+            WatchdogDisable();
             RESET();
         }
     }
@@ -75,6 +76,7 @@ teMainStates State_Transition(void)
     static uint16_t su16TM = 0;
     static uint8_t su8Cnt = 0;
     TMR1_Tasks_16BitOperation();
+    updateTimeout();
     if ((u8AppPresentFlag != 0) && (BootRequest != BOOTFLAG)) /* Application is present, no bootloader flag*/
     {
         /* Sending boot attention message every 50ms, waiting for any rx message */
@@ -97,6 +99,7 @@ teMainStates State_Transition(void)
         if ((TMR1_SoftwareCounterGet() > 250) || (su8Cnt > 5))
         {
             TMR1_Stop();
+            WatchdogDisable();
             StartApplication();
         }
     }

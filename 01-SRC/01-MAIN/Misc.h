@@ -13,6 +13,7 @@
 
 void BlockingDelay(uint16_t u16Timeout);
 void WatchdogEnable(void);
+void WatchdogDisable(void);
 
 #endif	/* MISC_H */
 
