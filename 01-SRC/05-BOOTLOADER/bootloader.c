@@ -75,19 +75,15 @@ teMainStates State_Transition(void)
     tsGenericMsg tsRxMsg;
     static uint16_t su16TM = 0;
     static uint8_t su8Cnt = 0;
-    TMR1_Tasks_16BitOperation();
     updateTimeout();
+    eRetVal = FrameAvailable(&tsRxMsg);
     if ((u8AppPresentFlag != 0) && (BootRequest != BOOTFLAG)) /* Application is present, no bootloader flag*/
     {
         /* Sending boot attention message every 50ms, waiting for any rx message */
         if (TMR1_SoftwareCounterGet() > su16TM)
         {
-            if (su8Cnt != 0) /* Skip first iteration: no Tx frame */
-            {
-                eRetVal = FrameAvailable(&tsRxMsg);
-            }
             SendBootFrame(eBootAttention);
-            su16TM = TMR1_SoftwareCounterGet() + 50;
+            su16TM = TMR1_SoftwareCounterGet() + 100;
             su8Cnt++;
         }
         if (eRetVal == eOperationSuccess)
@@ -96,7 +92,7 @@ teMainStates State_Transition(void)
             eRetState = eStateIdle;
             BootRequest = 0;
         }
-        if ((TMR1_SoftwareCounterGet() > 250) || (su8Cnt > 5))
+        else if ((TMR1_SoftwareCounterGet() > 300) || (su8Cnt > 3))
         {
             TMR1_Stop();
             WatchdogDisable();
@@ -105,6 +101,7 @@ teMainStates State_Transition(void)
     }
     else
     {
+        SendBootFrame(eBootIdle);
         eRetState = eStateIdle;
     }
     
