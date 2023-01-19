@@ -29,11 +29,14 @@ typedef enum
     eBadCRCBlock =              11,
     eFlashWriteError =          12,
     eAppliCheckError =          13,
-    eBootSessionTimeout =       14
+    eBootSessionTimeout =       14,
+    eBootIdle =                 15,
+    eBootAttention =            16,
 }teOperationRetVal;
 
 typedef enum
 {
+    eBoot =                     0x00,
     eService_gotoBoot =         0x01,
     eService_echo =             0x02,
     eService_getInfo =          0x03,
@@ -43,6 +46,13 @@ typedef enum
     eService_writePin =         0x0A,
     eService_readPin =          0x0B,
 }teBootServices;
+
+typedef enum
+{
+    eStateTransition,
+    eStateIdle,
+    eStateFlash
+}teMainStates;
 
 typedef struct
 {

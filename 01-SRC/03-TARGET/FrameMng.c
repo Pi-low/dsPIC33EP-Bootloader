@@ -1,11 +1,12 @@
 #include <stdint.h>
-#include "../01-MAIN/BootloaderTypes.h"
+#include "../05-BOOTLOADER/BootloaderTypes.h"
 #include "target.h"
 #include "FrameMng.h"
 
 static tsFrameSize tsFrameLength[REGISTERED_FRAMES] = 
 {
     /* Service ID          MIN MAX  */
+    {eBoot,                 2,  2   },
     {eService_gotoBoot,     1,  1   },
     {eService_echo,         2,  65  },
     {eService_getInfo,      2,  2   },

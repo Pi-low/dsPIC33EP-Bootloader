@@ -2,7 +2,7 @@
 #define TARGET_H
 
 #include <stdint.h>
-#include "../01-MAIN/BootloaderTypes.h"
+#include "../05-BOOTLOADER/BootloaderTypes.h"
 
 typedef enum
 {
@@ -14,6 +14,6 @@ void InitBackTask(void);
 void ManageBackTask(void);
 teOperationRetVal FrameAvailable(tsGenericMsg* FptsBootMsg);
 void sendFrame(tsGenericMsg *FptsTxMsg);
-void BufCopy(uint8_t* pu8Dest, uint8_t* pu8Src, uint16_t u16Size);
+//void BufCopy(uint8_t* pu8Dest, uint8_t* pu8Src, uint16_t u16Size);
 
 #endif

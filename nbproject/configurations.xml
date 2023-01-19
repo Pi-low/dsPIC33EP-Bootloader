@@ -5,9 +5,7 @@
                    displayName="Header Files"
                    projectFiles="true">
       <logicalFolder name="01-MAIN" displayName="01-MAIN" projectFiles="true">
-        <itemPath>01-SRC/01-MAIN/bootloader.h</itemPath>
-        <itemPath>01-SRC/01-MAIN/main.h</itemPath>
-        <itemPath>01-SRC/01-MAIN/BootloaderTypes.h</itemPath>
+        <itemPath>01-SRC/01-MAIN/Misc.h</itemPath>
       </logicalFolder>
       <logicalFolder name="02-FLAH_ROUTINES"
                      displayName="02-FLAH_ROUTINES"
@@ -20,6 +18,12 @@
       </logicalFolder>
       <logicalFolder name="04-CRC" displayName="04-CRC" projectFiles="true">
         <itemPath>01-SRC/04-CRC/crc.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="05-BOOTLOADER"
+                     displayName="05-BOOTLOADER"
+                     projectFiles="true">
+        <itemPath>01-SRC/05-BOOTLOADER/bootloader.h</itemPath>
+        <itemPath>01-SRC/05-BOOTLOADER/BootloaderTypes.h</itemPath>
       </logicalFolder>
       <logicalFolder name="MCC Generated Files"
                      displayName="MCC Generated Files"
@@ -53,8 +57,8 @@
                    displayName="Source Files"
                    projectFiles="true">
       <logicalFolder name="01-MAIN" displayName="01-MAIN" projectFiles="true">
-        <itemPath>01-SRC/01-MAIN/bootloader.c</itemPath>
         <itemPath>01-SRC/01-MAIN/main.c</itemPath>
+        <itemPath>01-SRC/01-MAIN/Misc.c</itemPath>
       </logicalFolder>
       <logicalFolder name="02-FLAH_ROUTINES"
                      displayName="02-FLAH_ROUTINES"
@@ -67,6 +71,11 @@
       </logicalFolder>
       <logicalFolder name="04-CRC" displayName="04-CRC" projectFiles="true">
         <itemPath>01-SRC/04-CRC/crc.c</itemPath>
+      </logicalFolder>
+      <logicalFolder name="05-BOOTLOADER"
+                     displayName="05-BOOTLOADER"
+                     projectFiles="true">
+        <itemPath>01-SRC/05-BOOTLOADER/bootloader.c</itemPath>
       </logicalFolder>
       <logicalFolder name="MCC Generated Files"
                      displayName="MCC Generated Files"
@@ -86,6 +95,10 @@
         <itemPath>mcc_generated_files/uart1.c</itemPath>
         <itemPath>mcc_generated_files/pin_manager.c</itemPath>
       </logicalFolder>
+      <logicalFolder name="f1" displayName="Startup" projectFiles="true">
+        <itemPath>01-SRC/01-MAIN/null_signature_boot.s</itemPath>
+        <itemPath>01-SRC/01-MAIN/crt1_extendedep_boot.s</itemPath>
+      </logicalFolder>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -100,6 +113,7 @@
     <Elem>01-SRC/02-FLAH_ROUTINES</Elem>
     <Elem>01-SRC/03-TARGET</Elem>
     <Elem>01-SRC/04-CRC</Elem>
+    <Elem>01-SRC/05-BOOTLOADER</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -329,6 +343,7 @@
         <property key="debugoptions.debug-startup" value="Use system settings"/>
         <property key="debugoptions.reset-behaviour" value="Use system settings"/>
         <property key="debugoptions.useswbreakpoints" value="false"/>
+        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="false"/>

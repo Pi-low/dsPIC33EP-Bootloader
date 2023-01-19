@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include "../../mcc_generated_files/system.h"
 #include "../../mcc_generated_files/memory/flash.h"
-#include "../01-MAIN/BootloaderTypes.h"
-#include "../01-MAIN/bootloader.h"
+#include "../05-BOOTLOADER/BootloaderTypes.h"
+#include "../05-BOOTLOADER/bootloader.h"
 #include "flash_routines.h"
 
 teOperationRetVal FlashReadBufferU8(uint8_t* Fpu8Buffer, uint16_t Fu16Size, uint32_t Fu32FlashAddr)
