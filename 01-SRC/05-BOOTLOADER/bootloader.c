@@ -1,3 +1,28 @@
+/* 
+ * The dsPIC33EP-Bootloader is a basic and simple UART bootloaloader that
+ * is designed to work with all dsPIC33EP 16bit Microchip MCU family.
+ * 
+ * Copyright (C) 2023  Nello Chommanivong
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * 
+ * File: bootloader.c
+ * Author: Nello
+ * Mail: nello.chom@protonmail.com
+ * 
+ */
+
 #include <stdlib.h>
 #include <string.h>
 #include "../../mcc_generated_files/system.h"
@@ -43,7 +68,6 @@ void manageTimeout(void)
     {
         if ((u8AppPresentFlag != 0) || (u8BootloadingFlag != 0))
         {
-            //SendBootFrame(eBootSessionTimeout);
             resetBootState();
             WatchdogDisable();
             RESET();
@@ -77,9 +101,9 @@ teMainStates State_Transition(void)
     static uint8_t su8Cnt = 0;
     updateTimeout();
     eRetVal = FrameAvailable(&tsRxMsg);
-    if ((u8AppPresentFlag != 0) && (BootRequest != BOOTFLAG)) /* Application is present, no bootloader flag*/
+    if (u8AppPresentFlag != 0) /* Application is present */
     {
-        /* Sending boot attention message every 50ms, waiting for any rx message */
+        /* Sending boot attention message every 100ms, waiting for any rx message */
         if (TMR1_SoftwareCounterGet() > su16TM)
         {
             SendBootFrame(eBootAttention);
@@ -90,7 +114,6 @@ teMainStates State_Transition(void)
         {
             SendBootFrame(eBootIdle);
             eRetState = eStateIdle;
-            BootRequest = 0;
         }
         else if ((TMR1_SoftwareCounterGet() > 300) || (su8Cnt > 3))
         {
@@ -122,21 +145,11 @@ teMainStates State_BootIdle(void)
         case eService_gotoBoot:
             eRetVal = serviceGoToBoot(&tsRxMsg);
             break;
-            
-        case eService_echo:
-            eRetVal = serviceEcho(&tsRxMsg);
-            break;
 
         case eService_getInfo:
             eRetVal = serviceGetInfo(&tsRxMsg);
             break;
 
-        case eService_writePin:
-            break;
-
-        case eService_readPin:
-            break;
-            
         default :
             break;
         }
@@ -195,28 +208,6 @@ teOperationRetVal serviceGoToBoot(tsGenericMsg* FptsGenMsg)
     tsInternalMsg.u8ID = FptsGenMsg->u8ID | 0x80;
     tsInternalMsg.pu8Data[0] = eRetVal;
     tsInternalMsg.u16Length = 1;
-    
-    sendFrame(&tsInternalMsg);
-    
-    return eRetVal;
-}
-
-teOperationRetVal serviceEcho(tsGenericMsg* FptsGenMsg)
-{
-    teOperationRetVal eRetVal = eOperationSuccess;
-    
-    tsInternalMsg.u8ID = FptsGenMsg->u8ID | 0x80;
-    tsInternalMsg.u16Length = 1 + FptsGenMsg->u16Length;
-    
-//    for (u8i = 0; u8i < FptsGenMsg->u16Length; u8i++)
-//    {
-//        u8TmpBuff[u8i + 1] = FptsGenMsg->pu8Data[u8i];
-//        tsInternalMsg.u16Length++;
-//    }
-    tsInternalMsg.pu8Data[0] = eRetVal;
-    memcpy(&tsInternalMsg.pu8Data[1], FptsGenMsg->pu8Data, FptsGenMsg->u16Length);
-    
-//    BufCopy(tsInternalMsg.pu8Data, u8TmpBuff, tsInternalMsg.u16Length);
     
     sendFrame(&tsInternalMsg);
     
@@ -454,19 +445,6 @@ teOperationRetVal serviceCheckFlash(tsGenericMsg * FptsGenMsg)
         }
     }
     
-    return eRetVal;
-}
-
-teOperationRetVal serviceWritePin(tsGenericMsg * FptsGenMsg)
-{
-    teOperationRetVal eRetVal = eOperationSuccess;
-    return eRetVal;
-}
-
-teOperationRetVal serviceReadPin(tsGenericMsg * FptsGenMsg)
-{
-
-    teOperationRetVal eRetVal = eOperationSuccess;
     return eRetVal;
 }
 

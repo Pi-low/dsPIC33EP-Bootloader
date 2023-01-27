@@ -1,3 +1,28 @@
+/* 
+ * The dsPIC33EP-Bootloader is a basic and simple UART bootloaloader that
+ * is designed to work with all dsPIC33EP 16bit Microchip MCU family.
+ * 
+ * Copyright (C) 2023  Nello Chommanivong
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * 
+ * File: bootloader.h
+ * Author: Nello
+ * Mail: nello.chom@protonmail.com
+ * 
+ */
+
 #ifndef BOOTLOADER_H
 #define BOOTLOADER_H
 
@@ -31,8 +56,6 @@
 #define ADDR_APPL_DESC      (0x280)
 #define ADDR_APPL_VERSION   (0x300)
 
-extern volatile uint32_t BootRequest;
-
 void resetBootState(void);
 void updateTimeout(void);
 void manageTimeout(void);
@@ -43,13 +66,10 @@ teMainStates State_Bootloading(void);
 teMainStates State_BootIdle(void);
 
 teOperationRetVal serviceGoToBoot(tsGenericMsg* FptsGenMsg);
-teOperationRetVal serviceEcho(tsGenericMsg* FptsGenMsg);
 teOperationRetVal serviceGetInfo(tsGenericMsg* FptsGenMsg);
 teOperationRetVal serviceEraseFlash(tsGenericMsg* FptsGenMsg);
 teOperationRetVal serviceDataTransfer(tsGenericMsg* FptsGenMsg);
 teOperationRetVal serviceCheckFlash(tsGenericMsg* FptsGenMsg);
-teOperationRetVal serviceWritePin(tsGenericMsg* FptsGenMsg);
-teOperationRetVal serviceReadPin(tsGenericMsg* FptsGenMsg);
 teOperationRetVal manageDataBlock(tsGenericMsg * FptsGenMsg, DataBlock_t * FptsBlock);
 
 #endif
