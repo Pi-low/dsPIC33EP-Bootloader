@@ -52,6 +52,9 @@ static uint32_t u32PrevBlockAddr;
 static tsGenericMsg tsInternalMsg;
 static void Ms_SendBootFrame(uint8_t Fu8Byte0);
 
+/**
+ * 
+ */
 void Mbootloader_ResetState(void)
 {
     u8BlankFlashFlag = 0;
@@ -61,11 +64,17 @@ void Mbootloader_ResetState(void)
     pu32SaveRstVector[1] = 0;
 }
 
+/**
+ * 
+ */
 void Mbootloader_updateTimeout(void)
 {
     u16Timeout1 = TMR1_SoftwareCounterGet() + BOOT_TIMEOUT;
 }
 
+/**
+ * 
+ */
 void Mbootloader_TimeoutMng(void)
 {
     TMR1_Tasks_16BitOperation();
@@ -80,6 +89,10 @@ void Mbootloader_TimeoutMng(void)
     }
 }
 
+/**
+ * 
+ * @param Fu8Byte0
+ */
 void Ms_SendBootFrame(uint8_t Fu8Byte0)
 {
     tsGenericMsg tsTxMsg;
@@ -89,6 +102,9 @@ void Ms_SendBootFrame(uint8_t Fu8Byte0)
     MTarget_SendFrame(&tsTxMsg);
 }
 
+/**
+ * 
+ */
 void Mbootloader_InitBoot(void)
 {
     uint32_t AppliPresent = (uint32_t) FLASH_ReadWord16(ADDR_APPL_FLAG) | ((uint32_t) FLASH_ReadWord16(ADDR_APPL_FLAG + 2) << 16);
@@ -97,6 +113,10 @@ void Mbootloader_InitBoot(void)
     ClrWdt();
 }
 
+/**
+ * 
+ * @return 
+ */
 teMainStates Mbootloader_StateTransition(void)
 {
     teMainStates eRetState = eStateTransition;
@@ -136,6 +156,10 @@ teMainStates Mbootloader_StateTransition(void)
     return eRetState;
 }
 
+/**
+ * 
+ * @return 
+ */
 teMainStates Mbootloader_StateIdle(void)
 {
     tsGenericMsg tsRxMsg;
@@ -170,6 +194,10 @@ teMainStates Mbootloader_StateIdle(void)
     return eRetState;
 }
 
+/**
+ * 
+ * @return 
+ */
 teMainStates Mbootloader_StateLoading(void)
 {
     tsGenericMsg tsRxMsg;
@@ -211,6 +239,11 @@ teMainStates Mbootloader_StateLoading(void)
     return eRetState;
 }
 
+/**
+ * 
+ * @param FptsGenMsg
+ * @return 
+ */
 teOperationRetVal Mbootloader_RqStartBoot(tsGenericMsg* FptsGenMsg)
 {
     teOperationRetVal eRetVal = eOperationSuccess;
@@ -227,6 +260,11 @@ teOperationRetVal Mbootloader_RqStartBoot(tsGenericMsg* FptsGenMsg)
     return eRetVal;
 }
 
+/**
+ * 
+ * @param FptsGenMsg
+ * @return 
+ */
 teOperationRetVal Mbootloader_RqGetInfo(tsGenericMsg * FptsGenMsg)
 {
     teOperationRetVal eRetVal = eOperationSuccess;
@@ -278,6 +316,11 @@ teOperationRetVal Mbootloader_RqGetInfo(tsGenericMsg * FptsGenMsg)
     return eRetVal;
 }
 
+/**
+ * 
+ * @param FptsGenMsg
+ * @return 
+ */
 teOperationRetVal Mbootloader_RqEraseFlash(tsGenericMsg * FptsGenMsg)
 {
     teOperationRetVal eRetVal = eOperationSuccess;
@@ -330,6 +373,11 @@ teOperationRetVal Mbootloader_RqEraseFlash(tsGenericMsg * FptsGenMsg)
     return eRetVal;
 }
 
+/**
+ * 
+ * @param FptsGenMsg
+ * @return 
+ */
 teOperationRetVal Mbootloader_RqDataTransfer(tsGenericMsg * FptsGenMsg)
 {
     teOperationRetVal eRetVal = eOperationSuccess;
@@ -371,6 +419,11 @@ teOperationRetVal Mbootloader_RqDataTransfer(tsGenericMsg * FptsGenMsg)
     return eRetVal;
 }
 
+/**
+ * 
+ * @param FptsGenMsg
+ * @return 
+ */
 teOperationRetVal Mbootloader_RqCheckFlash(tsGenericMsg * FptsGenMsg)
 {
     teOperationRetVal eRetVal = eOperationSuccess;
@@ -451,7 +504,7 @@ teOperationRetVal Mbootloader_RqCheckFlash(tsGenericMsg * FptsGenMsg)
         MTarget_SendFrame(&tsInternalMsg);
         if (eRetVal == eOperationSuccess)
         {
-            MMisc_BlockingDelay(50);
+            MMisc_DelayMs(50);
             TMR1_Stop();
             Mbootloader_ResetState();
             RESET();
@@ -461,6 +514,12 @@ teOperationRetVal Mbootloader_RqCheckFlash(tsGenericMsg * FptsGenMsg)
     return eRetVal;
 }
 
+/**
+ * 
+ * @param FptsGenMsg
+ * @param FptsBlock
+ * @return 
+ */
 teOperationRetVal Mbootloader_ProcessDataBlock(tsGenericMsg * FptsGenMsg, DataBlock_t * FptsBlock)
 {
     teOperationRetVal eRetVal = eOperationSuccess;

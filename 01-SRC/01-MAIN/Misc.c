@@ -35,7 +35,11 @@
 /* GLOBAL                                                                     */
 /******************************************************************************/
 
-void MMisc_BlockingDelay(uint16_t u16msDelay)
+/**
+ * @biref Blocking delay
+ * @param[in] u16msDelay Delay time in milliseconds
+ */
+void MMisc_DelayMs(uint16_t u16msDelay)
 {
     uint16_t u16Timeout = u16msDelay + TMR1_SoftwareCounterGet();
     while (u16Timeout > TMR1_SoftwareCounterGet())

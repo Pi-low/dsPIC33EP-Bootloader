@@ -34,6 +34,9 @@
 /******************************************************************************/
 /* GLOBAL                                                                     */
 /******************************************************************************/
+
+/**
+ */
 static tsFrameSize tsFrameLength[REGISTERED_FRAMES] = 
 {
     /* Service ID       MIN MAX  */
@@ -45,6 +48,12 @@ static tsFrameSize tsFrameLength[REGISTERED_FRAMES] =
     {eReq_checkFlash,   5,  5   },
 };
 
+/**
+ * 
+ * @param UARTFrm
+ * @param FpGenMsg
+ * @return 
+ */
 teOperationRetVal MFrameMng_RxHandler(tsUartFrm * UARTFrm, tsGenericMsg * FpGenMsg)
 {
     uint16_t u16i = 0;

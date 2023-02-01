@@ -42,11 +42,17 @@ static teBackTaskStates teCurrentState;
 static tsGenericMsg tsBootMsg;
 static tsUartFrm tsUartFrame;
 
+/**
+ * 
+ */
 void MTarget_InitBackTask(void)
 {
     teCurrentState = eBackTask_Idle;
 }
 
+/**
+ * 
+ */
 void MTarget_BackTaskMng(void)
 {
     uint8_t RxData;
@@ -114,6 +120,10 @@ void MTarget_BackTaskMng(void)
     }
 }
 
+/**
+ * 
+ * @param FptsTxMsg
+ */
 void MTarget_SendFrame(tsGenericMsg* FptsTxMsg)
 {
     uint8_t u8Checksum = 0;
@@ -151,6 +161,11 @@ void MTarget_SendFrame(tsGenericMsg* FptsTxMsg)
     memset(FptsTxMsg->pu8Data, 0, MAX_FRM_LEN);
 }
 
+/**
+ * 
+ * @param FptsBootMsg
+ * @return 
+ */
 teOperationRetVal MTarget_FrameAvailable(tsGenericMsg* FptsBootMsg)
 {
     teOperationRetVal teRetVal = eOperationNotAvailable;

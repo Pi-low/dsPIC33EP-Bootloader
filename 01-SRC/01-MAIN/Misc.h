@@ -30,7 +30,7 @@
 #include <xc.h>
 #include <stdint.h>
 
-void MMisc_BlockingDelay(uint16_t u16Timeout);
+void MMisc_DelayMs(uint16_t u16Timeout);
 void MMisc_WatchdogEnable(void);
 void MMisc_WatchdogDisable(void);
 

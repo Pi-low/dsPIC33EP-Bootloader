@@ -37,6 +37,13 @@
 /* GLOBAL                                                                     */
 /******************************************************************************/
 
+/**
+ * @brief Read an array of uint8 data in flash memory. Uint8 array are also written as uint16 array in flash memory
+ * @param Fpu8Buffer[out] Pointer to the reading buffer
+ * @param Fu16Size[in] Number of byte to read
+ * @param Fu32FlashAddr[in] Flash memory start address (must be modulo 2)
+ * @return teOperationRetVal
+ */
 teOperationRetVal MFlash_ReadBufferU8(uint8_t* Fpu8Buffer, uint16_t Fu16Size, uint32_t Fu32FlashAddr)
 {
     teOperationRetVal eRetVal = eOperationSuccess;
@@ -63,6 +70,12 @@ teOperationRetVal MFlash_ReadBufferU8(uint8_t* Fpu8Buffer, uint16_t Fu16Size, ui
     return eRetVal;
 }
 
+/**
+ * @brief Read an array of 64 word instructions from flash memory (256 bytes)
+ * @param Fpu8Buffer[out] Pointer to the reading buffer
+ * @param Fu32FlashAddr[in] Flash memory start address (must be modulo 2)
+ * @return teOperationRetVal
+ */
 teOperationRetVal MFlash_ReadRow(uint8_t* Fpu8Buffer, uint32_t Fu32FlashAddr)
 {
     teOperationRetVal eRetVal = eOperationSuccess;
@@ -78,6 +91,11 @@ teOperationRetVal MFlash_ReadRow(uint8_t* Fpu8Buffer, uint32_t Fu32FlashAddr)
     return eRetVal;
 }
 
+/**
+ * @brief Compare written data into flash with received datablock buffer
+ * @param FptsWrittenBlock[in] Pointer to the datablock which have been written into flash memory
+ * @return teOperationRetVal
+ */
 teOperationRetVal MFlash_CheckRow(DataBlock_t* FptsWrittenBlock)
 {
     teOperationRetVal eRetVal = eOperationSuccess;
@@ -98,6 +116,13 @@ teOperationRetVal MFlash_CheckRow(DataBlock_t* FptsWrittenBlock)
     return eRetVal;
 }
 
+/**
+ * @brief Transform an array of uint8 into an array of 24bit (uint32) data
+ * @param Fpu32WordData[out] Pointer to 24bit(uint32) word buffer, the upper byte is interpreted as 0
+ * @param Fpu8CharData[in] Pointer to uint8 buffer
+ * @param Fu16CharSize[in] Number of byte to process
+ * @return Number of available words
+ */
 uint16_t MFlash_CharToWordBuffer(uint32_t* Fpu32WordData, uint8_t* Fpu8CharData, uint16_t Fu16CharSize)
 {
     uint16_t u16CharCnt = 0;
@@ -137,6 +162,12 @@ uint16_t MFlash_CharToWordBuffer(uint32_t* Fpu32WordData, uint8_t* Fpu8CharData,
     return u16WordCnt;
 }
 
+/**
+ * @brief Transform an array of 24bit (uint32) data into an array of uint8 data
+ * @param Fpu32WordData[in] Pointer to 24bit (uint32) word buffer
+ * @param Fpu8CharData[out] Pointer to uint8 buffer
+ * @param Fu16WordSize[in] Number of words to process
+ */
 void MFlash_WordToCharBuffer(uint32_t* Fpu32WordData, uint8_t* Fpu8CharData, uint16_t Fu16WordSize)
 {
     uint32_t *pu32Word = Fpu32WordData;
