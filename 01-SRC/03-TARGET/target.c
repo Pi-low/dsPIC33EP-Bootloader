@@ -23,6 +23,9 @@
  * 
  */
 
+/******************************************************************************/
+/* INCLUDE                                                                    */
+/******************************************************************************/
 #include <stdlib.h>
 #include <string.h>
 #include "../../mcc_generated_files/system.h"
@@ -32,16 +35,19 @@
 #include "FrameMng.h"
 #include "target.h"
 
+/******************************************************************************/
+/* GLOBAL                                                                     */
+/******************************************************************************/
 static teBackTaskStates teCurrentState;
 static tsGenericMsg tsBootMsg;
 static tsUartFrm tsUartFrame;
 
-void InitBackTask(void)
+void MTarget_InitBackTask(void)
 {
     teCurrentState = eBackTask_Idle;
 }
 
-void ManageBackTask(void)
+void MTarget_BackTaskMng(void)
 {
     uint8_t RxData;
     teOperationRetVal eRetVal;
@@ -84,7 +90,7 @@ void ManageBackTask(void)
         case eBackTask_Data:
             tsUartFrame.pu8Data[tsUartFrame.u16Index] = RxData; /* Load incoming data into frame buffer */
             tsUartFrame.u16Index ++;
-            eRetVal = RxFrameHandler(&tsUartFrame, &tsBootMsg);
+            eRetVal = MFrameMng_RxHandler(&tsUartFrame, &tsBootMsg);
             
             if (eRetVal == eOperationSuccess)
             {
@@ -108,7 +114,7 @@ void ManageBackTask(void)
     }
 }
 
-void sendFrame(tsGenericMsg* FptsTxMsg)
+void MTarget_SendFrame(tsGenericMsg* FptsTxMsg)
 {
     uint8_t u8Checksum = 0;
     uint8_t pu8TxBuffer[256];
@@ -138,13 +144,14 @@ void sendFrame(tsGenericMsg* FptsTxMsg)
     
     FptsTxMsg->u8ID = 0;
     FptsTxMsg->u16Length = 0;
-    for (u16i = 0; u16i < MAX_FRM_LEN; u16i++)
-    {
-        FptsTxMsg->pu8Data[u16i] = 0;
-    }
+//    for (u16i = 0; u16i < MAX_FRM_LEN; u16i++)
+//    {
+//        FptsTxMsg->pu8Data[u16i] = 0;
+//    }
+    memset(FptsTxMsg->pu8Data, 0, MAX_FRM_LEN);
 }
 
-teOperationRetVal FrameAvailable(tsGenericMsg* FptsBootMsg)
+teOperationRetVal MTarget_FrameAvailable(tsGenericMsg* FptsBootMsg)
 {
     teOperationRetVal teRetVal = eOperationNotAvailable;
 //    uint16_t u16i = 0;

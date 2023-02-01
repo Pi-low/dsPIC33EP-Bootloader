@@ -38,6 +38,6 @@
 #define Mcr_SetStartFrame(tsFrm)    ((tsFrm).u8Flag |= 0x02)
 #define Mcr_GetStartFrame(tsFrm)    (uint8_t)(((tsFrm).u8Flag >> 1) & 1)
 
-teOperationRetVal RxFrameHandler(tsUartFrm * UARTFrm, tsGenericMsg * BootMsg);
+teOperationRetVal MFrameMng_RxHandler(tsUartFrm * UARTFrm, tsGenericMsg * BootMsg);
 
 #endif

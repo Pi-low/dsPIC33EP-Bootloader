@@ -23,6 +23,9 @@
  * 
  */
 
+/******************************************************************************/
+/* INCLUDE                                                                    */
+/******************************************************************************/
 #include "../../mcc_generated_files/system.h"
 #include "../../mcc_generated_files/pin_manager.h"
 #include "../../mcc_generated_files/tmr1.h"
@@ -33,6 +36,9 @@
 #include "../05-BOOTLOADER/bootloader.h"
 #include "Misc.h"
 
+/******************************************************************************/
+/* GLOBAL                                                                     */
+/******************************************************************************/
 #ifndef _IS_RELEASE
 const char __attribute__((address(ADDR_APPL_DESC), space(prog))) text[FLASH_LOGISTIC_CHAR_SIZE] = __DATE__" "__TIME__" : Bootloader standalone";
 const uint16_t SWVersion __attribute__((address(ADDR_APPL_VERSION), space(prog))) = 0x0001;
@@ -43,28 +49,27 @@ void main(void)
     teMainStates teCurrentState = eStateTransition;
     
     SYSTEM_Initialize();
-    WatchdogEnable();
-    MCU_FPWM_SetHigh();
-    InitBackTask();
+    MMisc_WatchdogEnable();
+    MTarget_InitBackTask();
     TMR1_Start();
-    InitBootloader();
+    Mbootloader_InitBoot();
     while(1)
     {
         TMR1_Tasks_16BitOperation(); /* SW timer management */
-        ManageBackTask(); /* UART frame management */
-        manageTimeout();
+        MTarget_BackTaskMng(); /* UART frame management */
+        Mbootloader_TimeoutMng();
         switch(teCurrentState)
         {
         case eStateTransition:
-            teCurrentState = State_Transition();
+            teCurrentState = Mbootloader_StateTransition();
             break;
             
         case eStateIdle:
-            teCurrentState = State_BootIdle();
+            teCurrentState = Mbootloader_StateIdle();
             break;
             
         case eStateFlash:
-            teCurrentState = State_Bootloading();
+            teCurrentState = Mbootloader_StateLoading();
             break;
             
         default:

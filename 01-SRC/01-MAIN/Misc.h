@@ -30,9 +30,9 @@
 #include <xc.h>
 #include <stdint.h>
 
-void BlockingDelay(uint16_t u16Timeout);
-void WatchdogEnable(void);
-void WatchdogDisable(void);
+void MMisc_BlockingDelay(uint16_t u16Timeout);
+void MMisc_WatchdogEnable(void);
+void MMisc_WatchdogDisable(void);
 
 #endif	/* MISC_H */
 

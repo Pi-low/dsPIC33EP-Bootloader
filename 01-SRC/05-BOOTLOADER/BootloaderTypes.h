@@ -61,12 +61,12 @@ typedef enum
 
 typedef enum
 {
-    eBoot =                     0x00,
-    eService_gotoBoot =         0x01,
-    eService_getInfo =          0x03,
-    eService_eraseFlash =       0x04,
-    eService_dataTransfer =     0x05,
-    eService_checkFlash =       0x06,
+    eBoot =                 0x00,
+    eReq_gotoBoot =         0x01,
+    eReq_getInfo =          0x03,
+    eReq_eraseFlash =       0x04,
+    eReq_dataTransfer =     0x05,
+    eReq_checkFlash =       0x06,
 }teBootServices;
 
 #define REGISTERED_FRAMES 6

@@ -56,20 +56,20 @@
 #define ADDR_APPL_DESC      (0x280)
 #define ADDR_APPL_VERSION   (0x300)
 
-void resetBootState(void);
-void updateTimeout(void);
-void manageTimeout(void);
-void InitBootloader(void);
+void Mbootloader_ResetState(void);
+void Mbootloader_updateTimeout(void);
+void Mbootloader_TimeoutMng(void);
+void Mbootloader_InitBoot(void);
 
-teMainStates State_Transition(void);
-teMainStates State_Bootloading(void);
-teMainStates State_BootIdle(void);
+teMainStates Mbootloader_StateTransition(void);
+teMainStates Mbootloader_StateLoading(void);
+teMainStates Mbootloader_StateIdle(void);
 
-teOperationRetVal serviceGoToBoot(tsGenericMsg* FptsGenMsg);
-teOperationRetVal serviceGetInfo(tsGenericMsg* FptsGenMsg);
-teOperationRetVal serviceEraseFlash(tsGenericMsg* FptsGenMsg);
-teOperationRetVal serviceDataTransfer(tsGenericMsg* FptsGenMsg);
-teOperationRetVal serviceCheckFlash(tsGenericMsg* FptsGenMsg);
-teOperationRetVal manageDataBlock(tsGenericMsg * FptsGenMsg, DataBlock_t * FptsBlock);
+teOperationRetVal Mbootloader_RqStartBoot(tsGenericMsg* FptsGenMsg);
+teOperationRetVal Mbootloader_RqGetInfo(tsGenericMsg* FptsGenMsg);
+teOperationRetVal Mbootloader_RqEraseFlash(tsGenericMsg* FptsGenMsg);
+teOperationRetVal Mbootloader_RqDataTransfer(tsGenericMsg* FptsGenMsg);
+teOperationRetVal Mbootloader_RqCheckFlash(tsGenericMsg* FptsGenMsg);
+teOperationRetVal Mbootloader_ProcessDataBlock(tsGenericMsg * FptsGenMsg, DataBlock_t * FptsBlock);
 
 #endif

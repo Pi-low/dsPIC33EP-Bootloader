@@ -35,10 +35,10 @@ typedef enum
     eBackTask_Data = 1
 }teBackTaskStates;
 
-void InitBackTask(void);
-void ManageBackTask(void);
-teOperationRetVal FrameAvailable(tsGenericMsg* FptsBootMsg);
-void sendFrame(tsGenericMsg *FptsTxMsg);
+void MTarget_InitBackTask(void);
+void MTarget_BackTaskMng(void);
+teOperationRetVal MTarget_FrameAvailable(tsGenericMsg* FptsBootMsg);
+void MTarget_SendFrame(tsGenericMsg *FptsTxMsg);
 //void BufCopy(uint8_t* pu8Dest, uint8_t* pu8Src, uint16_t u16Size);
 
 #endif

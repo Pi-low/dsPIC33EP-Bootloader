@@ -23,23 +23,29 @@
  * 
  */
 
+/******************************************************************************/
+/* INCLUDE                                                                    */
+/******************************************************************************/
 #include <stdint.h>
 #include "../05-BOOTLOADER/BootloaderTypes.h"
 #include "target.h"
 #include "FrameMng.h"
 
+/******************************************************************************/
+/* GLOBAL                                                                     */
+/******************************************************************************/
 static tsFrameSize tsFrameLength[REGISTERED_FRAMES] = 
 {
-    /* Service ID          MIN MAX  */
-    {eBoot,                 2,  2   },
-    {eService_gotoBoot,     1,  1   },
-    {eService_getInfo,      2,  2   },
-    {eService_eraseFlash,   1,  1   },
-    {eService_dataTransfer, 7,  MAX_FRM_LEN },
-    {eService_checkFlash,   5,  5   },
+    /* Service ID       MIN MAX  */
+    {eBoot,             2,  2   },
+    {eReq_gotoBoot,     1,  1   },
+    {eReq_getInfo,      2,  2   },
+    {eReq_eraseFlash,   1,  1   },
+    {eReq_dataTransfer, 7,  MAX_FRM_LEN },
+    {eReq_checkFlash,   5,  5   },
 };
 
-teOperationRetVal RxFrameHandler(tsUartFrm * UARTFrm, tsGenericMsg * FpGenMsg)
+teOperationRetVal MFrameMng_RxHandler(tsUartFrm * UARTFrm, tsGenericMsg * FpGenMsg)
 {
     uint16_t u16i = 0;
     uint16_t u16j = 0;
@@ -124,10 +130,10 @@ teOperationRetVal RxFrameHandler(tsUartFrm * UARTFrm, tsGenericMsg * FpGenMsg)
     
     if (RetVal > eOperationNotAvailable)
     {
-        FpGenMsg->u8ID += 0x90;
+        FpGenMsg->u8ID |= 0x90;
         FpGenMsg->pu8Data[0] = RetVal;
         FpGenMsg->u16Length = 1;
-        sendFrame(FpGenMsg);
+        MTarget_SendFrame(FpGenMsg);
     }
     return RetVal;
 }

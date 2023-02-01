@@ -23,8 +23,14 @@
  * 
  */
 
+/******************************************************************************/
+/* INCLUDE                                                                    */
+/******************************************************************************/
 #include "crc.h"
 
+/******************************************************************************/
+/* GLOBAL                                                                     */
+/******************************************************************************/
 const uint16_t KermitCRC16_Table[256] = {
 0x0000, 0x1189, 0x2312, 0x329b, 0x4624, 0x57ad, 0x6536, 0x74bf,
 0x8c48, 0x9dc1, 0xaf5a, 0xbed3, 0xca6c, 0xdbe5, 0xe97e, 0xf8f7,
@@ -59,7 +65,7 @@ const uint16_t KermitCRC16_Table[256] = {
 0xf78f, 0xe606, 0xd49d, 0xc514, 0xb1ab, 0xa022, 0x92b9, 0x8330,
 0x7bc7, 0x6a4e, 0x58d5, 0x495c, 0x3de3, 0x2c6a, 0x1ef1, 0x0f78};
 
-void updateCrc16(uint16_t* Fpu16Input, uint8_t Fu8Data)
+void Mcrc_update(uint16_t* Fpu16Input, uint8_t Fu8Data)
 {
     uint16_t *pu16InOut = Fpu16Input;
     uint16_t u16short = 0x00FF & (uint16_t)Fu8Data;
@@ -67,7 +73,7 @@ void updateCrc16(uint16_t* Fpu16Input, uint8_t Fu8Data)
     *pu16InOut = (*(pu16InOut) >> 8) ^ KermitCRC16_Table[u16Tmp & 0xFF];
 }
 
-void BufUpdateCrc16(uint16_t* Fpu16Input, uint8_t* Fpu8Data, uint16_t Fu16Length)
+void Mcrc_UpdateBuf(uint16_t* Fpu16Input, uint8_t* Fpu8Data, uint16_t Fu16Length)
 {
     uint16_t u16i = 0;
     uint16_t* pu16CRC = Fpu16Input;
@@ -75,6 +81,6 @@ void BufUpdateCrc16(uint16_t* Fpu16Input, uint8_t* Fpu8Data, uint16_t Fu16Length
     
     for (u16i = 0; u16i < Fu16Length; u16i++)
     {
-        updateCrc16(pu16CRC, *(pu8Data + u16i));
+        Mcrc_update(pu16CRC, *(pu8Data + u16i));
     }
 }
