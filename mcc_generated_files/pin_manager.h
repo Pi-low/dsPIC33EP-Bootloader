@@ -494,6 +494,152 @@
 #define MCU_FPWM_SetDigitalOutput() (_TRISA10 = 0)
 /**
   @Summary
+    Sets the GPIO pin, RA9, high using LATA9.
+
+  @Description
+    Sets the GPIO pin, RA9, high using LATA9.
+
+  @Preconditions
+    The RA9 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Set RA9 high (1)
+    CAN1_RS_SetHigh();
+    </code>
+
+*/
+#define CAN1_RS_SetHigh()          (_LATA9 = 1)
+/**
+  @Summary
+    Sets the GPIO pin, RA9, low using LATA9.
+
+  @Description
+    Sets the GPIO pin, RA9, low using LATA9.
+
+  @Preconditions
+    The RA9 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Set RA9 low (0)
+    CAN1_RS_SetLow();
+    </code>
+
+*/
+#define CAN1_RS_SetLow()           (_LATA9 = 0)
+/**
+  @Summary
+    Toggles the GPIO pin, RA9, using LATA9.
+
+  @Description
+    Toggles the GPIO pin, RA9, using LATA9.
+
+  @Preconditions
+    The RA9 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Toggle RA9
+    CAN1_RS_Toggle();
+    </code>
+
+*/
+#define CAN1_RS_Toggle()           (_LATA9 ^= 1)
+/**
+  @Summary
+    Reads the value of the GPIO pin, RA9.
+
+  @Description
+    Reads the value of the GPIO pin, RA9.
+
+  @Preconditions
+    None.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    uint16_t portValue;
+
+    // Read RA9
+    postValue = CAN1_RS_GetValue();
+    </code>
+
+*/
+#define CAN1_RS_GetValue()         _RA9
+/**
+  @Summary
+    Configures the GPIO pin, RA9, as an input.
+
+  @Description
+    Configures the GPIO pin, RA9, as an input.
+
+  @Preconditions
+    None.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Sets the RA9 as an input
+    CAN1_RS_SetDigitalInput();
+    </code>
+
+*/
+#define CAN1_RS_SetDigitalInput()  (_TRISA9 = 1)
+/**
+  @Summary
+    Configures the GPIO pin, RA9, as an output.
+
+  @Description
+    Configures the GPIO pin, RA9, as an output.
+
+  @Preconditions
+    None.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Sets the RA9 as an output
+    CAN1_RS_SetDigitalOutput();
+    </code>
+
+*/
+#define CAN1_RS_SetDigitalOutput() (_TRISA9 = 0)
+/**
+  @Summary
     Sets the GPIO pin, RB1, high using LATB1.
 
   @Description
@@ -638,6 +784,152 @@
 
 */
 #define MCU_MEAS_TEMP_SetDigitalOutput() (_TRISB1 = 0)
+/**
+  @Summary
+    Sets the GPIO pin, RC3, high using LATC3.
+
+  @Description
+    Sets the GPIO pin, RC3, high using LATC3.
+
+  @Preconditions
+    The RC3 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Set RC3 high (1)
+    CAN2_RS_SetHigh();
+    </code>
+
+*/
+#define CAN2_RS_SetHigh()          (_LATC3 = 1)
+/**
+  @Summary
+    Sets the GPIO pin, RC3, low using LATC3.
+
+  @Description
+    Sets the GPIO pin, RC3, low using LATC3.
+
+  @Preconditions
+    The RC3 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Set RC3 low (0)
+    CAN2_RS_SetLow();
+    </code>
+
+*/
+#define CAN2_RS_SetLow()           (_LATC3 = 0)
+/**
+  @Summary
+    Toggles the GPIO pin, RC3, using LATC3.
+
+  @Description
+    Toggles the GPIO pin, RC3, using LATC3.
+
+  @Preconditions
+    The RC3 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Toggle RC3
+    CAN2_RS_Toggle();
+    </code>
+
+*/
+#define CAN2_RS_Toggle()           (_LATC3 ^= 1)
+/**
+  @Summary
+    Reads the value of the GPIO pin, RC3.
+
+  @Description
+    Reads the value of the GPIO pin, RC3.
+
+  @Preconditions
+    None.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    uint16_t portValue;
+
+    // Read RC3
+    postValue = CAN2_RS_GetValue();
+    </code>
+
+*/
+#define CAN2_RS_GetValue()         _RC3
+/**
+  @Summary
+    Configures the GPIO pin, RC3, as an input.
+
+  @Description
+    Configures the GPIO pin, RC3, as an input.
+
+  @Preconditions
+    None.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Sets the RC3 as an input
+    CAN2_RS_SetDigitalInput();
+    </code>
+
+*/
+#define CAN2_RS_SetDigitalInput()  (_TRISC3 = 1)
+/**
+  @Summary
+    Configures the GPIO pin, RC3, as an output.
+
+  @Description
+    Configures the GPIO pin, RC3, as an output.
+
+  @Preconditions
+    None.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Sets the RC3 as an output
+    CAN2_RS_SetDigitalOutput();
+    </code>
+
+*/
+#define CAN2_RS_SetDigitalOutput() (_TRISC3 = 0)
 /**
   @Summary
     Sets the GPIO pin, RC6, high using LATC6.

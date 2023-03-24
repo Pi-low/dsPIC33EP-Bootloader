@@ -61,16 +61,16 @@ void PIN_MANAGER_Initialize (void)
     /****************************************************************************
      * Setting the Output Latch SFR(s)
      ***************************************************************************/
-    LATA = 0x0000;
+    LATA = 0x0200;
     LATB = 0x0100;
-    LATC = 0x0000;
+    LATC = 0x0008;
 
     /****************************************************************************
      * Setting the GPIO Direction SFR(s)
      ***************************************************************************/
-    TRISA = 0x0387;
+    TRISA = 0x0187;
     TRISB = 0xFEFF;
-    TRISC = 0x03BF;
+    TRISC = 0x03B7;
 
     /****************************************************************************
      * Setting the Weak Pull Up and Weak Pull Down SFR(s)
@@ -92,18 +92,25 @@ void PIN_MANAGER_Initialize (void)
     /****************************************************************************
      * Setting the Analog/Digital Configuration SFR(s)
      ***************************************************************************/
-    ANSELA = 0x020A;
+    ANSELA = 0x000A;
     ANSELB = 0x0203;
-    ANSELC = 0x003F;
+    ANSELC = 0x0037;
     
     /****************************************************************************
      * Set the PPS
      ***************************************************************************/
     __builtin_write_OSCCONL(OSCCON & 0xbf); // unlock PPS
 
-    RPOR0bits.RP20R = 0x0031;    //RA4->INTERNAL OSCILLATOR:REFCLK
-    RPOR3bits.RP40R = 0x0001;    //RB8->UART1:U1TX
+    RPINR26bits.C1RXR = 0x0030;    //RC0->ECAN1:C1RX
+    RPINR19bits.U2RXR = 0x0037;    //RC7->UART2:U2RX
+    RPOR7bits.RP57R = 0x000F;    //RC9->ECAN2:C2TX
     RPINR18bits.U1RXR = 0x0027;    //RB7->UART1:U1RX
+    RPOR0bits.RP20R = 0x0031;    //RA4->INTERNAL OSCILLATOR:REFCLK
+    RPOR3bits.RP41R = 0x0003;    //RB9->UART2:U2TX
+    RPOR1bits.RP36R = 0x000F;    //RB4->ECAN2:C2TX
+    RPINR26bits.C2RXR = 0x0018;    //RA8->ECAN2:C2RX
+    RPOR3bits.RP40R = 0x0001;    //RB8->UART1:U1TX
+    RPOR5bits.RP49R = 0x000E;    //RC1->ECAN1:C1TX
 
     __builtin_write_OSCCONL(OSCCON | 0x40); // lock PPS
 }

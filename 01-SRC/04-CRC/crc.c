@@ -1,5 +1,36 @@
+/* 
+ * The dsPIC33EP-Bootloader is a basic and simple UART bootloaloader that
+ * is designed to work with all dsPIC33EP 16bit Microchip MCU family.
+ * 
+ * Copyright (C) 2023  Nello Chommanivong
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * 
+ * File: crc.c
+ * Author: Nello
+ * Mail: nello.chom@protonmail.com
+ * 
+ */
+
+/******************************************************************************/
+/* INCLUDE                                                                    */
+/******************************************************************************/
 #include "crc.h"
 
+/******************************************************************************/
+/* GLOBAL                                                                     */
+/******************************************************************************/
 const uint16_t KermitCRC16_Table[256] = {
 0x0000, 0x1189, 0x2312, 0x329b, 0x4624, 0x57ad, 0x6536, 0x74bf,
 0x8c48, 0x9dc1, 0xaf5a, 0xbed3, 0xca6c, 0xdbe5, 0xe97e, 0xf8f7,
@@ -34,7 +65,12 @@ const uint16_t KermitCRC16_Table[256] = {
 0xf78f, 0xe606, 0xd49d, 0xc514, 0xb1ab, 0xa022, 0x92b9, 0x8330,
 0x7bc7, 0x6a4e, 0x58d5, 0x495c, 0x3de3, 0x2c6a, 0x1ef1, 0x0f78};
 
-void updateCrc16(uint16_t* Fpu16Input, uint8_t Fu8Data)
+/**
+ * 
+ * @param Fpu16Input
+ * @param Fu8Data
+ */
+void Mcrc_update(uint16_t* Fpu16Input, uint8_t Fu8Data)
 {
     uint16_t *pu16InOut = Fpu16Input;
     uint16_t u16short = 0x00FF & (uint16_t)Fu8Data;
@@ -42,7 +78,13 @@ void updateCrc16(uint16_t* Fpu16Input, uint8_t Fu8Data)
     *pu16InOut = (*(pu16InOut) >> 8) ^ KermitCRC16_Table[u16Tmp & 0xFF];
 }
 
-void BufUpdateCrc16(uint16_t* Fpu16Input, uint8_t* Fpu8Data, uint16_t Fu16Length)
+/**
+ * 
+ * @param Fpu16Input
+ * @param Fpu8Data
+ * @param Fu16Length
+ */
+void Mcrc_UpdateBuf(uint16_t* Fpu16Input, uint8_t* Fpu8Data, uint16_t Fu16Length)
 {
     uint16_t u16i = 0;
     uint16_t* pu16CRC = Fpu16Input;
@@ -50,6 +92,6 @@ void BufUpdateCrc16(uint16_t* Fpu16Input, uint8_t* Fpu8Data, uint16_t Fu16Length
     
     for (u16i = 0; u16i < Fu16Length; u16i++)
     {
-        updateCrc16(pu16CRC, *(pu8Data + u16i));
+        Mcrc_update(pu16CRC, *(pu8Data + u16i));
     }
 }

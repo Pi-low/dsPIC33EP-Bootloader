@@ -1,3 +1,31 @@
+/* 
+ * The dsPIC33EP-Bootloader is a basic and simple UART bootloaloader that
+ * is designed to work with all dsPIC33EP 16bit Microchip MCU family.
+ * 
+ * Copyright (C) 2023  Nello Chommanivong
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * 
+ * File: target.c
+ * Author: Nello
+ * Mail: nello.chom@protonmail.com
+ * 
+ */
+
+/******************************************************************************/
+/* INCLUDE                                                                    */
+/******************************************************************************/
 #include <stdlib.h>
 #include <string.h>
 #include "../../mcc_generated_files/system.h"
@@ -7,16 +35,25 @@
 #include "FrameMng.h"
 #include "target.h"
 
+/******************************************************************************/
+/* GLOBAL                                                                     */
+/******************************************************************************/
 static teBackTaskStates teCurrentState;
 static tsGenericMsg tsBootMsg;
 static tsUartFrm tsUartFrame;
 
-void InitBackTask(void)
+/**
+ * 
+ */
+void MTarget_InitBackTask(void)
 {
     teCurrentState = eBackTask_Idle;
 }
 
-void ManageBackTask(void)
+/**
+ * 
+ */
+void MTarget_BackTaskMng(void)
 {
     uint8_t RxData;
     teOperationRetVal eRetVal;
@@ -59,7 +96,7 @@ void ManageBackTask(void)
         case eBackTask_Data:
             tsUartFrame.pu8Data[tsUartFrame.u16Index] = RxData; /* Load incoming data into frame buffer */
             tsUartFrame.u16Index ++;
-            eRetVal = RxFrameHandler(&tsUartFrame, &tsBootMsg);
+            eRetVal = MFrameMng_RxHandler(&tsUartFrame, &tsBootMsg);
             
             if (eRetVal == eOperationSuccess)
             {
@@ -83,7 +120,11 @@ void ManageBackTask(void)
     }
 }
 
-void sendFrame(tsGenericMsg* FptsTxMsg)
+/**
+ * 
+ * @param FptsTxMsg
+ */
+void MTarget_SendFrame(tsGenericMsg* FptsTxMsg)
 {
     uint8_t u8Checksum = 0;
     uint8_t pu8TxBuffer[256];
@@ -113,13 +154,19 @@ void sendFrame(tsGenericMsg* FptsTxMsg)
     
     FptsTxMsg->u8ID = 0;
     FptsTxMsg->u16Length = 0;
-    for (u16i = 0; u16i < MAX_FRM_LEN; u16i++)
-    {
-        FptsTxMsg->pu8Data[u16i] = 0;
-    }
+//    for (u16i = 0; u16i < MAX_FRM_LEN; u16i++)
+//    {
+//        FptsTxMsg->pu8Data[u16i] = 0;
+//    }
+    memset(FptsTxMsg->pu8Data, 0, MAX_FRM_LEN);
 }
 
-teOperationRetVal FrameAvailable(tsGenericMsg* FptsBootMsg)
+/**
+ * 
+ * @param FptsBootMsg
+ * @return 
+ */
+teOperationRetVal MTarget_FrameAvailable(tsGenericMsg* FptsBootMsg)
 {
     teOperationRetVal teRetVal = eOperationNotAvailable;
 //    uint16_t u16i = 0;
@@ -130,10 +177,6 @@ teOperationRetVal FrameAvailable(tsGenericMsg* FptsBootMsg)
         FptsBootMsg->u8ID = tsBootMsg.u8ID;
         FptsBootMsg->u16Length = tsBootMsg.u16Length;
         memcpy(FptsBootMsg->pu8Data, tsBootMsg.pu8Data, tsBootMsg.u16Length);
-//        for (u16i = 0; u16i < tsBootMsg.u16Length; u16i++)
-//        {
-//            FptsBootMsg->pu8Data[u16i] = tsBootMsg.pu8Data[u16i];
-//        }
     }
     else
     {
@@ -141,12 +184,3 @@ teOperationRetVal FrameAvailable(tsGenericMsg* FptsBootMsg)
     }
     return teRetVal;
 }
-
-//void BufCopy(uint8_t* pu8Dest, uint8_t* pu8Src, uint16_t u16Size)
-//{
-//    uint16_t u16i;
-//    for (u16i = 0; u16i < u16Size; u16i++)
-//    {
-//        pu8Dest[u16i] = pu8Src[u16i];
-//    }
-//}

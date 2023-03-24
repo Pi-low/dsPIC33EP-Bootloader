@@ -1,23 +1,60 @@
+/* 
+ * The dsPIC33EP-Bootloader is a basic and simple UART bootloaloader that
+ * is designed to work with all dsPIC33EP 16bit Microchip MCU family.
+ * 
+ * Copyright (C) 2023  Nello Chommanivong
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * 
+ * File: FrameMng.c
+ * Author: Nello
+ * Mail: nello.chom@protonmail.com
+ * 
+ */
+
+/******************************************************************************/
+/* INCLUDE                                                                    */
+/******************************************************************************/
 #include <stdint.h>
 #include "../05-BOOTLOADER/BootloaderTypes.h"
 #include "target.h"
 #include "FrameMng.h"
 
+/******************************************************************************/
+/* GLOBAL                                                                     */
+/******************************************************************************/
+
+/**
+ */
 static tsFrameSize tsFrameLength[REGISTERED_FRAMES] = 
 {
-    /* Service ID          MIN MAX  */
-    {eBoot,                 2,  2   },
-    {eService_gotoBoot,     1,  1   },
-    {eService_echo,         2,  65  },
-    {eService_getInfo,      2,  2   },
-    {eService_eraseFlash,   1,  1   },
-    {eService_dataTransfer, 7,  262 },
-    {eService_checkFlash,   5,  5   },
-    {eService_writePin,     2,  2   },
-    {eService_readPin,      2,  2   },
+    /* Service ID       MIN MAX  */
+    {eBoot,             2,  2   },
+    {eReq_gotoBoot,     1,  1   },
+    {eReq_getInfo,      2,  2   },
+    {eReq_eraseFlash,   1,  1   },
+    {eReq_dataTransfer, 7,  MAX_FRM_LEN },
+    {eReq_checkFlash,   5,  5   },
 };
 
-teOperationRetVal RxFrameHandler(tsUartFrm * UARTFrm, tsGenericMsg * FpGenMsg)
+/**
+ * 
+ * @param UARTFrm
+ * @param FpGenMsg
+ * @return 
+ */
+teOperationRetVal MFrameMng_RxHandler(tsUartFrm * UARTFrm, tsGenericMsg * FpGenMsg)
 {
     uint16_t u16i = 0;
     uint16_t u16j = 0;
@@ -102,10 +139,10 @@ teOperationRetVal RxFrameHandler(tsUartFrm * UARTFrm, tsGenericMsg * FpGenMsg)
     
     if (RetVal > eOperationNotAvailable)
     {
-        FpGenMsg->u8ID += 0x90;
+        FpGenMsg->u8ID |= 0x90;
         FpGenMsg->pu8Data[0] = RetVal;
         FpGenMsg->u16Length = 1;
-        sendFrame(FpGenMsg);
+        MTarget_SendFrame(FpGenMsg);
     }
     return RetVal;
 }

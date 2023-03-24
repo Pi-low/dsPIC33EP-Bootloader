@@ -1,3 +1,28 @@
+/* 
+ * The dsPIC33EP-Bootloader is a basic and simple UART bootloaloader that
+ * is designed to work with all dsPIC33EP 16bit Microchip MCU family.
+ * 
+ * Copyright (C) 2023  Nello Chommanivong
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * 
+ * File: BootloaderTypes.h
+ * Author: Nello
+ * Mail: nello.chom@protonmail.com
+ * 
+ */
+
 #ifndef BOOT_TYPES_H
 #define BOOT_TYPES_H
 
@@ -36,16 +61,15 @@ typedef enum
 
 typedef enum
 {
-    eBoot =                     0x00,
-    eService_gotoBoot =         0x01,
-    eService_echo =             0x02,
-    eService_getInfo =          0x03,
-    eService_eraseFlash =       0x04,
-    eService_dataTransfer =     0x05,
-    eService_checkFlash =       0x06,
-    eService_writePin =         0x0A,
-    eService_readPin =          0x0B,
+    eBoot =                 0x00,
+    eReq_gotoBoot =         0x01,
+    eReq_getInfo =          0x03,
+    eReq_eraseFlash =       0x04,
+    eReq_dataTransfer =     0x05,
+    eReq_checkFlash =       0x06,
 }teBootServices;
+
+#define REGISTERED_FRAMES 6
 
 typedef enum
 {
